@@ -1,0 +1,34 @@
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { AddQuestionComponent } from './components/add-question/add-question.component';
+import { QuestionDetailsComponent } from './components/question-details/question-details.component';
+import { QuestionsListComponent } from './components/question-list/question-list.component';
+
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
+import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
+import { GameComponent } from './components/game/game.component';
+@NgModule({
+  declarations: [
+    AppComponent,
+    AddQuestionComponent,
+    QuestionDetailsComponent,
+    QuestionsListComponent,
+    CreateLobbyComponent,
+    JoinLobbyComponent,
+    GameComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

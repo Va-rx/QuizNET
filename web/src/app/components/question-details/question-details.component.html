@@ -1,0 +1,59 @@
+<div *ngIf="viewMode; else editable">
+  <div *ngIf="currentQuestion.id">
+    <h4>Question</h4>
+    <div>
+      <label><strong>Question:</strong></label> {{ currentQuestion.question }}
+    </div>
+
+    <a
+      class="badge badge-warning"
+      routerLink="/Questions/{{ currentQuestion.id }}"
+    >
+      Edit
+    </a>
+  </div>
+
+  <div *ngIf="!currentQuestion">
+    <br />
+    <p>Please click on a Question...</p>
+  </div>
+</div>
+
+<ng-template #editable>
+  <div *ngIf="currentQuestion.id" class="edit-form">
+    <h4>Question</h4>
+    <form>
+      <div class="form-group">
+        <label for="title">Question</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          [(ngModel)]="currentQuestion.question"
+          name="title"
+        />
+      </div>
+
+    </form>
+
+
+
+    <button class="badge badge-danger mr-2" (click)="deleteQuestion()">
+      Delete
+    </button>
+
+    <button
+      type="submit"
+      class="badge badge-success mb-2"
+      (click)="updateQuestion()"
+    >
+      Update
+    </button>
+    <p>{{ message }}</p>
+  </div>
+
+  <div *ngIf="!currentQuestion.id">
+    <br />
+    <p>Cannot access this Question...</p>
+  </div>
+</ng-template>
