@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
 import { GameComponent } from './components/game/game.component';
+import { TankGameComponent } from './components/tank-game/tank-game.component';
+import { SocketServiceService } from './services/socket-service.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +22,8 @@ import { GameComponent } from './components/game/game.component';
     QuestionsListComponent,
     CreateLobbyComponent,
     JoinLobbyComponent,
-    GameComponent
+    GameComponent,
+    TankGameComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +31,7 @@ import { GameComponent } from './components/game/game.component';
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [SocketServiceService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

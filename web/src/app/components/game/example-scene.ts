@@ -3,12 +3,13 @@ import { io } from "socket.io-client";
 export default class Example extends Phaser.Scene
 {
     scoreText;
+    lastScore=-1;
     score = 0;
     cursors;
     platforms;
     stars;
     player;
-    socket=io('http://localhost:8080');
+    //socket=io('http://localhost:8080');
     others;
     othersprites;
     preload ()
@@ -84,7 +85,15 @@ export default class Example extends Phaser.Scene
     }
 
     override update ()
-    {
+    {      
+        //emiting user score
+        if(this.score!=this.lastScore){
+            this.lastScore=this.score;
+            this.game.events.emit('userScoreUpdate',this.score);
+        
+            console.log(this.score);
+        }
+        
         if (this.cursors.left.isDown)
         {
             this.player.setVelocityX(-160);

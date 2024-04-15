@@ -1,6 +1,7 @@
 import { Component, OnInit  } from '@angular/core';
 import Phaser from 'phaser';
 import Example from './example-scene'; 
+import { SocketServiceService } from 'src/app/services/socket-service.service';
 
 
 @Component({
@@ -11,8 +12,10 @@ import Example from './example-scene';
 export class GameComponent implements OnInit {
   phaserGame!: Phaser.Game;
   config: Phaser.Types.Core.GameConfig;
+  private socket: any;
+  scoreBoard:string="";
 
-  constructor() {
+  constructor(private socketService:SocketServiceService) {
     this.config = {
       type: Phaser.AUTO,
       height: 600,
@@ -33,6 +36,9 @@ export class GameComponent implements OnInit {
 
   ngOnInit() {
     this.phaserGame = new Phaser.Game(this.config);
+    this.phaserGame.scene.game.events.on('userScoreUpdate',(user_score)=>this.socket.emit('userScoreUpdate',this.socketService.getUserId(),user_score,this.socketService.getJoinCode()),this);
+    this.socket=this.socketService.getSocket();
+    this.socket.on('broadcastScoreBoard',(jsonScoreBoard) => this.scoreBoard=jsonScoreBoard);
   }
 
   ngOnDestroy() {

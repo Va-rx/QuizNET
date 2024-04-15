@@ -6,6 +6,7 @@ import { AddQuestionComponent } from './components/add-question/add-question.com
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
 import { GameComponent } from './components/game/game.component';
+import { TankGameComponent } from './components/tank-game/tank-game.component';
 const routes: Routes = [
   { path: '', redirectTo: 'Questions', pathMatch: 'full' },
   { path: 'Questions', component: QuestionsListComponent },
@@ -13,7 +14,8 @@ const routes: Routes = [
   { path: 'add', component: AddQuestionComponent },
   { path: 'create-lobby', component: CreateLobbyComponent },
   { path: 'join-lobby', component: JoinLobbyComponent },
-  { path: 'game', component: GameComponent }
+  { path: 'game', component: GameComponent },
+  { path: 'tank-game', component: TankGameComponent },
 ];
 
 @NgModule({

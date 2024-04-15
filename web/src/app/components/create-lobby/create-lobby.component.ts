@@ -1,5 +1,6 @@
 import { Component,OnInit } from '@angular/core';
 import io from 'socket.io-client';
+import { SocketServiceService } from 'src/app/services/socket-service.service';
 
 @Component({
   selector: 'app-create-lobby',
@@ -11,11 +12,15 @@ export class CreateLobbyComponent implements OnInit {
   joinCode: string = '';
   userList: string[] = [];
   created: boolean = false;
-  constructor() { }
+  lobbyName!:string;
+  userName!:string;
+
+  constructor(private socketService:SocketServiceService) { }
 
   ngOnInit(): void {
     // Connect to Socket.io server
-    this.socket = io('http://localhost:8080'); // Adjust URL accordingly
+    //this.socket = io('http://localhost:8080'); // Adjust URL accordingly
+    this.socket=this.socketService.getSocket();
 
     this.socket.on('joinCode', (code: string) => {
       console.log('Received join code:', code);
@@ -31,7 +36,10 @@ export class CreateLobbyComponent implements OnInit {
   // Method to handle form submission
   onSubmit(): void {
     // Emit an event to the server
-    this.socket.emit('requestJoinCode',);
+    console.log(this.lobbyName);
+    console.log(this.userName);
+    this.socketService.setUserId(this.userName);
+    this.socket.emit('requestJoinCode',this.userName,this.lobbyName);
 
   }
 
