@@ -14,6 +14,11 @@ import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component
 import { GameComponent } from './components/game/game.component';
 import { TankGameComponent } from './components/tank-game/tank-game.component';
 import { SocketServiceService } from './services/socket-service.service';
+import { QuestionViewComponent } from './components/question-view/question-view.component';
+import {MatButtonModule} from '@angular/material/button';
+import { AnswerViewComponent } from './components/question-view/answer-view/answer-view.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,13 +28,17 @@ import { SocketServiceService } from './services/socket-service.service';
     CreateLobbyComponent,
     JoinLobbyComponent,
     GameComponent,
-    TankGameComponent
+    TankGameComponent,
+    QuestionViewComponent,
+    AnswerViewComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatButtonModule,
+    MatDialogModule
   ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]

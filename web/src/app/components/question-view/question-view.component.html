@@ -1,0 +1,15 @@
+<div class="container">
+    <ng-template [ngIf]="!isSubmitted" [ngIfElse]="submitted">
+        <div class="question">
+            <h2>{{mockQuestion.question}}</h2>
+            <div class="answers" *ngFor="let answer of mockQuestion.answers">
+                <app-answer-view (answers)="chooseAnswer($event)" [answer]="answer" [isChosen]="checkAnswer(answer)"></app-answer-view>
+            </div>
+        </div>
+        <button (click)="submitAnswer()" class="submit-btn" mat-flat-button color="primary">Zatwierdź Odpwiedzi</button>
+    </ng-template>
+
+    <ng-template #submitted>
+        <h1>Twój wynik: {{result}}!</h1>
+    </ng-template>
+</div>

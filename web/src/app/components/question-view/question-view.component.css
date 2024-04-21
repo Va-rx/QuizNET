@@ -1,0 +1,21 @@
+.container {
+ 
+
+    background-color: #343a40;
+    color: white;
+    border-radius: 30px;
+    text-align: center;
+}
+
+.question {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.submit-btn{
+    margin: 5px 0 20px;
+}
+
