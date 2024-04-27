@@ -11,17 +11,26 @@ export class AddQuestionComponent implements OnInit {
 
   question: Question = {
     question: '',
+    image_link: 'null'
   };
   submitted = false;
 
   constructor(private questionService: QuestionService) { }
 
   ngOnInit(): void {
+    this.questionService.getAll().subscribe(
+      data => {
+        console.log(data);
+      },
+      error => {
+        console.log(error);
+      });
   }
 
   saveQuestion(): void {
     const data = {
       question : this.question.question,
+      image_link: 'xd'
     };
 
     this.questionService.create(data)

@@ -14,27 +14,61 @@ var corsOptions = {
   // Origin: "http://localhost:8081" bez tego działa
 };
 
+const { getQuestions, createQuestion } = require("./database/database-queries/questions-queries");
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// const db = require("./app/models");
-// db.sequelize.sync({ force: true })
-//   .then(() => {
-//     console.log("Synced db.");
-//   })
-//   .catch((err) => {
-//     console.log("Failed to sync db: " + err.message);
-//   });
+const db = require("./database/database-connection");
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to TEST application." });
 });
 
+
+app.get("/questionsxd", (req, res) => {
+  getQuestions()
+  .then(questions => {
+    res.send(questions);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving questions."
+    });
+  });
+});
+
+// app.get("/questions", (req, res) => {
+//   db.questions.findAll()
+//     .then(data => {
+//       res.send(data);
+//     }
+//     )
+//     .catch(err => {
+//       res.status(500).send({
+//         message: err.message || "Some error occurred while retrieving questions."
+//       }));
+//     }
+//   );
+
+// create post method for /questions with questions-queries.js
+
+// app.get("/questionsxd", (req, res) => {
+//   getQuestions()
+//   .then(questions => {
+//     res.send(questions);
+//   })
+//   .catch(err => {
+//     res.status(500).send({
+//       message: err.message || "Some error occurred while retrieving questions."
+//     });
+//   }
+// );
+
 //require("./app/routes/question.routes")(app);
 
 const PORT = process.env.PORT || 8080;
-
 
 const sessions = new Map();
 const userToSocket= new Map();

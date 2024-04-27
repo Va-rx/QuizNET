@@ -10,10 +10,12 @@ const baseUrl = 'http://localhost:8080/api/Questions';
 })
 export class QuestionService {
 
+  private baseUrl = 'http://localhost:8080';
+
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<Question[]> {
-    return this.http.get<Question[]>(baseUrl);
+    return this.http.get<Question[]>(`${this.baseUrl}/questionsxd`);
   }
 
   get(id: any): Observable<Question> {
@@ -21,7 +23,7 @@ export class QuestionService {
   }
 
   create(data: any): Observable<any> {
-    return this.http.post(baseUrl, data);
+    return this.http.post<Question>(this.baseUrl, data);
   }
 
   update(id: any, data: any): Observable<any> {
