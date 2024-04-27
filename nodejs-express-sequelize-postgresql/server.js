@@ -2,6 +2,15 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http"); 
 const socketIo = require("socket.io");
+const { Pool } = require('pg'); 
+
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+});
 
 const app = express();
 const server = http.createServer(app); 
@@ -18,20 +27,20 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const db = require("./app/models");
-db.sequelize.sync({ force: true })
-  .then(() => {
-    console.log("Synced db.");
-  })
-  .catch((err) => {
-    console.log("Failed to sync db: " + err.message);
-  });
+// const db = require("./app/models");
+// db.sequelize.sync({ force: true })
+//   .then(() => {
+//     console.log("Synced db.");
+//   })
+//   .catch((err) => {
+//     console.log("Failed to sync db: " + err.message);
+//   });
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to TEST application." });
 });
 
-require("./app/routes/question.routes")(app);
+//require("./app/routes/question.routes")(app);
 
 const PORT = process.env.PORT || 8080;
 
@@ -133,6 +142,13 @@ io.on("connection", (socket) => {
 // Start the HTTP server
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
+  pool.query('SELECT * FROM test', (error, results) => {
+    if (error) {
+      console.error('Błąd zapytania:', error);
+      return;
+    }
+    console.log('Wyniki zapytania:', results.rows);
+  });
 });
 
 // TODO: zastapic to funkjca taka jak ma byc porzadna
