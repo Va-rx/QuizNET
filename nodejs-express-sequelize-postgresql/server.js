@@ -14,59 +14,12 @@ var corsOptions = {
   // Origin: "http://localhost:8081" bez tego działa
 };
 
-const { getQuestions, createQuestion } = require("./database/database-queries/questions-queries");
-
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const db = require("./database/database-connection");
-
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to TEST application." });
-});
-
-
-app.get("/questionsxd", (req, res) => {
-  getQuestions()
-  .then(questions => {
-    res.send(questions);
-  })
-  .catch(err => {
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving questions."
-    });
-  });
-});
-
-// app.get("/questions", (req, res) => {
-//   db.questions.findAll()
-//     .then(data => {
-//       res.send(data);
-//     }
-//     )
-//     .catch(err => {
-//       res.status(500).send({
-//         message: err.message || "Some error occurred while retrieving questions."
-//       }));
-//     }
-//   );
-
-// create post method for /questions with questions-queries.js
-
-// app.get("/questionsxd", (req, res) => {
-//   getQuestions()
-//   .then(questions => {
-//     res.send(questions);
-//   })
-//   .catch(err => {
-//     res.status(500).send({
-//       message: err.message || "Some error occurred while retrieving questions."
-//     });
-//   }
-// );
-
-//require("./app/routes/question.routes")(app);
+const testRouter = require("./routes/test-routes");
+app.use("/api/questions", testRouter);
 
 const PORT = process.env.PORT || 8080;
 

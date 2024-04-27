@@ -45,11 +45,21 @@ const deleteQuestion = async (id) => {
     }
 }
 
+const deleteQuestions = async () => {
+    try {
+        const res = await db.query(`DELETE * FROM questions`);
+        return res.rows;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
 module.exports = {
     getQuestions,
     getQuestionById,
     createQuestion,
     updateQuestion,
-    deleteQuestion
+    deleteQuestion,
+    deleteQuestions
 }
 

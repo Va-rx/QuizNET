@@ -17,15 +17,7 @@ export class AddQuestionComponent implements OnInit {
 
   constructor(private questionService: QuestionService) { }
 
-  ngOnInit(): void {
-    this.questionService.getAll().subscribe(
-      data => {
-        console.log(data);
-      },
-      error => {
-        console.log(error);
-      });
-  }
+  ngOnInit(): void { }
 
   saveQuestion(): void {
     const data = {
@@ -49,5 +41,4 @@ export class AddQuestionComponent implements OnInit {
       question: ''
     };
   }
-
 }
