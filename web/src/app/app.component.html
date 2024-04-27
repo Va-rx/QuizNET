@@ -1,0 +1,28 @@
+<div>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <a href="#" class="navbar-brand">QuizNET</a>
+    <div class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a routerLink="Questions" class="nav-link">Questions</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="add" class="nav-link">Add</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="create-lobby" class="nav-link">Create Lobby</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="join-lobby" class="nav-link">Join Lobby</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="game" class="nav-link">Play</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="tank-game" class="nav-link">Tank-game</a>
+    </div>
+  </nav>
+
+  <div class="container mt-3">
+    <router-outlet></router-outlet>
+  </div>
+</div>

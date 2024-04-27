@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card mt-5">
+        <div class="card-header bg-primary text-white">
+          <h4>Join Lobby</h4>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="form-group">
+              <label for="joinCode">Join Code</label>
+              <input type="text" class="form-control" id="joinCode" placeholder="Enter join code" [(ngModel)]="joinCode" [ngModelOptions]="{standalone: true}">
+              <label for="userName">User Name</label>
+              <input type="text" class="form-control" id="userName" placeholder="Enter user name" [(ngModel)]="userName" [ngModelOptions]="{standalone: true}">
+            </div>
+            <button type="submit" *ngIf="!joined" (click)="onSubmit()" class="btn btn-primary">Join Lobby</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="userList.length > 0" class="container mt-4">
+  <h4>User List</h4>
+  <ul>
+    <li *ngFor="let user of userList">{{ user }}</li>
+  </ul>
+</div>

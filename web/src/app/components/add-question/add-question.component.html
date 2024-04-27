@@ -1,0 +1,24 @@
+<div>
+  <div class="submit-form">
+    <div *ngIf="!submitted">
+      <div class="form-group">
+        <label for="question">Question</label>
+        <input
+          type="text"
+          class="form-control"
+          id="question"
+          required
+          [(ngModel)]="question.question"
+          name="question"
+        />
+      </div>
+
+      <button (click)="saveQuestion()" class="btn btn-success">Submit</button>
+    </div>
+
+    <div *ngIf="submitted">
+      <h4>Question was submitted successfully!</h4>
+      <button class="btn btn-success" (click)="newQuestion()">Add</button>
+    </div>
+  </div>
+</div>

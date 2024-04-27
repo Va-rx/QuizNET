@@ -1,0 +1,9 @@
+.green-border{
+    border-style: solid;
+    border-color: green;
+}
+
+.answer{
+    width: 300px;
+    margin: 10px 15px;
+}

@@ -1,0 +1,35 @@
+<!-- create-lobby.component.html -->
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card mt-5">
+        <div class="card-header bg-primary text-white">
+          <h4>Create Lobby</h4>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="form-group">
+              <label for="lobbyName">Lobby Name</label>
+              <input type="text" class="form-control" id="lobbyName" placeholder="Enter lobby name" [(ngModel)]="lobbyName" [ngModelOptions]="{standalone: true}">
+              <label for="userName">User Name</label>
+              <input type="text" class="form-control" id="userName" placeholder="Enter user name" [(ngModel)]="userName" [ngModelOptions]="{standalone: true}">
+            </div>
+            <button type="submit" *ngIf="!created" (click)="onSubmit()" class="btn btn-primary">Create Lobby</button>
+            <button type="submit" *ngIf="created" (click)="onStartGame()" class="btn btn-primary">Start game</button>
+          </form>
+        </div>
+        <div class="card-body">
+          <div *ngIf="joinCode != ''">
+            <h4>Join Code</h4>
+            <p>{{joinCode}}</p>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="userList.length > 0" class="container mt-4">
+  <h4>User List</h4>
+  <ul>
+    <li *ngFor="let user of userList">{{ user }}</li>
+  </ul>
+</div>
