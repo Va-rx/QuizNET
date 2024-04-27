@@ -1,4 +1,4 @@
-const { createQuestion, getQuestions } = require('./database-queries/question-queries');
+const { createQuestion, getQuestions } = require('./database-queries/questions-queries');
 
 getQuestions()
     .then(res => console.log(res))
