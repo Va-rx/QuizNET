@@ -2,15 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http"); 
 const socketIo = require("socket.io");
-const { Pool } = require('pg'); 
-
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
 
 const app = express();
 const server = http.createServer(app); 
@@ -142,13 +133,6 @@ io.on("connection", (socket) => {
 // Start the HTTP server
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
-  pool.query('SELECT * FROM test', (error, results) => {
-    if (error) {
-      console.error('Błąd zapytania:', error);
-      return;
-    }
-    console.log('Wyniki zapytania:', results.rows);
-  });
 });
 
 // TODO: zastapic to funkjca taka jak ma byc porzadna
