@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app); 
 const io = socketIo(server, {
   cors: {
-    methods: ["GET", "POST"], // Allow GET and POST requests
+    methods: ["GET", "POST", "DELETE"], // Allow GET and POST requests
   }
 });
 var corsOptions = {
