@@ -1,4 +1,7 @@
-.submit-form {
-  max-width: 400px;
-  margin: auto;
+mat-form-field, input[type="file"] {
+  display: block;
+}
+
+.underline {
+  border-bottom: 1px solid black;
 }

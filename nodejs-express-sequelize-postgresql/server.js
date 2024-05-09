@@ -19,7 +19,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const testRouter = require("./routes/test-routes");
+const answerRouter = require("./routes/answer-routes");
 app.use("/api/questions", testRouter);
+app.use("/api/answers", answerRouter);
 
 const PORT = process.env.PORT || 8080;
 
