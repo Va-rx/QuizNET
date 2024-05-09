@@ -18,6 +18,11 @@ import { QuestionViewComponent } from './components/question-view/question-view.
 import {MatButtonModule} from '@angular/material/button';
 import { AnswerViewComponent } from './components/question-view/answer-view/answer-view.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatCardModule} from "@angular/material/card";
+import {MatInputModule} from "@angular/material/input";
+import {MatIconModule} from "@angular/material/icon";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -38,7 +43,12 @@ import { MatDialogModule } from '@angular/material/dialog';
     FormsModule,
     HttpClientModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCardModule,
+    MatInputModule,
+    MatIconModule,
+    MatCheckboxModule,
+    BrowserAnimationsModule
   ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]

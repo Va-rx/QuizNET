@@ -10,6 +10,8 @@ services:
             POSTGRES_DB: postgres # quiznet -> ive changed it
         ports:
             - "5432:5432"
+        volumes:
+            - ./dbInit:/docker-entrypoint-initdb.d
         networks:
             - quiznet-network
         healthcheck:

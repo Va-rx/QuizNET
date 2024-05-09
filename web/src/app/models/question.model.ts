@@ -6,6 +6,7 @@ export class Question {
 }
 
 export class Answer {
+  questionId?: number;
   answer!: string;
   isCorrect?: boolean;
 }
