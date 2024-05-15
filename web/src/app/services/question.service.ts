@@ -21,7 +21,14 @@ export class QuestionService {
   }
 
   create(data: any): Observable<any> {
-    return this.http.post(baseUrl, data);
+    const formData = new FormData();
+    formData.append('question', data.question);
+
+    if (data.image_link) {
+      formData.append('image_link', data.image_link);
+    }
+
+    return this.http.post(baseUrl, formData);
   }
 
   update(id: any, data: any): Observable<any> {
