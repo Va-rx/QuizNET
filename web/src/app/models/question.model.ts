@@ -1,7 +1,7 @@
 export class Question {
   id?: any;
   question?: string;
-  image_link?: string;
+  image_link?: string | null;
   answers?: Answer[];
 }
 

@@ -13,7 +13,7 @@ export class AddQuestionComponent implements OnInit {
 
   question: Question = {
     question: '',
-    image_link: ''
+    image_link: null
 
   };
   submitted = false;
@@ -27,7 +27,7 @@ export class AddQuestionComponent implements OnInit {
   async saveQuestion(): Promise<void> {
     const data = {
       question : this.question.question,
-      image_link: 'xd'
+      image_link: this.file
     };
 
     const resultQuestion = await this.questionService.create(data).toPromise();

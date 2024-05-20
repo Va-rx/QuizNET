@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Question } from 'src/app/models/question.model';
 import { QuestionService } from 'src/app/services/question.service';
-
 @Component({
   selector: 'app-questions-list',
   templateUrl: './question-list.component.html',
@@ -67,4 +66,7 @@ export class QuestionsListComponent implements OnInit {
       });
   }
 
+  imageSrc(questionSrc: String): string {
+    return `data:image/png;base64,${questionSrc}`;
+  }
 }

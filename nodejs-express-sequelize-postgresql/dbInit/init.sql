@@ -9,7 +9,7 @@ CREATE TABLE answers (
 CREATE TABLE questions (
     question_id int  NOT NULL,
     question varchar(300)  NOT NULL,
-    image_link varchar(100)  NULL,
+    image_link bytea NULL,
     CONSTRAINT questions_pk PRIMARY KEY (question_id)
 );
 

@@ -23,11 +23,14 @@
     <ul class="list-group">
       <li
         class="list-group-item"
-        *ngFor="let tutorial of questions; let i = index"
+        *ngFor="let question of questions; let i = index"
         [class.active]="i == currentIndex"
-        (click)="setActiveQuestion(tutorial, i)"
+        (click)="setActiveQuestion(question, i)"
       >
-        {{ tutorial.question }}
+        {{ question.question }}
+        <div *ngIf="question.image_link">
+          <img [src]="imageSrc(question.image_link)" />
+        </div>
       </li>
     </ul>
 
