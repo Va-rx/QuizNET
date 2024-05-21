@@ -1,6 +1,7 @@
 import { Component,OnInit } from '@angular/core';
 import Phaser from 'phaser';
-import Tanks from './tank-scene';
+import Tanks, { UIScene } from './tank-scene';
+
 @Component({
   selector: 'app-tank-game',
   templateUrl: './tank-game.component.html',
@@ -16,12 +17,22 @@ export class TankGameComponent implements OnInit{
       height: 768,
       width: 1280,
       physics: {
-        default: 'arcade',
-        arcade: {
-          debug: true,
+        default: 'matter',
+        matter: {
+          debug: false,
+          gravity:{
+            x:0,
+            y:0
+          }
         },
+
+
       },
-      scene: [ Tanks ], // Use Example scene here
+      fps: {
+        target: 60,
+        forceSetTimeOut: true
+      },
+      scene: [ Tanks ,UIScene], // Use Example scene here
     };
   }
 
