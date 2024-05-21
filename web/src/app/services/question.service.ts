@@ -17,7 +17,7 @@ export class QuestionService {
   }
 
   get(id: any): Observable<Question> {
-    return this.http.get(`${baseUrl}/${id}`);
+    return this.http.get<Question>(`${baseUrl}/${id}`);
   }
 
   create(data: any): Observable<any> {
