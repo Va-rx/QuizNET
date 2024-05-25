@@ -11,8 +11,8 @@ const getSets = async () => {
 
 const getSetById = async (id) => {
     try {
-        const res = await db.query(`SELECT * FROM sets WHERE id = $1`, [id]);
-        return res.rows[0];
+        const res = await db.query(`SELECT * FROM sets WHERE test_id = $1`, [id]);
+        return res.rows;
     } catch (err) {
         console.log(err.message);
     }
@@ -20,7 +20,7 @@ const getSetById = async (id) => {
 
 const createSet = async (set) => {
     try {
-        const res = await db.query(`INSERT INTO sets (test_id, question_id) VALUES ($1, $2) RETURNING *`, [set.testId, set.questionId]);
+        const res = await db.query(`INSERT INTO sets (test_id, question_id) VALUES ($1, $2) RETURNING *`, [set.test_id, set.question_id]);
         return res.rows[0];
     } catch (err) {
         console.log(err.message);

@@ -5,7 +5,7 @@ import { Question } from 'src/app/models/question.model';
 import { QuestionService } from 'src/app/services/question.service';
 import { AnswerService } from 'src/app/services/answer.service';
 import { QuestionViewComponent } from '../question-view/question-view.component';
-
+import { TestsService } from 'src/app/services/tests.service';
 import {
   MatDialog,
   MAT_DIALOG_DATA,
@@ -24,8 +24,10 @@ export class TankGameComponent implements OnInit{
   phaserGame!: Phaser.Game;
   config: Phaser.Types.Core.GameConfig;
   questions?: Question[];
-
-  constructor(private questionService: QuestionService,private answerService: AnswerService,private dialog: MatDialog) {
+  testID: number=1;
+  maxLevel:number=9;
+  currentLevel:number=1;
+  constructor(private questionService: QuestionService,private answerService: AnswerService,private dialog: MatDialog,private TestsService:TestsService) {
     this.config = {
       type: Phaser.AUTO,
       height: 768,
@@ -52,10 +54,15 @@ export class TankGameComponent implements OnInit{
 
   ngOnInit() {
     this.phaserGame = new Phaser.Game(this.config);
+    this.TestsService.get(this.testID).subscribe((data) => {
+      this.questions = data;
+      console.log(this.questions);
+    });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion',(id)=>{
       const dialogRef = this.dialog.open(QuestionViewComponent, {
-        data: { id: id }
+        data: { id: this.currentLevel }
       });
+      this.currentLevel++;
     });
 
 

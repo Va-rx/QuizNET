@@ -11,8 +11,13 @@ const getTests = async () => {
 
 const getTestById = async (id) => {
     try {
-        const res = await db.query(`SELECT * FROM tests WHERE id = $1`, [id]);
-        return res.rows[0];
+        const res = await db.query(`
+        SELECT q.question_id, q.question, q.image_link
+        FROM questions q
+        JOIN sets s ON q.question_id = s.question_id
+        WHERE s.test_id = $1
+    `, [id]);        
+    return res.rows;
     } catch (err) {
         console.log(err.message);
     }
@@ -20,7 +25,7 @@ const getTestById = async (id) => {
 
 const createTest = async (test) => {
     try {
-        const res = await db.query(`INSERT INTO tests (name, description) VALUES ($1, $2) RETURNING *`, [test.name, test.description]);
+        const res = await db.query(`INSERT INTO tests (name, desciption) VALUES ($1, $2) RETURNING *`, [test.name, test.description]);
         return res.rows[0];
     } catch (err) {
         console.log(err.message);
