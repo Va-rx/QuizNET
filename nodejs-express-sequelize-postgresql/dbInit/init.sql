@@ -32,7 +32,7 @@ CREATE TABLE students (
 CREATE TABLE tests (
     test_id int  NOT NULL,
     name varchar(50)  NOT NULL,
-    desciption varchar(500)  NULL,
+    description varchar(500)  NULL,
     CONSTRAINT tests_pk PRIMARY KEY (test_id)
 );
 

@@ -5,17 +5,8 @@
         type="text"
         class="form-control"
         placeholder="Search by question"
-        [(ngModel)]="title"
+        [formControl]="title"
       />
-      <div class="input-group-append">
-        <button
-          class="btn btn-outline-secondary"
-          type="button"
-          (click)="searchTitle()"
-        >
-          Search
-        </button>
-      </div>
     </div>
   </div>
   <div class="col-md-6">
@@ -23,7 +14,7 @@
     <ul class="list-group">
       <li
         class="list-group-item"
-        *ngFor="let question of questions; let i = index"
+        *ngFor="let question of filteredQuestions$ | async; let i = index"
         [class.active]="i == currentIndex"
         (click)="setActiveQuestion(question, i)"
       >
@@ -38,7 +29,7 @@
       Remove All
     </button>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-6" *ngIf="currentQuestion">
     <app-question-details
       [viewMode]="true"
       [currentQuestion]="currentQuestion"

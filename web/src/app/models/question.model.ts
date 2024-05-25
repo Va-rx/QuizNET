@@ -1,6 +1,6 @@
 export class Question {
   id?: any;
-  question?: string;
+  question: string = '';
   image_link?: string | null;
   answers?: Answer[];
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Question } from 'src/app/models/question.model';
 import { QuestionService } from 'src/app/services/question.service';
+import {FormControl} from "@angular/forms";
+import {combineLatest, map, Observable, startWith} from "rxjs";
 @Component({
   selector: 'app-questions-list',
   templateUrl: './question-list.component.html',
@@ -8,32 +10,29 @@ import { QuestionService } from 'src/app/services/question.service';
 })
 export class QuestionsListComponent implements OnInit {
 
-  questions?: Question[];
-  currentQuestion: Question = {};
+  filteredQuestions$: Observable<Question[]> | undefined;
+  questions$: Observable<Question[]> | undefined;
   currentIndex = -1;
-  title = '';
-
+  title = new FormControl('');
+  currentQuestion!: Question;
   constructor(private questionService: QuestionService) { }
 
   ngOnInit(): void {
-    this.retrieveQuestions();
-  }
+    this.questions$ = this.questionService.getAll();
 
-  retrieveQuestions(): void {
-    this.questionService.getAll()
-      .subscribe({
-        next: (data) => {
-          this.questions = data;
-          console.log(data);
-        },
-        error: (e) => console.error(e)
-      });
-  }
+    const searchedQuestion$ = this.title.valueChanges.pipe(
+      startWith(this.title.value)
+    );
+    this.filteredQuestions$ = combineLatest([this.questions$, searchedQuestion$]).pipe(
+      map(([questions, searchedQuestion]) =>
+        questions.filter(
+          (question) =>
+            searchedQuestion === '' ||
+            question.question.toLowerCase().includes(searchedQuestion ? searchedQuestion.toLowerCase() : '')
 
-  refreshList(): void {
-    this.retrieveQuestions();
-    this.currentQuestion = {};
-    this.currentIndex = -1;
+        )
+      )
+    );
   }
 
   setActiveQuestion(question: Question, index: number): void {
@@ -42,28 +41,8 @@ export class QuestionsListComponent implements OnInit {
   }
 
   removeAllQuestions(): void {
-    this.questionService.deleteAll()
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          this.refreshList();
-        },
-        error: (e) => console.error(e)
-      });
-  }
-
-  searchTitle(): void {
-    this.currentQuestion = {};
-    this.currentIndex = -1;
-    console.log(this.title);
-    this.questionService.findByQuestionDesciption(this.title)
-      .subscribe({
-        next: (data) => {
-          this.questions = data;
-          console.log(data);
-        },
-        error: (e) => console.error(e)
-      });
+     this.questions$ = this.questionService.deleteAll();
+     this.filteredQuestions$ = this.questions$;
   }
 
   imageSrc(questionSrc: String): string {

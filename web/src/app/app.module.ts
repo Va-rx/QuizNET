@@ -7,7 +7,7 @@ import { AddQuestionComponent } from './components/add-question/add-question.com
 import { QuestionDetailsComponent } from './components/question-details/question-details.component';
 import { QuestionsListComponent } from './components/question-list/question-list.component';
 
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
@@ -23,6 +23,8 @@ import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -37,19 +39,22 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     QuestionViewComponent,
     AnswerViewComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatCardModule,
-    MatInputModule,
-    MatIconModule,
-    MatCheckboxModule,
-    BrowserAnimationsModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        HttpClientModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatCardModule,
+        MatInputModule,
+        MatIconModule,
+        MatCheckboxModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSnackBarModule
+    ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]
 })

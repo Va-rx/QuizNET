@@ -12,9 +12,7 @@ export class QuestionDetailsComponent implements OnInit {
 
   @Input() viewMode = false;
 
-  @Input() currentQuestion: Question = {
-    question: '',
-  };
+  @Input() currentQuestion!: Question;
 
   message = '';
 

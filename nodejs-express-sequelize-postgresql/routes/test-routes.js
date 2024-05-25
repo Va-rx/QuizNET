@@ -7,11 +7,9 @@ const { getQuestions, getQuestionById, updateQuestion, deleteQuestion, deleteQue
 router.get("/",(req, res) => {
     getQuestions()
     .then(questions => {
-        for (const question of questions) {
-            if (question.image_link) {
-                question.image_link = question.image_link.toString('base64');
-            }
-        }
+        questions.map(question => {
+            question.image_link = question.image_link ? question.image_link.toString('base64'): null;
+        });
       res.send(questions);
     })
     .catch(err => {

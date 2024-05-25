@@ -47,7 +47,7 @@ const deleteQuestion = async (id) => {
 
 const deleteQuestions = async () => {
     try {
-        const res = await db.query(`DELETE * FROM questions`);
+        const res = await db.query(`TRUNCATE TABLE questions CASCADE;`);
         return res.rows;
     } catch (err) {
         console.log(err.message);

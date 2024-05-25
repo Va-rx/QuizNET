@@ -37,7 +37,7 @@
                   <mat-checkbox [(ngModel)]="answer.isCorrect">
                     Czy jest poprawna?
                   </mat-checkbox>
-                  <button mat-button (click)="deleteAnswer(i)"><mat-icon>delete</mat-icon></button>
+                  <button *ngIf="answers.length > 2" mat-button (click)="deleteAnswer(i)"><mat-icon>delete</mat-icon></button>
                 </div>
               </mat-card-content>
             </mat-card>
