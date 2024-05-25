@@ -11,8 +11,8 @@ const getAnswers = async () => {
 
 const getAnswerById = async (id) => {
     try {
-        const res = await db.query(`SELECT * FROM answers WHERE id = $1`, [id]);
-        return res.rows[0];
+        const res = await db.query(`SELECT * FROM answers WHERE question_id = $1`, [id]);
+        return res.rows;
     } catch (err) {
         console.log(err.message);
     }

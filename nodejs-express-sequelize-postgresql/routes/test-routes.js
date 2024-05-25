@@ -25,7 +25,9 @@ router.get("/:id", (req, res) => {
     const id = req.params.id;
     getQuestionById(id)
     .then(question => {
-        question.image_link = question.image_link.toString('base64');
+        if (question.image_link){//if no image link is present, it will be null
+          question.image_link = question.image_link.toString('base64');          
+        }
         res.send(question);
     })
     .catch(err => {

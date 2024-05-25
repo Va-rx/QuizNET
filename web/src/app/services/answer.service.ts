@@ -14,4 +14,12 @@ export class AnswerService {
     return this.http.post(baseUrl, data);
   }
 
+  getAll(): Observable<any> {
+    return this.http.get(baseUrl);
+  }
+
+  get(id: number): Observable<any> {
+    return this.http.get(`${baseUrl}/${id}`);
+  }
+
 }
