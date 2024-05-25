@@ -18,5 +18,30 @@ router.post("/", (req, res) => {
         });
 });
 
+router.get("/", (req, res) => {
+    getAnswers()
+        .then(answers => {
+            res.send(answers);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving answers."
+            });
+        });
+});
+
+router.get("/:id", (req, res) => {
+    const id = req.params.id;
+    getAnswerById(id)
+        .then(answer => {
+            res.send(answer);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving answer."
+            });
+        });
+}
+);
 
 module.exports = router;

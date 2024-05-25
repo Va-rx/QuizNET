@@ -20,8 +20,12 @@ app.use(express.urlencoded({ extended: true }));
 
 const testRouter = require("./routes/test-routes");
 const answerRouter = require("./routes/answer-routes");
+const setRouter = require("./routes/set-routes");
+const test_setRouter = require("./routes/test_set-routes");
 app.use("/api/questions", testRouter);
 app.use("/api/answers", answerRouter);
+app.use("/api/sets", setRouter);
+app.use("/api/test_sets", test_setRouter);
 
 const PORT = process.env.PORT || 8080;
 

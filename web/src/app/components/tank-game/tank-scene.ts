@@ -176,6 +176,7 @@ class Checkpoint {
             //emit level complete event
             if(!this.finsihsed){
             this.game.events.emit('levelComplete', this.id);
+            this.game.game.events.emit('levelCompleted_SpawnQuestion', this.id);
             }
             this.finsihsed = true;
             this.game.matter.world.remove(this.checkpoint);
