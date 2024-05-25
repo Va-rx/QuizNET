@@ -1,4 +1,4 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
 import Tanks, { UIScene } from './tank-scene';
 import { Question } from 'src/app/models/question.model';
@@ -20,14 +20,14 @@ import {
   templateUrl: './tank-game.component.html',
   styleUrls: ['./tank-game.component.css']
 })
-export class TankGameComponent implements OnInit{
+export class TankGameComponent implements OnInit {
   phaserGame!: Phaser.Game;
   config: Phaser.Types.Core.GameConfig;
-  questions?: Question[];
-  testID: number=1;
-  maxLevel:number=9;
-  currentLevel:number=1;
-  constructor(private questionService: QuestionService,private answerService: AnswerService,private dialog: MatDialog,private TestsService:TestsService) {
+  questions: Question[] = [];
+  testID: number = 1;
+  maxLevel: number = 9;
+  currentLevel: number = 0;
+  constructor(private questionService: QuestionService, private answerService: AnswerService, private dialog: MatDialog, private TestsService: TestsService) {
     this.config = {
       type: Phaser.AUTO,
       height: 768,
@@ -36,9 +36,9 @@ export class TankGameComponent implements OnInit{
         default: 'matter',
         matter: {
           debug: false,
-          gravity:{
-            x:0,
-            y:0
+          gravity: {
+            x: 0,
+            y: 0
           }
         },
 
@@ -48,24 +48,30 @@ export class TankGameComponent implements OnInit{
         target: 60,
         forceSetTimeOut: true
       },
-      scene: [ Tanks ,UIScene], // Use Example scene here
+      scene: [Tanks, UIScene], // Use Example scene here
     };
   }
 
   ngOnInit() {
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.get(this.testID).subscribe((data) => {
+      data.forEach((element: {
+        id: number; question_id: number;
+      }) => {
+        element.id = element.question_id;
+      });
       this.questions = data;
       console.log(this.questions);
+
     });
-    this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion',(id)=>{
+    this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
+      console.log(this.questions);
       const dialogRef = this.dialog.open(QuestionViewComponent, {
-        data: { id: this.currentLevel }
+        data: { id: this.questions[this.currentLevel].id }
       });
       this.currentLevel++;
+
     });
-
-
   }
   ngOnDestroy() {
     this.phaserGame.destroy(true);
