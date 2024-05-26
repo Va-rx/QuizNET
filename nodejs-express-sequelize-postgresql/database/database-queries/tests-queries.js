@@ -12,7 +12,7 @@ const getTests = async () => {
 const getTestById = async (id) => {
     try {
         const res = await db.query(`
-        SELECT q.question_id, q.question, q.image_link
+        SELECT q.question_id as id, q.question, q.image_link
         FROM questions q
         JOIN sets s ON q.question_id = s.question_id
         WHERE s.test_id = $1
