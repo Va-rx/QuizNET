@@ -3,7 +3,6 @@ import Phaser from 'phaser';
 import Tanks, { UIScene } from './tank-scene';
 import { Question } from 'src/app/models/question.model';
 import { QuestionService } from 'src/app/services/question.service';
-import { AnswerService } from 'src/app/services/answer.service';
 import { QuestionViewComponent } from '../question-view/question-view.component';
 import { TestsService } from 'src/app/services/tests.service';
 import {
@@ -27,7 +26,7 @@ export class TankGameComponent implements OnInit {
   testID: number = 1;
   maxLevel: number = 9;
   currentLevel: number = 0;
-  constructor(private questionService: QuestionService, private answerService: AnswerService, private dialog: MatDialog, private TestsService: TestsService) {
+  constructor(private questionService: QuestionService, private dialog: MatDialog, private TestsService: TestsService) {
     this.config = {
       type: Phaser.AUTO,
       height: 768,
@@ -55,11 +54,6 @@ export class TankGameComponent implements OnInit {
   ngOnInit() {
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.get(this.testID).subscribe((data) => {
-      data.forEach((element: {
-        id: number; question_id: number;
-      }) => {
-        element.id = element.question_id;
-      });
       this.questions = data;
       console.log(this.questions);
 

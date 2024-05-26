@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Answer, Question } from 'src/app/models/question.model';
 import { QuestionService } from 'src/app/services/question.service';
-import { AnswerService } from 'src/app/services/answer.service';
 import { Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
@@ -16,7 +15,7 @@ export class QuestionViewComponent {
   isSubmitted: boolean = false;
   result: number = 0;
 
-  constructor(private questionService: QuestionService,private answerService: AnswerService,@Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(private questionService: QuestionService,@Inject(MAT_DIALOG_DATA) public data: any) {
     console.log('Received id:', data.id);
     this.loadQuestionWithAnswersById(data.id);//overrides
    }
@@ -30,14 +29,6 @@ export class QuestionViewComponent {
        console.log(question);
         this.mockQuestion.question = question.question;
     });
-    this.answerService.get(id).subscribe(answers => {
-      console.log(answers);
-      this.mockQuestion.answers = answers.map((answer: any) => {
-        return {answer: answer.answer, isCorrect: answer.is_correct};
-      });
-    });
-
-
   }
 
   chooseAnswer(answer: Answer): void {
