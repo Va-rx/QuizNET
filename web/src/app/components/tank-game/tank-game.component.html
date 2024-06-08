@@ -1,1 +1,19 @@
-<p>tank-game works!</p>
+<div class="main_container">
+<div class="container">
+  <h2>Scoreboard</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Levels</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let player of scoreBoard">
+        <td>{{ player.username }}</td>
+        <td>{{ player.score }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
