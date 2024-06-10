@@ -25,6 +25,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import { CreateMatchmakingComponent } from './components/create-matchmaking/create-matchmaking.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     GameComponent,
     TankGameComponent,
     QuestionViewComponent,
-    AnswerViewComponent
+    AnswerViewComponent,
+    CreateMatchmakingComponent
   ],
     imports: [
         BrowserModule,

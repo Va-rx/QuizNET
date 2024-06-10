@@ -36,9 +36,12 @@ export class JoinLobbyComponent {
       this.joined = true;
     });
 
-    this.socket.on('gameStarted', (code: string) => {
+    this.socket.on('gameStarted', (game_route,test_id) => {
       //router to game
-      this.router.navigate(['/game']);
+      console.log(game_route);
+      console.log(test_id);
+      console.log('Game started'+game_route+test_id);
+      this.router.navigate([game_route.route+'/'+test_id.test_id]);
     });
   }
 

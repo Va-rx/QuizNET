@@ -1,0 +1,11 @@
+.table-active {
+  background-color: #f1f1f1;
+}
+
+.card.border-primary {
+  border-color: #007bff !important;
+}
+
+.card.border-primary .card-body {
+  background-color: rgba(0, 123, 255, 0.1);
+}

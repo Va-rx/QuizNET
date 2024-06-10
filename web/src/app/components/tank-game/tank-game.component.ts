@@ -5,6 +5,10 @@ import { Question } from 'src/app/models/question.model';
 import { QuestionService } from 'src/app/services/question.service';
 import { QuestionViewComponent } from '../question-view/question-view.component';
 import { TestsService } from 'src/app/services/tests.service';
+import { SocketServiceService } from 'src/app/services/socket-service.service';
+import { ActivatedRoute } from '@angular/router';
+
+
 import {
   MatDialog,
   MAT_DIALOG_DATA,
@@ -26,11 +30,15 @@ export class TankGameComponent implements OnInit {
   testID: number = 1;
   maxLevel: number = 9;
   currentLevel: number = 0;
-  constructor(private questionService: QuestionService, private dialog: MatDialog, private TestsService: TestsService) {
+  scoreBoard:any[]=[];
+  private socket: any;
+
+  constructor(private questionService: QuestionService, private answerService: AnswerService, private dialog: MatDialog, private TestsService: TestsService,private socketService:SocketServiceService,private route:ActivatedRoute) {
     this.config = {
       type: Phaser.AUTO,
-      height: 768,
-      width: 1280,
+    //height as window
+      height: Math.min(window.innerHeight-100,800),
+      width: window.innerWidth-300,
       physics: {
         default: 'matter',
         matter: {
@@ -52,6 +60,8 @@ export class TankGameComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.socket=this.socketService.getSocket();
+    this.testID= this.route.snapshot.params["id"];
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.get(this.testID).subscribe((data) => {
       this.questions = data;
@@ -60,12 +70,20 @@ export class TankGameComponent implements OnInit {
     });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       console.log(this.questions);
+      this.socket.emit('userScoreUpdate',this.socketService.getUserId(),id,this.socketService.getJoinCode())
       const dialogRef = this.dialog.open(QuestionViewComponent, {
         data: { id: this.questions[this.currentLevel].id }
       });
       this.currentLevel++;
 
     });
+
+    this.socket.on('broadcastScoreBoard',(jsonScoreBoard) =>
+      {console.log(jsonScoreBoard);
+        this.scoreBoard=Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({username,score}));
+      console.log(this.scoreBoard);}
+
+    );
   }
   ngOnDestroy() {
     this.phaserGame.destroy(true);

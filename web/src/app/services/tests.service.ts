@@ -13,4 +13,8 @@ export class TestsService {
     return this.http.get(`${baseUrl}/${id}`);
   }
 
+  getAll(): Observable<any> {
+    return this.http.get(baseUrl);
+  }
+
 }

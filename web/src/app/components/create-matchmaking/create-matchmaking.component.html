@@ -1,0 +1,44 @@
+<div class="container mt-4" *ngIf="!isSubmitted">
+  <h2 class="mb-4">Wybierz test</h2>
+  <table class="table table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nazwa</th>
+        <th>Opis</th>
+        <th>Wybierz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let test of testSets" [class.table-active]="test === selectedTest" (click)="selectTest(test)">
+        <td>{{ test.test_id }}</td>
+        <td>{{ test.name }}</td>
+        <td>{{ test.desciption }}</td>
+        <td><button class="btn btn-primary" (click)="selectTest(test); $event.stopPropagation()">Wybierz</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="mb-4">Wybierz datę i godzinę</h2>
+  <div class="form-group">
+    <input [formControl]="dateControl" type="date" class="form-control mb-2">
+    <input [formControl]="timeControl" type="time" class="form-control">
+  </div>
+
+  <h2 class="mb-4">Wybierz grę</h2>
+  <div class="row">
+    <div class="col-md-4" *ngFor="let game of games">
+      <div class="card mb-4" [class.border-primary]="game === selectedGame" (click)="selectGame(game)">
+        <div class="card-body">
+          <h5 class="card-title">{{ game.game_name }}</h5>
+          <p class="card-text">{{ game.description }}</p>
+          <button class="btn btn-primary" (click)="selectGame(game); $event.stopPropagation()">Wybierz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary mt-4" (click)="onSubmit()">Submit</button>
+</div>
+
+<app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [date]="dateControl.value" [time]="timeControl.value"></app-create-lobby>

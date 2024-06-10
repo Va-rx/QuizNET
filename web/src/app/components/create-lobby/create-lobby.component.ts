@@ -1,5 +1,7 @@
-import { Component,OnInit } from '@angular/core';
+import { Component,Inject,Input,OnInit } from '@angular/core';
 import io from 'socket.io-client';
+import { FormControl } from '@angular/forms';
+
 import { SocketServiceService } from 'src/app/services/socket-service.service';
 
 @Component({
@@ -13,7 +15,14 @@ export class CreateLobbyComponent implements OnInit {
   userList: string[] = [];
   created: boolean = false;
   lobbyName!:string;
-  userName!:string;
+  userName:string="Creator";
+  scheduled: boolean = false;
+
+
+  @Input() test: any;
+  @Input() date !:Date|null;
+  @Input() time !:Date|null;
+  @Input() game: any;
 
   constructor(private socketService:SocketServiceService) { }
 
@@ -31,6 +40,7 @@ export class CreateLobbyComponent implements OnInit {
     this.socket.on('userList', (users: string[]) => {
       this.userList = users;
     });
+
   }
 
   // Method to handle form submission
@@ -44,6 +54,7 @@ export class CreateLobbyComponent implements OnInit {
   }
 
   onStartGame(): void {
-    this.socket.emit('startGame');
+    this.socket.emit('startGame',this.date,this.time,this.game,this.test);
+    this.scheduled = true;
   }
 }
