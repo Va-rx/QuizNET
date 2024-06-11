@@ -2,7 +2,7 @@ import { Component,Inject,Input,OnInit } from '@angular/core';
 import io from 'socket.io-client';
 import { FormControl } from '@angular/forms';
 
-import { SocketServiceService } from 'src/app/services/socket-service.service';
+import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
 
 @Component({
   selector: 'app-create-lobby',

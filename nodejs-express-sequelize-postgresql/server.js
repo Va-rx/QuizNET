@@ -19,15 +19,16 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const testRouter = require("./routes/test-routes");
+const questionRouter = require("./routes/question-routes");
 const answerRouter = require("./routes/answer-routes");
 const setRouter = require("./routes/set-routes");
-const test_setRouter = require("./routes/test_set-routes");
+const testRouter = require("./routes/test-routes");
 const gameRouter = require("./routes/game-routes");
-app.use("/api/questions", testRouter);
+
+app.use("/api/questions", questionRouter);
 app.use("/api/answers", answerRouter);
 app.use("/api/sets", setRouter);
-app.use("/api/test_sets", test_setRouter);
+app.use("/api/tests", testRouter);
 app.use("/api/games", gameRouter);
 
 const PORT = process.env.PORT || 8080;

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Answer, Question} from 'src/app/models/question.model';
-import { QuestionService } from 'src/app/services/question.service';
-import {AnswerService} from "../../services/answer.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { Answer, Question } from 'src/app/models/question.model';
+import { QuestionService } from 'src/app/services/question/question.service';
+import { AnswerService } from "../../services/answer/answer.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-add-question',

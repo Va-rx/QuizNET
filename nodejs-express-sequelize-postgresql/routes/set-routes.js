@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getSets, getSetById, createSet, updateSet, deleteSet } = require("../database/database-queries/sets-queries");
+const { getSets, getSetById, createSet, updateSet, deleteSet } = require("../database/database-queries/set-queries");
 
 router.post("/", (req, res) => {
     const newSet = req.body;

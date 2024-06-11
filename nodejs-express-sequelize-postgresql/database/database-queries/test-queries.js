@@ -25,7 +25,7 @@ const getTestById = async (id) => {
 
 const createTest = async (test) => {
     try {
-        const res = await db.query(`INSERT INTO tests (name, desciption) VALUES ($1, $2) RETURNING *`, [test.name, test.description]);
+        const res = await db.query(`INSERT INTO tests (name, description) VALUES ($1, $2) RETURNING *`, [test.name, test.description]);
         return res.rows[0];
     } catch (err) {
         console.log(err.message);
@@ -43,7 +43,7 @@ const updateTest = async (id, test) => {
 
 const deleteTest = async (id) => {
     try {
-        const res = await db.query(`DELETE FROM tests WHERE id = $1`, [id]);
+        const res = await db.query(`DELETE FROM tests WHERE test_id = $1`, [id]);
         return res.rows[0];
     } catch (err) {
         console.log(err.message);

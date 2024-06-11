@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getAnswers, getAnswerById, createAnswer, updateAnswer, deleteAnswer} = require("../database/database-queries/answers-queries");
+const { getAnswers, getAnswerById, createAnswer, updateAnswer, deleteAnswer} = require("../database/database-queries/answer-queries");
 
 
 

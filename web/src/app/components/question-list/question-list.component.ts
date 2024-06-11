@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Question } from 'src/app/models/question.model';
-import { QuestionService } from 'src/app/services/question.service';
+import { QuestionService } from 'src/app/services/question/question.service';
 import {FormControl} from "@angular/forms";
 import {combineLatest, map, Observable, startWith} from "rxjs";
 @Component({

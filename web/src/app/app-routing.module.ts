@@ -8,6 +8,7 @@ import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component
 import { GameComponent } from './components/game/game.component';
 import { TankGameComponent } from './components/tank-game/tank-game.component';
 import { CreateMatchmakingComponent } from './components/create-matchmaking/create-matchmaking.component';
+import { CreateTestComponent } from './components/create-test/create-test.component';
 const routes: Routes = [
   { path: '', redirectTo: 'Questions', pathMatch: 'full' },
   { path: 'Questions', component: QuestionsListComponent },
@@ -19,7 +20,7 @@ const routes: Routes = [
   { path: 'tank-game', component: TankGameComponent },
   {path :'create-matchmaking', component: CreateMatchmakingComponent},
   { path: 'tank-game/:id', component: TankGameComponent },
-
+  {path: 'create-test', component: CreateTestComponent},
 ];
 
 @NgModule({

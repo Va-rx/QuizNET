@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Answer, Question } from 'src/app/models/question.model';
-import { QuestionService } from 'src/app/services/question.service';
-import { AnswerService } from 'src/app/services/answer.service';
+import { QuestionService } from 'src/app/services/question/question.service';
+import { AnswerService } from 'src/app/services/answer/answer.service';
 import { Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({

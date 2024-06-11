@@ -1,7 +1,7 @@
 import { Component,OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import io, { Socket } from 'socket.io-client';
-import { SocketServiceService } from 'src/app/services/socket-service.service';
+import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
 
 @Component({
   selector: 'app-join-lobby',

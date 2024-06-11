@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
 import Tanks, { UIScene } from './tank-scene';
 import { Question } from 'src/app/models/question.model';
-import { QuestionService } from 'src/app/services/question.service';
-import { AnswerService } from 'src/app/services/answer.service';
+import { QuestionService } from 'src/app/services/question/question.service';
+import { AnswerService } from 'src/app/services/answer/answer.service';
 import { QuestionViewComponent } from '../question-view/question-view.component';
-import { TestsService } from 'src/app/services/tests.service';
-import { SocketServiceService } from 'src/app/services/socket-service.service';
+import { TestService } from 'src/app/services/test/test.service';
+import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
 import { ActivatedRoute } from '@angular/router';
 
 
@@ -34,7 +34,7 @@ export class TankGameComponent implements OnInit {
   scoreBoard:any[]=[];
   private socket: any;
 
-  constructor(private questionService: QuestionService, private answerService: AnswerService, private dialog: MatDialog, private TestsService: TestsService,private socketService:SocketServiceService,private route:ActivatedRoute) {
+  constructor(private questionService: QuestionService, private answerService: AnswerService, private dialog: MatDialog, private TestsService: TestService,private socketService:SocketServiceService,private route:ActivatedRoute) {
     this.config = {
       type: Phaser.AUTO,
     //height as window
