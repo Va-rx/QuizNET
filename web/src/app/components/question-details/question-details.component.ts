@@ -24,25 +24,10 @@ export class QuestionDetailsComponent implements OnInit {
   ngOnInit(): void {
     if (!this.viewMode) {
       this.message = '';
-      this.getQuestion(this.route.snapshot.params["id"]);
     }
   }
-
-  getQuestion(id: string): void {
-    this.questionService.get(id)
-      .subscribe({
-        next: (data) => {
-          this.currentQuestion = data;
-          console.log(data);
-        },
-        error: (e) => console.error(e)
-      });
-  }
-
-
   updateQuestion(): void {
     this.message = '';
-
     this.questionService.update(this.currentQuestion.id, this.currentQuestion)
       .subscribe({
         next: (res) => {
@@ -62,6 +47,10 @@ export class QuestionDetailsComponent implements OnInit {
         },
         error: (e) => console.error(e)
       });
+  }
+
+  addAnswer(): void {
+    this.currentQuestion.answers?.push({answer: ''});
   }
 
 }

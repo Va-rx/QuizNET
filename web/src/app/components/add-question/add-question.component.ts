@@ -20,33 +20,23 @@ export class AddQuestionComponent implements OnInit {
   answers: Answer[] = [{ isCorrect: false, answer: '' }, { isCorrect: false, answer: '' }];
   file!: File;
 
-  constructor(private questionService: QuestionService, private answerService: AnswerService, private _snackBar: MatSnackBar) { }
+  constructor(private questionService: QuestionService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void { }
 
   async saveQuestion(): Promise<void> {
     const data = {
       question : this.question.question,
-      image_link: this.file
+      image_link: this.file,
+      answers: this.answers
     };
 
     if (!this.validateForm()) {
       return;
     }
 
-    const resultQuestion = await this.questionService.create(data).toPromise();
-
-    if (!resultQuestion) {
-      return;
-    }
-
-    for (const answer of this.answers) {
-      answer.questionId = resultQuestion.question_id;
-      await this.answerService.create(answer).toPromise();
-    }
-
+    await this.questionService.create(data).toPromise();
     this.submitted = true;
-
   }
 
   newQuestion(): void {
@@ -55,7 +45,7 @@ export class AddQuestionComponent implements OnInit {
       question: ''
     };
 
-    this.answers = [];
+    this.answers = [{ isCorrect: false, answer: '' }, { isCorrect: false, answer: '' }];
   }
 
   addAnswer(): void {

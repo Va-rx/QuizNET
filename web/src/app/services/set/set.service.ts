@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Set } from 'src/app/models/set.model';
+import {Question} from "../../models/question.model";
 
 const baseUrl = 'http://localhost:8080/api/sets';
 
@@ -16,28 +17,28 @@ export class SetService {
     return this.http.get<Set[]>(baseUrl);
   }
 
-  getSetById(id: number): Observable<Set[]> {
-        return this.http.get<Set[]>(`${baseUrl}/${id}`);
-  }
-
-  get(id: number): Observable<Set> {
-    return this.http.get<Set>(`${baseUrl}/${id}`);
+  getQuestionsByTestId(id: number): Observable<Question[]> {
+        return this.http.get<Question[]>(`${baseUrl}/${id}`);
   }
 
   create(data: Set): Observable<any> {
-    const formData = new FormData();
+    return this.http.post(baseUrl, data);
+  }
 
-    formData.append('test_id', data.test_id);
-    formData.append('question_id', data.question_id);
-
-    return this.http.post(baseUrl, formData);
+  createAll(sets: Set[]): Observable<any> {
+    return this.http.post(`${baseUrl}/all`, sets);
   }
 
   update(id: number, data: Set): Observable<any> {
     return this.http.put(`${baseUrl}/${id}`, data);
   }
 
-  delete(id: number): Observable<any> {
-    return this.http.delete(`${baseUrl}/${id}`);
+  deleteSet(set: Set): Observable<any> {
+    return this.http.delete(`${baseUrl}/${set.test_id}/${set.question_id}`);
   }
+
+  deleteAll(sets: Set[]): Observable<any> {
+    return this.http.post(`${baseUrl}/deleteAll`, sets);
+  }
+
 }

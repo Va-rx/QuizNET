@@ -65,11 +65,6 @@ export class TankGameComponent implements OnInit {
     this.testID= this.route.snapshot.params["id"];
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.get(this.testID).subscribe((data) => {
-      data.forEach((element: {
-        id: number; question_id: number;
-      }) => {
-        element.id = element.question_id;
-      });
       this.questions = data;
       console.log(this.questions);
 

@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const { getTests, getTestById, createTest, deleteTest} = require("../database/database-queries/test-queries");
+const { getTests, createTest} = require("../database/database-queries/test-queries");
 
 router.post("/", (req, res) => {
     const newTest = req.body;
-    console.log(newTest);
     createTest(newTest)
         .then(test_set => {
             res.send(test_set);
@@ -43,19 +42,5 @@ router.get("/:id", (req, res) => {
 }
 );
 
-router.delete("/:id", (req, res) => {
-    const id = req.params.id;
-    deleteTest(id)
-      .then(result => {
-        if (result) {
-          res.send({ message: `Test set with id=${id} was deleted successfully.` });
-        }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: err.message || `Some error occurred while deleting test set with id=${id}.`
-        });
-      });
-  });
 
 module.exports = router;

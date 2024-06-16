@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of, map } from 'rxjs';
+import {Observable, of} from 'rxjs';
 import { Test } from 'src/app/models/test.model';
 import { TestService } from 'src/app/services/test/test.service';
 import { SetService } from 'src/app/services/set/set.service';
-import { QuestionService } from 'src/app/services/question/question.service';
 import { Question } from 'src/app/models/question.model';
+import {QuestionService} from "../../services/question/question.service";
 
 
 @Component({
@@ -15,38 +15,32 @@ import { Question } from 'src/app/models/question.model';
 export class CreateTestComponent implements OnInit{
   tests$: Observable<Test[]> = of();
   test: Test = new Test();
-  currentTest?: Test;
+  currentTest!: Test;
   currentIndex?: number;
   showForm = false;
-  questions: Question[] = [];
+  testQuestions: Question[] = [];
+  allQuestions: Question[] = [];
+  uniqueQuestions: Question[] = [];
+  questionIdsToDelete: number[] = [];
+  questionIdsToAdd: number[] = [];
 
   constructor(private testsService: TestService, private setService: SetService, private questionService: QuestionService) { }
 
   ngOnInit() {
     this.tests$ = this.testsService.getAll();
+    this.questionService.getAll().subscribe(question => this.allQuestions = question);
+
   }
 
   setActiveTest(test: Test, index: number): void {
-    this.questions = [];
     this.currentTest = test;
     this.currentIndex = index;
-
-    this.setService.getSetById(test.test_id).subscribe(
-      sets => {
-        sets.forEach(set => {
-          this.questionService.get(set.question_id).subscribe(
-            question => {
-              console.log(question);
-              this.questions.push(question);
-            },
-            error => {
-              console.log(error);
-            });
-        });
-      },
-      error => {
-        console.log(error);
-      });
+    this.setService.getQuestionsByTestId(this.currentTest.test_id).subscribe(
+      question => {
+        this.testQuestions = question;
+        this.uniqueQuestions = this.allQuestions.filter(question => !this.testQuestions.some(testQuestion => testQuestion.id === question.id));
+      }
+    );
   }
 
   onSubmit(data: Test): void {
@@ -66,7 +60,6 @@ export class CreateTestComponent implements OnInit{
   deleteTest(id: number, event: Event): void {
     event.stopPropagation();
     console.log("ID:" + id);
-  
     this.testsService.delete(id).subscribe(
       response => {
         console.log(response);
@@ -78,4 +71,46 @@ export class CreateTestComponent implements OnInit{
         console.log(error);
       });
   }
+  addQuestionToTest(question: Question, index: number){
+    this.testQuestions.push(question);
+    this.uniqueQuestions = this.uniqueQuestions.filter(q => q.id !== question.id);
+    if (this.questionIdsToDelete.includes(question.id)){
+      this.questionIdsToDelete = this.questionIdsToDelete.filter(q => q !== question.id);
+    }
+    else{
+      this.questionIdsToAdd.push(question.id);
+    }
+  }
+
+  removeQuestionFromTest(question: Question, index: number){
+      this.testQuestions = this.testQuestions.filter(q => q.id !== question.id);
+      this.uniqueQuestions.push(question);
+      if (this.questionIdsToAdd.includes(question.id)){
+        this.questionIdsToAdd = this.questionIdsToAdd.filter(q => q !== question.id);
+      }
+      else {
+        this.questionIdsToDelete.push(question.id);
+      }
+  }
+
+  async saveQuestions(): Promise<void> {
+    const setsToAdd = this.questionIdsToAdd.map(questionId => {
+      return {test_id: this.currentTest.test_id, question_id: questionId};
+    });
+
+    const setsToDelete = this.questionIdsToDelete.map(questionId => {
+      return {test_id: this.currentTest.test_id, question_id: questionId};
+    });
+
+    if (setsToAdd.length > 0){
+      await this.setService.createAll(setsToAdd).toPromise();
+    }
+
+    if (setsToDelete.length > 0){
+      await this.setService.deleteAll(setsToDelete).toPromise();
+    }
+    this.questionIdsToAdd = [];
+    this.questionIdsToDelete = [];
+  }
+
 }

@@ -32,6 +32,33 @@
           [(ngModel)]="currentQuestion.question"
           name="title"
         />
+
+<!--        TODO: Add image link input field-->
+<!--        <label for="image_link">Image Link</label>-->
+<!--        <input-->
+<!--          type="file"-->
+<!--          id="image_link"-->
+<!--          [(ngModel)]="currentQuestion.image_link"-->
+<!--          name="image_link"-->
+<!--        />-->
+
+        <label for="answers">Answers</label>
+        <div id="answers">
+          <mat-card appearance="outlined" *ngFor="let answer of currentQuestion.answers; let i = index" style="margin-bottom: 10px" >
+
+            <input
+              type="text"
+              class="form-control"
+              name="answer{{i}}"
+              [(ngModel)]="answer.answer"
+            >
+            <mat-checkbox [checked]="answer.isCorrect">Is correct?</mat-checkbox>
+          </mat-card>
+
+          <button mat-button (click)="addAnswer()" ><mat-icon>add</mat-icon> Dodaj odpowiedź</button>
+
+
+        </div>
       </div>
 
     </form>

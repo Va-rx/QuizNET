@@ -23,11 +23,10 @@ export class QuestionService {
   create(data: any): Observable<any> {
     const formData = new FormData();
     formData.append('question', data.question);
-
+    formData.append('answers', JSON.stringify(data.answers));
     if (data.image_link) {
       formData.append('image_link', data.image_link);
     }
-
     return this.http.post(baseUrl, formData);
   }
 

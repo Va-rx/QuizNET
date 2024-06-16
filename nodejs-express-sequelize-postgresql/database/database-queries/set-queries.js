@@ -1,5 +1,6 @@
 const db = require('../database-connection');
 
+
 const getSets = async () => {
     try {
         const res = await db.query(`SELECT * FROM sets`);
@@ -9,16 +10,16 @@ const getSets = async () => {
     }
 }
 
-const getSetById = async (id) => {
+const getQuestionsByTestId = async (id) => {
     try {
-        const res = await db.query(`SELECT * FROM sets WHERE test_id = $1`, [id]);
+        const res = await db.query(`SELECT q.question_id as id, question, image_link FROM sets tq INNER JOIN questions q on q.question_id = tq.question_id WHERE test_id = $1`, [id]);
         return res.rows;
     } catch (err) {
         console.log(err.message);
     }
 }
 
-const createSet = async (set) => {
+const addQuestionToTest = async (set) => {
     try {
         const res = await db.query(`INSERT INTO sets (test_id, question_id) VALUES ($1, $2) RETURNING *`, [set.test_id, set.question_id]);
         return res.rows[0];
@@ -27,28 +28,20 @@ const createSet = async (set) => {
     }
 }
 
-const updateSet = async (id, set) => {
+const deleteSet = async (set) => {
     try {
-        const res = await db.query(`UPDATE sets SET test_id = $1, question_id = $2 WHERE id = $3 RETURNING *`, [set.testId, set.questionId, id]);
+        const res = await db.query(`DELETE FROM sets WHERE test_id = $1 and question_id = $2`, [set.test_id, set.question_id]);
         return res.rows[0];
     } catch (err) {
         console.log(err.message);
     }
 }
 
-const deleteSet = async (id) => {
-    try {
-        const res = await db.query(`DELETE FROM sets WHERE id = $1`, [id]);
-        return res.rows[0];
-    } catch (err) {
-        console.log(err.message);
-    }
-}
+
 
 module.exports = {
     getSets,
-    getSetById,
-    createSet,
-    updateSet,
+    getQuestionsByTestId,
+    addQuestionToTest,
     deleteSet
 }
