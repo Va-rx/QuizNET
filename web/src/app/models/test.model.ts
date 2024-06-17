@@ -1,5 +1,5 @@
 export class Test {
-    test_id!: number;
+    id!: number;
     name!: string;
     description?: string;
 }

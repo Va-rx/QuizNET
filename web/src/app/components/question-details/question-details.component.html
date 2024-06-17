@@ -1,3 +1,4 @@
+<div class="container">
 <div *ngIf="viewMode; else editable">
   <div *ngIf="currentQuestion.id">
     <h4>Question</h4>
@@ -33,14 +34,23 @@
           name="title"
         />
 
-<!--        TODO: Add image link input field-->
-<!--        <label for="image_link">Image Link</label>-->
-<!--        <input-->
-<!--          type="file"-->
-<!--          id="image_link"-->
-<!--          [(ngModel)]="currentQuestion.image_link"-->
-<!--          name="image_link"-->
-<!--        />-->
+
+        <label for="image_link">Image Link</label>
+
+        <div *ngIf="selectedImage">
+          <img [src]="selectedImage" />
+        </div>
+
+        <div *ngIf="!selectedImage && currentQuestion.image_link">
+          <img [src]="imageSrc(currentQuestion.image_link)" />
+        </div>
+
+        <input
+          type="file"
+          id="image_link"
+          (change)="onFileChange($event)"
+          name="image_link"
+        />
 
         <label for="answers">Answers</label>
         <div id="answers">
@@ -52,7 +62,7 @@
               name="answer{{i}}"
               [(ngModel)]="answer.answer"
             >
-            <mat-checkbox [checked]="answer.isCorrect">Is correct?</mat-checkbox>
+            <mat-checkbox name="isCorrect{{i}}" [(ngModel)]="answer.isCorrect">Is correct?</mat-checkbox>
           </mat-card>
 
           <button mat-button (click)="addAnswer()" ><mat-icon>add</mat-icon> Dodaj odpowiedź</button>
@@ -60,7 +70,6 @@
 
         </div>
       </div>
-
     </form>
 
 
@@ -84,3 +93,4 @@
     <p>Cannot access this Question...</p>
   </div>
 </ng-template>
+</div>

@@ -1,7 +1,9 @@
 const express = require('express');
 const upload = require('./upload');
 const router = express.Router();
-const { getQuestions, getQuestionById, updateQuestion, deleteQuestion, deleteQuestions, createQuestion} = require("../database/database-queries/question-queries");
+const { getQuestions, getQuestionById, updateQuestion, deleteQuestion, deleteQuestions, createQuestion,
+    getQuestionByIdWithAnswers, getQuestionsWithAnswers
+} = require("../database/database-queries/question-queries");
 
 
 router.get("/",(req, res) => {
@@ -19,9 +21,9 @@ router.get("/",(req, res) => {
     });
   });
   
-router.get("/:id", (req, res) => {
+router.get("/answers/:id", (req, res) => {
     const id = req.params.id;
-    getQuestionById(id)
+    getQuestionByIdWithAnswers(id)
     .then(question => {
         if (question.image_link){//if no image link is present, it will be null
           question.image_link = question.image_link.toString('base64');          
@@ -33,6 +35,37 @@ router.get("/:id", (req, res) => {
         message: err.message || "Some error occurred while retrieving question with specified id."
       });
     });
+})
+
+router.get("/answers",(req, res) => {
+    getQuestionsWithAnswers()
+        .then(questions => {
+            questions.map(question => {
+                question.image_link = question.image_link ? question.image_link.toString('base64'): null;
+            });
+            res.send(questions);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving all questions."
+            });
+        });
+});
+
+router.get("/:id", (req, res) => {
+    const id = req.params.id;
+    getQuestionById(id)
+        .then(question => {
+            if (question.image_link){//if no image link is present, it will be null
+                question.image_link = question.image_link.toString('base64');
+            }
+            res.send(question);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving question with specified id."
+            });
+        });
 })
   
 router.post("/", upload.single('image_link'), (req, res) => {
@@ -49,9 +82,10 @@ router.post("/", upload.single('image_link'), (req, res) => {
     });
 });
   
-router.put("/:id", (req, res) => {
+router.put("/:id", upload.single('image_link'), (req, res) => {
     const id = req.params.id;
     const updatedQuestion = req.body;
+    updatedQuestion.image_link = req.file ? req.file.buffer : null;
     updateQuestion(id, updatedQuestion)
     .then(question => {
       res.send(question);

@@ -1,8 +1,9 @@
 const db = require('../database-connection');
+const allColumns = "test_id as id, name, description";
 
 const getTests = async () => {
     try {
-        const res = await db.query(`SELECT * FROM tests`);
+        const res = await db.query(`SELECT ${allColumns} FROM tests`);
         return res.rows;
     } catch (err) {
         console.log(err.message);
@@ -12,7 +13,7 @@ const getTests = async () => {
 const getTestById = async (id) => {
     try {
         const res = await db.query(`
-        SELECT q.question_id, q.question, q.image_link
+        SELECT q.question_id as questionId, q.question, q.image_link
         FROM questions q
         JOIN sets s ON q.question_id = s.question_id
         WHERE s.test_id = $1

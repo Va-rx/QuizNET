@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getTests, createTest} = require("../database/database-queries/test-queries");
+const { getTests, createTest, getTestById} = require("../database/database-queries/test-queries");
 
 router.post("/", (req, res) => {
     const newTest = req.body;

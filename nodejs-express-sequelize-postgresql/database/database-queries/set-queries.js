@@ -1,9 +1,9 @@
 const db = require('../database-connection');
-
+const allColumns = "set_id as id, test_id as \"testId\", question_id as \"questionId\"";
 
 const getSets = async () => {
     try {
-        const res = await db.query(`SELECT * FROM sets`);
+        const res = await db.query(`SELECT ${allColumns} FROM sets`);
         return res.rows;
     } catch (err) {
         console.log(err.message);
@@ -21,7 +21,7 @@ const getQuestionsByTestId = async (id) => {
 
 const addQuestionToTest = async (set) => {
     try {
-        const res = await db.query(`INSERT INTO sets (test_id, question_id) VALUES ($1, $2) RETURNING *`, [set.test_id, set.question_id]);
+        const res = await db.query(`INSERT INTO sets (test_id, question_id) VALUES ($1, $2) RETURNING *`, [set.testId, set.questionId]);
         return res.rows[0];
     } catch (err) {
         console.log(err.message);
@@ -30,7 +30,7 @@ const addQuestionToTest = async (set) => {
 
 const deleteSet = async (set) => {
     try {
-        const res = await db.query(`DELETE FROM sets WHERE test_id = $1 and question_id = $2`, [set.test_id, set.question_id]);
+        const res = await db.query(`DELETE FROM sets WHERE test_id = $1 and question_id = $2`, [set.testId, set.questionId]);
         return res.rows[0];
     } catch (err) {
         console.log(err.message);

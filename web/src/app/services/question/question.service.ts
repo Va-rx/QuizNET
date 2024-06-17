@@ -20,6 +20,14 @@ export class QuestionService {
     return this.http.get<Question>(`${baseUrl}/${id}`);
   }
 
+  getAllWithAnswers(): Observable<Question[]> {
+    return this.http.get<Question[]>(`${baseUrl}/answers`);
+  }
+
+  getQuestionWithAnswers(id: any): Observable<Question> {
+    return this.http.get<Question>(`${baseUrl}/answers/${id}`);
+  }
+
   create(data: any): Observable<any> {
     const formData = new FormData();
     formData.append('question', data.question);
@@ -31,7 +39,13 @@ export class QuestionService {
   }
 
   update(id: any, data: any): Observable<any> {
-    return this.http.put(`${baseUrl}/${id}`, data);
+    const formData = new FormData();
+    formData.append('question', data.question);
+    formData.append('answers', JSON.stringify(data.answers));
+    if (data.image_link) {
+      formData.append('image_link', data.image_link);
+    }
+    return this.http.put(`${baseUrl}/${id}`, formData);
   }
 
   delete(id: any): Observable<any> {

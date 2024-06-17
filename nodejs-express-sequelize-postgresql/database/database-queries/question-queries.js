@@ -1,8 +1,27 @@
 const db = require('../database-connection');
-const {getAnswerById, createAnswer} = require("./answer-queries");
+const {getAnswerById, createAnswer, updateAnswer} = require("./answer-queries");
 const allColumns = "question_id as id, question, image_link";
 
 const getQuestions = async () => {
+    try {
+        const res = await db.query(`SELECT ${allColumns} FROM questions`);
+        return res.rows;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+const  getQuestionById = async (id) => {
+    try {
+        const res = await db.query(`SELECT ${allColumns} FROM questions WHERE question_id = $1`, [id]);
+        return res.rows[0];
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+
+const getQuestionsWithAnswers = async () => {
     try {
         const res = await db.query(`SELECT ${allColumns} FROM questions`);
         for (const row of res.rows) {
@@ -14,7 +33,7 @@ const getQuestions = async () => {
     }
 }
 
-const getQuestionById = async (id) => {
+const getQuestionByIdWithAnswers = async (id) => {
     try {
         const res = await db.query(`SELECT ${allColumns} FROM questions WHERE question_id = $1`, [id]);
         res.rows[0].answers = await getAnswerById(id);
@@ -40,7 +59,19 @@ const createQuestion = async (question) => {
 
 const updateQuestion = async (id, question) => {
     try {
-        const res = await db.query(`UPDATE questions SET question = $1, image_link = $2 WHERE question_id = $3 RETURNING *`, [question.question, question.image_link, id]);
+        const res =  question.image_link !== null ? await db.query(`UPDATE questions SET question = $1, image_link = $2 WHERE question_id = $3 RETURNING *`, [question.question, question.image_link, id]) : await db.query(`UPDATE questions SET question = $1 WHERE question_id = $2 RETURNING *`, [question.question, id]);
+        if (res.rows[0]){
+            let parsedAnswers = JSON.parse(question.answers);
+            for (const answer of parsedAnswers ){
+                if (answer.id){
+                    await updateAnswer(answer.id, answer);
+                }
+                else {
+                    await createAnswer(answer);
+                }
+
+            }
+        }
         return res.rows[0];
     } catch (err) {
         console.log(err.message);
@@ -68,6 +99,8 @@ const deleteQuestions = async () => {
 module.exports = {
     getQuestions,
     getQuestionById,
+    getQuestionByIdWithAnswers,
+    getQuestionsWithAnswers,
     createQuestion,
     updateQuestion,
     deleteQuestion,

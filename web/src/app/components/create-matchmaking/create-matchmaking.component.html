@@ -11,9 +11,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let test of testSets" [class.table-active]="test === selectedTest" (click)="selectTest(test)">
-        <td>{{ test.test_id }}</td>
+        <td>{{ test.id }}</td>
         <td>{{ test.name }}</td>
-        <td>{{ test.desciption }}</td>
+        <td>{{ test.description }}</td>
         <td><button class="btn btn-primary" (click)="selectTest(test); $event.stopPropagation()">Wybierz</button></td>
       </tr>
     </tbody>

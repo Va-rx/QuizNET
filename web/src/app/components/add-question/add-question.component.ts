@@ -61,7 +61,6 @@ export class AddQuestionComponent implements OnInit {
 
 
   onFileChange(event: any) {
-    console.log(event.target.files[0])
     this.file = event.target.files[0]
   }
 

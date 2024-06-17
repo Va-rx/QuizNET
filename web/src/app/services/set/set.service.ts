@@ -34,7 +34,7 @@ export class SetService {
   }
 
   deleteSet(set: Set): Observable<any> {
-    return this.http.delete(`${baseUrl}/${set.test_id}/${set.question_id}`);
+    return this.http.delete(`${baseUrl}/${set.testId}/${set.questionId}`);
   }
 
   deleteAll(sets: Set[]): Observable<any> {

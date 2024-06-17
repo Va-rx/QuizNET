@@ -5,3 +5,7 @@ mat-form-field, input[type="file"] {
 .underline {
   border-bottom: 1px solid black;
 }
+
+.container {
+  overflow-y: auto;
+}

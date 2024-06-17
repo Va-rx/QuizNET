@@ -19,9 +19,6 @@
         (click)="setActiveQuestion(question, i)"
       >
         {{ question.question }}
-        <div *ngIf="question.image_link">
-          <img [src]="imageSrc(question.image_link)" />
-        </div>
       </li>
     </ul>
 

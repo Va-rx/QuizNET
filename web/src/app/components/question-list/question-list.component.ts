@@ -18,7 +18,7 @@ export class QuestionsListComponent implements OnInit {
   constructor(private questionService: QuestionService) { }
 
   ngOnInit(): void {
-    this.questions$ = this.questionService.getAll();
+    this.questions$ = this.questionService.getAllWithAnswers();
 
     const searchedQuestion$ = this.title.valueChanges.pipe(
       startWith(this.title.value)
@@ -43,9 +43,5 @@ export class QuestionsListComponent implements OnInit {
   removeAllQuestions(): void {
      this.questions$ = this.questionService.deleteAll();
      this.filteredQuestions$ = this.questions$;
-  }
-
-  imageSrc(questionSrc: String): string {
-    return `data:image/png;base64,${questionSrc}`;
   }
 }

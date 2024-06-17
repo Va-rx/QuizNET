@@ -23,7 +23,7 @@
         (click)="setActiveTest(test, i)"
       >
         {{ test.name }}
-        <button class="btn btn-danger float-right" (click)="deleteTest(test.test_id, $event)">Delete</button>
+        <button class="btn btn-danger float-right" (click)="deleteTest(test.id, $event)">Delete</button>
       </li>
     </ul>
   </div>
@@ -34,7 +34,7 @@
     <p>Description: {{ currentTest.description }}</p>
     <h4>Questions</h4>
     <ul class="list-group half-list" *ngIf="testQuestions.length > 0; else testQuestionsEmpty" >
-      <li class="list-group-item" *ngFor="let question of testQuestions; let i = index">{{question.question}} <button class="btn btn-danger float-right" (click)="removeQuestionFromTest(question, i)" >Delete</button></li>
+      <li class="list-group-item" *ngFor="let question of testQuestions; let i = index">{{question.question}} <button class="btn btn-danger float-right" (click)="removeQuestionFromTest(question, i)" >Delete</button><button class="btn float-right" (click)="openDialog(question)">Edit</button></li>
     </ul>
 
     <ng-template #testQuestionsEmpty>

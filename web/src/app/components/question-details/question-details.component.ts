@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Inject, Input, OnInit, Optional} from '@angular/core';
 import { QuestionService } from 'src/app/services/question/question.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Question } from 'src/app/models/question.model';
+import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-question-details',
@@ -15,27 +16,25 @@ export class QuestionDetailsComponent implements OnInit {
   @Input() currentQuestion!: Question;
 
   message = '';
-
+  file!: File;
+  selectedImage: any;
   constructor(
     private questionService: QuestionService,
     private route: ActivatedRoute,
-    private router: Router) { }
+    private router: Router,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {
     if (!this.viewMode) {
       this.message = '';
     }
+    if (this.data) {
+      this.currentQuestion = this.data.currentQuestion;
+    }
   }
-  updateQuestion(): void {
+  async updateQuestion(): Promise<void> {
     this.message = '';
-    this.questionService.update(this.currentQuestion.id, this.currentQuestion)
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          this.message = res.message ? res.message : 'This question was updated successfully!';
-        },
-        error: (e) => console.error(e)
-      });
+    await this.questionService.update(this.currentQuestion.id, this.currentQuestion).toPromise();
   }
 
   deleteQuestion(): void {
@@ -50,7 +49,24 @@ export class QuestionDetailsComponent implements OnInit {
   }
 
   addAnswer(): void {
-    this.currentQuestion.answers?.push({answer: ''});
+    this.currentQuestion.answers?.push({ answer: '', isCorrect: false, questionId: this.currentQuestion.id });
   }
 
+  onFileChange(event: any) {
+    if (event.target.files && event.target.files[0]) {
+      this.file = event.target.files[0];
+      this.currentQuestion.image_link = this.file;
+
+      const reader = new FileReader();
+      reader.onload = e => this.selectedImage = reader.result;
+
+      reader.readAsDataURL(this.file);
+    }
+  }
+  imageSrc(questionSrc: String | File): string {
+    if (typeof questionSrc == "string") {
+      return `data:image/png;base64,${questionSrc}`;
+    }
+    return '';
+  }
 }
