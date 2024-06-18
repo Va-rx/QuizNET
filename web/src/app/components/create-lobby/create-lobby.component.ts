@@ -30,7 +30,6 @@ export class CreateLobbyComponent implements OnInit {
     // Connect to Socket.io server
     //this.socket = io('http://localhost:8080'); // Adjust URL accordingly
     this.socket=this.socketService.getSocket();
-
     this.socket.on('joinCode', (code: string) => {
       console.log('Received join code:', code);
       this.joinCode = code;
