@@ -52,10 +52,9 @@
           name="image_link"
         />
 
-        <label for="answers">Answers</label>
+        <p><label for="answers">Answers</label></p>
         <div id="answers">
           <mat-card appearance="outlined" *ngFor="let answer of currentQuestion.answers; let i = index" style="margin-bottom: 10px" >
-
             <input
               type="text"
               class="form-control"
@@ -74,13 +73,14 @@
 
 
 
-    <button class="badge badge-danger mr-2" (click)="deleteQuestion()">
+    <button class="btn btn-danger mb-3" (click)="deleteQuestion()">
       Delete
     </button>
 
     <button
       type="submit"
-      class="badge badge-success mb-2"
+      class="btn btn-success mb-3"
+      style="margin-left: 10px"
       (click)="updateQuestion()"
     >
       Update

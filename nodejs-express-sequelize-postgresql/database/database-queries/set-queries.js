@@ -1,4 +1,5 @@
 const db = require('../database-connection');
+const {getAnswerById} = require("./answer-queries");
 const allColumns = "set_id as id, test_id as \"testId\", question_id as \"questionId\"";
 
 const getSets = async () => {
@@ -10,9 +11,12 @@ const getSets = async () => {
     }
 }
 
-const getQuestionsByTestId = async (id) => {
+const getQuestionsByTestId = async (id)=> {
     try {
         const res = await db.query(`SELECT q.question_id as id, question, image_link FROM sets tq INNER JOIN questions q on q.question_id = tq.question_id WHERE test_id = $1`, [id]);
+        for (const row of res.rows) {
+            row.answers = await getAnswerById(row.id);
+        }
         return res.rows;
     } catch (err) {
         console.log(err.message);

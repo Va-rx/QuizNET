@@ -3,6 +3,7 @@ import { QuestionService } from 'src/app/services/question/question.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Question } from 'src/app/models/question.model';
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-question-details',
@@ -22,6 +23,7 @@ export class QuestionDetailsComponent implements OnInit {
     private questionService: QuestionService,
     private route: ActivatedRoute,
     private router: Router,
+    private _snackBar: MatSnackBar,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {
@@ -35,6 +37,8 @@ export class QuestionDetailsComponent implements OnInit {
   async updateQuestion(): Promise<void> {
     this.message = '';
     await this.questionService.update(this.currentQuestion.id, this.currentQuestion).toPromise();
+
+    this._snackBar.open('Question save successfully')
   }
 
   deleteQuestion(): void {

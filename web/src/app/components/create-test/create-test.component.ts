@@ -121,9 +121,7 @@ export class CreateTestComponent implements OnInit{
       width: '80vw',
       height: '80vh'
     });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
+    dialogRef.afterClosed();
   }
 
 }
