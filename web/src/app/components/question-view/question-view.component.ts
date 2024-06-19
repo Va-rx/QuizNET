@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { Answer, Question } from 'src/app/models/question.model';
 import { QuestionService } from 'src/app/services/question/question.service';
-import { AnswerService } from 'src/app/services/answer/answer.service';
 import { Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
@@ -9,28 +8,22 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './question-view.component.html',
   styleUrls: ['./question-view.component.css']
 })
-export class QuestionViewComponent {
+export class QuestionViewComponent implements OnInit{
 
   isMultipleChoice: boolean = false;
   chosenAnswers: Answer[] = [];
   isSubmitted: boolean = false;
   result: number = 0;
-
+  question: Question = new Question();
   constructor(private questionService: QuestionService,@Inject(MAT_DIALOG_DATA) public data: any) {
-    console.log('Received id:', data.id);
-    this.loadQuestionWithAnswersById(data.id);//overrides
+
    }
 
-  mockQuestion: Question = {
-    question: ' Maksymalna liczba regeneratorów sygnału w dowolnej topologii wynosi:',
-    answers: [{answer: '4', isCorrect: false}, {answer: '5', isCorrect: false}, {answer: '3', isCorrect: false}, {answer: 'nie jest ograniczona', isCorrect: true}]
-  };
-  loadQuestionWithAnswersById(id: number): void {
-    this.questionService.get(id).subscribe(question => {
-       console.log(question);
-        this.mockQuestion.question = question.question;
-    });
-  }
+    ngOnInit(): void {
+    this.questionService.getQuestionWithAnswers(this.data.id).subscribe(question => {
+        this.question = question;
+      });
+   }
 
   chooseAnswer(answer: Answer): void {
     if (this.checkAnswer(answer) && this.isMultipleChoice) {

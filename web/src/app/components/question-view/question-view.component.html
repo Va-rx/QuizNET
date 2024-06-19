@@ -1,8 +1,8 @@
 <div class="container">
     <ng-template [ngIf]="!isSubmitted" [ngIfElse]="submitted">
         <div class="question">
-            <h2>{{mockQuestion.question}}</h2>
-            <div class="answers" *ngFor="let answer of mockQuestion.answers">
+            <h2>{{question.question}}</h2>
+            <div class="answers" *ngFor="let answer of question.answers">
                 <app-answer-view (answers)="chooseAnswer($event)" [answer]="answer" [isChosen]="checkAnswer(answer)"></app-answer-view>
             </div>
         </div>

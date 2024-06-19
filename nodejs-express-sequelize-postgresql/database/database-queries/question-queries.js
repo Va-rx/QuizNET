@@ -37,6 +37,7 @@ const getQuestionByIdWithAnswers = async (id) => {
     try {
         const res = await db.query(`SELECT ${allColumns} FROM questions WHERE question_id = $1`, [id]);
         res.rows[0].answers = await getAnswerById(id);
+        return res.rows[0];
     } catch (err) {
         console.log(err.message);
     }
