@@ -19,9 +19,6 @@
         (click)="setActiveQuestion(question, i)"
       >
         {{ question.question }}
-        <div *ngIf="question.image_link">
-          <img [src]="imageSrc(question.image_link)" />
-        </div>
       </li>
     </ul>
 
@@ -31,7 +28,6 @@
   </div>
   <div class="col-md-6" *ngIf="currentQuestion">
     <app-question-details
-      [viewMode]="true"
       [currentQuestion]="currentQuestion"
     ></app-question-details>
   </div>

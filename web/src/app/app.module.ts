@@ -13,7 +13,7 @@ import { CreateLobbyComponent } from './components/create-lobby/create-lobby.com
 import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
 import { GameComponent } from './components/game/game.component';
 import { TankGameComponent } from './components/tank-game/tank-game.component';
-import { SocketServiceService } from './services/socket-service.service';
+import { SocketServiceService } from './services/socket/socket-service.service';
 import { QuestionViewComponent } from './components/question-view/question-view.component';
 import {MatButtonModule} from '@angular/material/button';
 import { AnswerViewComponent } from './components/question-view/answer-view/answer-view.component';
@@ -26,6 +26,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { CreateMatchmakingComponent } from './components/create-matchmaking/create-matchmaking.component';
+import { CreateTestComponent } from './components/create-test/create-test.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { CreateMatchmakingComponent } from './components/create-matchmaking/crea
     TankGameComponent,
     QuestionViewComponent,
     AnswerViewComponent,
-    CreateMatchmakingComponent
+    CreateMatchmakingComponent,
+    CreateTestComponent
   ],
     imports: [
         BrowserModule,

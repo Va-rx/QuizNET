@@ -1,3 +1,4 @@
+<div class="container">
 <div *ngIf="viewMode; else editable">
   <div *ngIf="currentQuestion.id">
     <h4>Question</h4>
@@ -32,19 +33,54 @@
           [(ngModel)]="currentQuestion.question"
           name="title"
         />
-      </div>
 
+
+        <label for="image_link">Image Link</label>
+
+        <div *ngIf="selectedImage">
+          <img [src]="selectedImage" />
+        </div>
+
+        <div *ngIf="!selectedImage && currentQuestion.image_link">
+          <img [src]="imageSrc(currentQuestion.image_link)" />
+        </div>
+
+        <input
+          type="file"
+          id="image_link"
+          (change)="onFileChange($event)"
+          name="image_link"
+        />
+
+        <p><label for="answers">Answers</label></p>
+        <div id="answers">
+          <mat-card appearance="outlined" *ngFor="let answer of currentQuestion.answers; let i = index" style="margin-bottom: 10px" >
+            <input
+              type="text"
+              class="form-control"
+              name="answer{{i}}"
+              [(ngModel)]="answer.answer"
+            >
+            <mat-checkbox name="isCorrect{{i}}" [(ngModel)]="answer.isCorrect">Is correct?</mat-checkbox>
+          </mat-card>
+
+          <button mat-button (click)="addAnswer()" ><mat-icon>add</mat-icon> Dodaj odpowiedź</button>
+
+
+        </div>
+      </div>
     </form>
 
 
 
-    <button class="badge badge-danger mr-2" (click)="deleteQuestion()">
+    <button class="btn btn-danger mb-3" (click)="deleteQuestion()">
       Delete
     </button>
 
     <button
       type="submit"
-      class="badge badge-success mb-2"
+      class="btn btn-success mb-3"
+      style="margin-left: 10px"
       (click)="updateQuestion()"
     >
       Update
@@ -57,3 +93,4 @@
     <p>Cannot access this Question...</p>
   </div>
 </ng-template>
+</div>

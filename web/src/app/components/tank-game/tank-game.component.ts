@@ -2,23 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
 import Tanks, { UIScene } from './tank-scene';
 import { Question } from 'src/app/models/question.model';
-import { QuestionService } from 'src/app/services/question.service';
-import { AnswerService } from 'src/app/services/answer.service';
 import { QuestionViewComponent } from '../question-view/question-view.component';
-import { TestsService } from 'src/app/services/tests.service';
-import { SocketServiceService } from 'src/app/services/socket-service.service';
+import { TestService } from 'src/app/services/test/test.service';
+import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
-
-import {
-  MatDialog,
-  MAT_DIALOG_DATA,
-  MatDialogRef,
-  MatDialogTitle,
-  MatDialogContent,
-  MatDialogActions,
-  MatDialogClose,
-} from '@angular/material/dialog';
 @Component({
   selector: 'app-tank-game',
   templateUrl: './tank-game.component.html',
@@ -34,7 +23,7 @@ export class TankGameComponent implements OnInit {
   scoreBoard:any[]=[];
   private socket: any;
 
-  constructor(private questionService: QuestionService, private answerService: AnswerService, private dialog: MatDialog, private TestsService: TestsService,private socketService:SocketServiceService,private route:ActivatedRoute) {
+  constructor( private dialog: MatDialog, private TestsService: TestService,private socketService:SocketServiceService,private route:ActivatedRoute) {
     this.config = {
       type: Phaser.AUTO,
     //height as window
@@ -65,17 +54,9 @@ export class TankGameComponent implements OnInit {
     this.testID= this.route.snapshot.params["id"];
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.get(this.testID).subscribe((data) => {
-      data.forEach((element: {
-        id: number; question_id: number;
-      }) => {
-        element.id = element.question_id;
-      });
       this.questions = data;
-      console.log(this.questions);
-
     });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
-      console.log(this.questions);
       this.socket.emit('userScoreUpdate',this.socketService.getUserId(),id,this.socketService.getJoinCode())
       const dialogRef = this.dialog.open(QuestionViewComponent, {
         data: { id: this.questions[this.currentLevel].id }

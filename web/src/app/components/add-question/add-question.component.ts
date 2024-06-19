@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Answer, Question} from 'src/app/models/question.model';
-import { QuestionService } from 'src/app/services/question.service';
-import {AnswerService} from "../../services/answer.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { Answer, Question } from 'src/app/models/question.model';
+import { QuestionService } from 'src/app/services/question/question.service';
+import { AnswerService } from "../../services/answer/answer.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-add-question',
@@ -20,33 +20,23 @@ export class AddQuestionComponent implements OnInit {
   answers: Answer[] = [{ isCorrect: false, answer: '' }, { isCorrect: false, answer: '' }];
   file!: File;
 
-  constructor(private questionService: QuestionService, private answerService: AnswerService, private _snackBar: MatSnackBar) { }
+  constructor(private questionService: QuestionService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void { }
 
   async saveQuestion(): Promise<void> {
     const data = {
       question : this.question.question,
-      image_link: this.file
+      image_link: this.file,
+      answers: this.answers
     };
 
     if (!this.validateForm()) {
       return;
     }
 
-    const resultQuestion = await this.questionService.create(data).toPromise();
-
-    if (!resultQuestion) {
-      return;
-    }
-
-    for (const answer of this.answers) {
-      answer.questionId = resultQuestion.question_id;
-      await this.answerService.create(answer).toPromise();
-    }
-
+    await this.questionService.create(data).toPromise();
     this.submitted = true;
-
   }
 
   newQuestion(): void {
@@ -55,7 +45,7 @@ export class AddQuestionComponent implements OnInit {
       question: ''
     };
 
-    this.answers = [];
+    this.answers = [{ isCorrect: false, answer: '' }, { isCorrect: false, answer: '' }];
   }
 
   addAnswer(): void {
@@ -71,7 +61,6 @@ export class AddQuestionComponent implements OnInit {
 
 
   onFileChange(event: any) {
-    console.log(event.target.files[0])
     this.file = event.target.files[0]
   }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit  } from '@angular/core';
 import Phaser from 'phaser';
 import Example from './example-scene'; 
-import { SocketServiceService } from 'src/app/services/socket-service.service';
+import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
 
 import {
   MatDialog,

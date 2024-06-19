@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { GamesService } from 'src/app/services/games.service';
-import { TestsService } from 'src/app/services/tests.service';
+import { GamesService } from 'src/app/services/game/game.service';
+import { TestService } from 'src/app/services/test/test.service';
 @Component({
   selector: 'app-create-matchmaking',
   templateUrl: './create-matchmaking.component.html',
@@ -17,7 +17,7 @@ export class CreateMatchmakingComponent implements OnInit {
   isSubmitted = false;
 
 
-  constructor(private testsService: TestsService,private gameService: GamesService) { }
+  constructor(private testsService: TestService,private gameService: GamesService) { }
 
   ngOnInit(): void {
     this.loadTestSets();
