@@ -24,12 +24,14 @@ const answerRouter = require("./routes/answer-routes");
 const setRouter = require("./routes/set-routes");
 const testRouter = require("./routes/test-routes");
 const gameRouter = require("./routes/game-routes");
+const userRouter = require("./routes/user-routes")
 
 app.use("/api/questions", questionRouter);
 app.use("/api/answers", answerRouter);
 app.use("/api/sets", setRouter);
 app.use("/api/tests", testRouter);
 app.use("/api/games", gameRouter);
+app.use("/api/users", userRouter);
 
 const PORT = process.env.PORT || 8080;
 

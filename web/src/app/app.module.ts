@@ -27,6 +27,9 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { CreateMatchmakingComponent } from './components/create-matchmaking/create-matchmaking.component';
 import { CreateTestComponent } from './components/create-test/create-test.component';
+import { RegisterComponent } from './components/register/register.component';
+import { LoginComponent } from './components/login/login.component';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +44,10 @@ import { CreateTestComponent } from './components/create-test/create-test.compon
     QuestionViewComponent,
     AnswerViewComponent,
     CreateMatchmakingComponent,
-    CreateTestComponent
+    CreateTestComponent,
+    RegisterComponent,
+    LoginComponent,
+    HomeComponent
   ],
     imports: [
         BrowserModule,

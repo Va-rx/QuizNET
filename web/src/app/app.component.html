@@ -1,17 +1,17 @@
 <div>
   <nav class="navbar navbar-expand navbar-dark bg-dark">
-    <a href="#" class="navbar-brand">QuizNET</a>
+    <a routerLink="" class="navbar-brand">QuizNET</a>
     <div class="navbar-nav mr-auto">
-      <li class="nav-item">
+      <li class="nav-item" *ngIf="role === roles.ADMIN">
         <a routerLink="Questions" class="nav-link">Questions</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" *ngIf="role === roles.ADMIN">
         <a routerLink="add" class="nav-link">Add</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" *ngIf="role === roles.ADMIN">
         <a routerLink="create-test" class="nav-link">Create test</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" *ngIf="role === roles.ADMIN">
         <a routerLink="create-lobby" class="nav-link">Create Lobby</a>
       </li>
       <li class="nav-item">
@@ -23,8 +23,12 @@
       <li class="nav-item">
         <a routerLink="tank-game" class="nav-link">Tank-game</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" *ngIf="role === roles.ADMIN">
         <a routerLink="create-matchmaking" class="nav-link">Create matchmaking</a>
+      </li>
+
+      <li class="nav-item" *ngIf="role !== roles.NONE" (click)="logout()">
+        <a routerLink="login" class="nav-link">Log out</a>
       </li>
     </div>
   </nav>

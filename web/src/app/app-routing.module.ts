@@ -9,18 +9,25 @@ import { GameComponent } from './components/game/game.component';
 import { TankGameComponent } from './components/tank-game/tank-game.component';
 import { CreateMatchmakingComponent } from './components/create-matchmaking/create-matchmaking.component';
 import { CreateTestComponent } from './components/create-test/create-test.component';
+import {RegisterComponent} from "./components/register/register.component";
+import {LoginComponent} from "./components/login/login.component";
+import {authGuard} from "./guards/auth.guard";
+import {HomeComponent} from "./components/home/home.component";
+import {RoleGuard} from "./guards/role.guard";
 const routes: Routes = [
-  { path: '', redirectTo: 'Questions', pathMatch: 'full' },
-  { path: 'Questions', component: QuestionsListComponent },
-  { path: 'Questions/:id', component: QuestionDetailsComponent },
-  { path: 'add', component: AddQuestionComponent },
-  { path: 'create-lobby', component: CreateLobbyComponent },
-  { path: 'join-lobby', component: JoinLobbyComponent },
-  { path: 'game', component: GameComponent },
-  { path: 'tank-game', component: TankGameComponent },
-  {path :'create-matchmaking', component: CreateMatchmakingComponent},
-  { path: 'tank-game/:id', component: TankGameComponent },
-  {path: 'create-test', component: CreateTestComponent},
+  { path: '', component: HomeComponent, canActivate: [authGuard] },
+  { path: 'Questions', component: QuestionsListComponent, canActivate: [authGuard, RoleGuard]},
+  { path: 'Questions/:id', component: QuestionDetailsComponent, canActivate: [authGuard, RoleGuard]},
+  { path: 'add', component: AddQuestionComponent, canActivate: [authGuard, RoleGuard]},
+  { path: 'create-lobby', component: CreateLobbyComponent, canActivate: [authGuard, RoleGuard]},
+  { path: 'join-lobby', component: JoinLobbyComponent, canActivate: [authGuard]},
+  { path: 'game', component: GameComponent, canActivate: [authGuard]},
+  { path: 'tank-game', component: TankGameComponent, canActivate: [authGuard]},
+  { path :'create-matchmaking', component: CreateMatchmakingComponent, canActivate: [authGuard, RoleGuard]},
+  { path: 'tank-game/:id', component: TankGameComponent, canActivate: [authGuard]},
+  { path: 'create-test', component: CreateTestComponent, canActivate: [authGuard, RoleGuard]},
+  { path: 'register', component: RegisterComponent},
+  { path: 'login', component: LoginComponent}
 ];
 
 @NgModule({
