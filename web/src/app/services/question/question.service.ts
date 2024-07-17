@@ -32,6 +32,7 @@ export class QuestionService {
     const formData = new FormData();
     formData.append('question', data.question);
     formData.append('answers', JSON.stringify(data.answers));
+    formData.append('points', data.points);
     if (data.image_link) {
       formData.append('image_link', data.image_link);
     }
@@ -45,6 +46,7 @@ export class QuestionService {
     if (data.image_link) {
       formData.append('image_link', data.image_link);
     }
+    formData.append('points', data.points)
     return this.http.put(`${baseUrl}/${id}`, formData);
   }
 

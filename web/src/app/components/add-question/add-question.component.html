@@ -18,8 +18,13 @@
                   <textarea matInput placeholder="Pytanie" [(ngModel)]="question.question" name="question"
                     required></textarea>
                 </mat-form-field>
-
+                <div class="second-row">
+                  <mat-form-field appearance="outline" style="width: 70px">
+                    <input matInput type="number" [(ngModel)]="question.points">
+                  </mat-form-field>
+                  <span>%</span>
                 <input type="file" (change)="onFileChange($event)">
+                </div>
               </mat-card-content>
 
             </mat-card>
@@ -28,17 +33,23 @@
               <mat-card-header *ngIf="answers.length > 0">
                 <mat-card-title>Stwórz odpowiedzi</mat-card-title>
               </mat-card-header>
-              <mat-card-content *ngFor="let answer of answers; let i = index;">
-                <div class="underline" style="margin-top: 10px">
+              <mat-card-content class="answer" *ngFor="let answer of answers; let i = index;">
                   <mat-form-field appearance="outline">
                     <textarea matInput placeholder="Odpowiedź" [(ngModel)]="answer.answer" name="answer"
                       required></textarea>
                   </mat-form-field>
-                  <mat-checkbox [(ngModel)]="answer.isCorrect">
-                    Czy jest poprawna?
-                  </mat-checkbox>
-                  <button *ngIf="answers.length > 2" mat-button (click)="deleteAnswer(i)"><mat-icon>delete</mat-icon></button>
-                </div>
+                <div class="second-row">
+                  <mat-form-field appearance="outline" style="width: 70px">
+                    <input matInput type="number" [(ngModel)]="answer.percentagePoints">
+                  </mat-form-field>
+                 <span>%</span>
+                <mat-checkbox [(ngModel)]="answer.isCorrect">
+                  Czy jest poprawna?
+                </mat-checkbox>
+                <button *ngIf="answers.length > 2" mat-button (click)="deleteAnswer(i)"><mat-icon>delete</mat-icon></button>
+              </div>
+
+                  <mat-divider></mat-divider>
               </mat-card-content>
             </mat-card>
 

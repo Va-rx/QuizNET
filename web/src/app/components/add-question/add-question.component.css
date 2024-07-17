@@ -2,10 +2,15 @@ mat-form-field, input[type="file"] {
   display: block;
 }
 
-.underline {
-  border-bottom: 1px solid black;
-}
-
 .container {
   overflow-y: auto;
+}
+
+.answer{
+  margin-bottom: 10px;
+}
+
+.second-row{
+  display: flex;
+  align-items: baseline;
 }

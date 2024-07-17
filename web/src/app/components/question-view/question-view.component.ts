@@ -38,16 +38,22 @@ export class QuestionViewComponent implements OnInit{
   }
 
   submitAnswer(): void {
-    for (const answer of this.chosenAnswers) {
-      if (answer.isCorrect) {
-        this.result++;
-      }
-    }
+    this.result = this.calculatePoints();
+
     this.isSubmitted = true;
   }
 
   checkAnswer(answer: Answer): boolean {
     return this.chosenAnswers.includes(answer);
+  }
+
+  calculatePoints(): number {
+    let result = 0;
+    this.chosenAnswers.forEach(answer => {
+      result += this.question.points * (answer.percentagePoints / 100);
+    })
+
+    return result;
   }
 
 

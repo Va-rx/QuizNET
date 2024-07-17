@@ -13,11 +13,12 @@ export class AddQuestionComponent implements OnInit {
 
   question: Question = {
     question: '',
-    image_link: null
+    image_link: null,
+    points: 1
 
   };
   submitted = false;
-  answers: Answer[] = [{ isCorrect: false, answer: '' }, { isCorrect: false, answer: '' }];
+  answers: Answer[] = [{ isCorrect: false, answer: '', percentagePoints: 0 }, { isCorrect: false, answer: '',  percentagePoints: 0 }];
   file!: File;
 
   constructor(private questionService: QuestionService, private _snackBar: MatSnackBar) { }
@@ -28,7 +29,8 @@ export class AddQuestionComponent implements OnInit {
     const data = {
       question : this.question.question,
       image_link: this.file,
-      answers: this.answers
+      answers: this.answers,
+      points: this.question.points
     };
 
     if (!this.validateForm()) {
@@ -42,14 +44,15 @@ export class AddQuestionComponent implements OnInit {
   newQuestion(): void {
     this.submitted = false;
     this.question = {
-      question: ''
+      question: '',
+      points: 1
     };
 
-    this.answers = [{ isCorrect: false, answer: '' }, { isCorrect: false, answer: '' }];
+    this.answers = [{ isCorrect: false, answer: '', percentagePoints: 0}, { isCorrect: false, answer: '', percentagePoints: 0 }];
   }
 
   addAnswer(): void {
-    this.answers.push({answer: '', isCorrect: false});
+    this.answers.push({answer: '', isCorrect: false, percentagePoints: 0});
   }
 
   deleteAnswer(index: number): void {

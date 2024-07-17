@@ -53,7 +53,7 @@ export class QuestionDetailsComponent implements OnInit {
   }
 
   addAnswer(): void {
-    this.currentQuestion.answers?.push({ answer: '', isCorrect: false, questionId: this.currentQuestion.id });
+    this.currentQuestion.answers?.push({ answer: '', isCorrect: false, questionId: this.currentQuestion.id, percentagePoints: 0 });
   }
 
   onFileChange(event: any) {

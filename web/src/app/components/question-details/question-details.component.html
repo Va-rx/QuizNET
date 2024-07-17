@@ -61,7 +61,11 @@
               name="answer{{i}}"
               [(ngModel)]="answer.answer"
             >
-            <mat-checkbox name="isCorrect{{i}}" [(ngModel)]="answer.isCorrect">Is correct?</mat-checkbox>
+            <div class="second-row">
+                <input type="number" name="percentagePoints{{i}}" [(ngModel)]="answer.percentagePoints">
+              <span>%</span>
+              <mat-checkbox name="isCorrect{{i}}" [(ngModel)]="answer.isCorrect">Is correct?</mat-checkbox>
+            </div>
           </mat-card>
 
           <button mat-button (click)="addAnswer()" ><mat-icon>add</mat-icon> Dodaj odpowiedź</button>

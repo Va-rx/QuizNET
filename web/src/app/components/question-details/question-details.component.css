@@ -6,3 +6,8 @@
 .container{
   overflow-y: auto;
 }
+
+.second-row{
+  display: flex;
+  align-items: baseline;
+}

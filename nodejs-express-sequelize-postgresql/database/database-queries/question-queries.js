@@ -1,6 +1,6 @@
 const db = require('../database-connection');
 const {getAnswerById, createAnswer, updateAnswer} = require("./answer-queries");
-const allColumns = "question_id as id, question, image_link";
+const allColumns = "question_id as id, question, image_link, points";
 
 const getQuestions = async () => {
     try {
@@ -45,7 +45,7 @@ const getQuestionByIdWithAnswers = async (id) => {
 
 const createQuestion = async (question) => {
     try {
-        const res = await db.query(`INSERT INTO questions (question, image_link) VALUES ($1, $2) RETURNING *`, [question.question, question.image_link]);
+        const res = await db.query(`INSERT INTO questions (question, image_link, points) VALUES ($1, $2, $3) RETURNING *`, [question.question, question.image_link, question.points]);
         if (res.rows[0].question_id && res.rows[0].question_id !== -1){
             let parsedAnswers = JSON.parse(question.answers);
             for (const answer of parsedAnswers ){
@@ -60,7 +60,7 @@ const createQuestion = async (question) => {
 
 const updateQuestion = async (id, question) => {
     try {
-        const res =  question.image_link !== null ? await db.query(`UPDATE questions SET question = $1, image_link = $2 WHERE question_id = $3 RETURNING *`, [question.question, question.image_link, id]) : await db.query(`UPDATE questions SET question = $1 WHERE question_id = $2 RETURNING *`, [question.question, id]);
+        const res =  question.image_link !== null ? await db.query(`UPDATE questions SET question = $1, image_link = $2, points = $3 WHERE question_id = $4 RETURNING *`, [question.question, question.image_link, question.points, id]) : await db.query(`UPDATE questions SET question = $1, points = $2 WHERE question_id = $3 RETURNING *`, [question.question, question.points, id]);
         if (res.rows[0]){
             let parsedAnswers = JSON.parse(question.answers);
             for (const answer of parsedAnswers ){

@@ -30,6 +30,7 @@ import { CreateTestComponent } from './components/create-test/create-test.compon
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
+import {MatDividerModule} from "@angular/material/divider";
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { HomeComponent } from './components/home/home.component';
         BrowserAnimationsModule,
         ReactiveFormsModule,
         MatFormFieldModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        MatDividerModule
     ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]

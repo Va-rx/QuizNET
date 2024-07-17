@@ -3,6 +3,7 @@ CREATE TABLE answers (
     question_id int  NOT NULL,
     answer varchar(100)  NOT NULL,
     is_correct boolean  NOT NULL,
+    percentage_points int  NOT NULL,
     CONSTRAINT answers_pk PRIMARY KEY (answer_id)
 );
 
@@ -10,6 +11,7 @@ CREATE TABLE questions (
     question_id int  NOT NULL,
     question varchar(300)  NOT NULL,
     image_link bytea NULL,
+    points int  NOT NULL,
     CONSTRAINT questions_pk PRIMARY KEY (question_id)
 );
 
