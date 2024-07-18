@@ -1,3 +1,11 @@
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 label {
   display: block;
   margin-top: 10px;
@@ -6,6 +14,10 @@ label {
 .card-container.card {
   max-width: 400px !important;
   padding: 40px 40px;
+  width: 50%;
+  height: 60%;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .card {
