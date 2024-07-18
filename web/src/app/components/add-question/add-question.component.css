@@ -9,3 +9,7 @@ mat-form-field, input[type="file"] {
 .container {
   overflow-y: auto;
 }
+
+.submit-form {
+  margin-bottom: 10px;
+}
