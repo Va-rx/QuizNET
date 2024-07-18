@@ -6,27 +6,12 @@
   justify-content: center;
 }
 
-label {
-  display: block;
-  margin-top: 10px;
-}
-
-
-
-.card-container.card {
-  width: 50%;
-  height: 60%;
-  max-width: 400px !important;
-  padding: 40px 40px;
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
 .card {
+  width: 40%;
   background-color: #f7f7f7;
   padding: 20px 25px 30px;
   margin: 0 auto 25px;
-  margin-top: 50px;
+  margin-top: 25px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
