@@ -2,6 +2,11 @@
     background-color:#24242c !important;
     padding: 10px 10px;
     margin: 0;
+    height: 10%;
+}
+
+.navbar-expand {
+    height: 10%;
 }
 
 .nav-item {
@@ -12,7 +17,7 @@
 .nav-item::after {
     content: "";
     position: absolute;
-    bottom: -10px;
+    bottom: -9px;
     left: 0;
     right: 0;
     height: 3px;
@@ -57,4 +62,14 @@
 
 .navbar-brand.active {
     color: #9662d2!important;
+}
+
+a {
+    height: 100%;
+}
+
+li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

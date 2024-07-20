@@ -1,5 +1,10 @@
-<div class="container">
-  <div class="col-3 menu">
-    <div class="box"></div>
+<div class="content">
+  <div class="abc">
+    <div class="block add-button">+</div>
+    <div 
+      class="block" 
+      *ngFor="let test of (tests$ | async); let i = index" >
+      {{test.name}}
+    </div>
   </div>
 </div>
