@@ -58,7 +58,11 @@ export class QuestionViewComponent implements OnInit{
       if (answer.isCorrect) {
         this.result++;
       }
+      else {
+        this.result=Math.max(0,this.result-1);
+      }
     }
+
     this.result=this.result/this.max_points_sum;
     //round to 2 decimal places
     this.result = Math.round(this.result * 100) / 100;
@@ -73,7 +77,7 @@ export class QuestionViewComponent implements OnInit{
   }
 
   closeDialog(): void {
-    const result =  "JEBAC DISA W JEBANYM DIALOGU";
+    const result = this.result;
     this.dialogRef.close(result);
   }
 }
