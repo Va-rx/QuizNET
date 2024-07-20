@@ -58,10 +58,19 @@ export class TankGameComponent implements OnInit {
     });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       this.socket.emit('userScoreUpdate',this.socketService.getUserId(),id,this.socketService.getJoinCode())
+      //freeze game for question time
+      this.phaserGame.pause();
       const dialogRef = this.dialog.open(QuestionViewComponent, {
-        data: { id: this.questions[this.currentLevel].id }
+        data: { id: this.questions[this.currentLevel].id },
+        disableClose: true
       });
       this.currentLevel++;
+      dialogRef.afterClosed().subscribe(result => {
+        console.log(`Dialog result: ${result}`);
+        //resume game
+        this.phaserGame.resume();
+      });
+
 
     });
 
