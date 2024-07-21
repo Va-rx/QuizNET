@@ -8,7 +8,7 @@ import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component
 import { GameComponent } from './components/game/game.component';
 import { TankGameComponent } from './components/tank-game/tank-game.component';
 import { CreateMatchmakingComponent } from './components/create-matchmaking/create-matchmaking.component';
-import { CreateTestComponent } from './components/create-test/create-test.component';
+import { TestsComponent } from './components/tests/tests.component';
 import {RegisterComponent} from "./components/register/register.component";
 import {LoginComponent} from "./components/login/login.component";
 import {authGuard} from "./guards/auth.guard";
@@ -25,7 +25,7 @@ const routes: Routes = [
   { path: 'tank-game', component: TankGameComponent, canActivate: [authGuard]},
   { path :'create-matchmaking', component: CreateMatchmakingComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'tank-game/:id', component: TankGameComponent, canActivate: [authGuard]},
-  { path: 'create-test', component: CreateTestComponent, canActivate: [authGuard, RoleGuard]},
+  { path: 'tests', component: TestsComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'register', component: RegisterComponent},
   { path: 'login', component: LoginComponent}
 ];

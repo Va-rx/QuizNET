@@ -10,11 +10,11 @@ import {MatDialog} from "@angular/material/dialog";
 
 
 @Component({
-  selector: 'app-create-test',
-  templateUrl: './create-test.component.html',
-  styleUrls: ['./create-test.component.css']
+  selector: 'app-tests',
+  templateUrl: './tests.component.html',
+  styleUrls: ['./tests.component.css']
 })
-export class CreateTestComponent implements OnInit{
+export class TestsComponent implements OnInit{
   tests$: Observable<Test[]> = of();
   test: Test = new Test();
   currentTest!: Test;
