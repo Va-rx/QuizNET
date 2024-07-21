@@ -13,6 +13,9 @@ import { SetService } from 'src/app/services/set/set.service';
 export class TestDetailsComponent implements OnInit {
   test: Test = new Test();
   questions: Question[] = [];
+  selectedQuestion: Question = new Question();
+
+  isEditable = false;
 
   constructor (private TestService: TestService, private QuestionService: QuestionService, private SetService: SetService) { }
 
@@ -28,5 +31,13 @@ export class TestDetailsComponent implements OnInit {
         throw new Error('Test is null');
       }
     });
+  }
+
+  selectQuestion(question: Question) {
+    this.selectedQuestion = question;
+  }
+
+  toggleEdit() {
+    this.isEditable = !this.isEditable;
   }
 }

@@ -4,10 +4,36 @@
             <p> {{test.name}} </p>
         </div>
         <div class="questions">
-            <div class="question" *ngFor="let question of questions"> 
-                <p>{{question.question}} </p>
+            <div class="question" *ngFor="let question of questions"
+            (click)="selectQuestion(question)"> 
+                <p> {{question.question}} </p>
             </div>
         </div>
     </div>
-    <div class="details"></div>
+    <div class="details">
+        <div class="question">
+            <p>
+                {{selectedQuestion.question}}
+            </p>
+        </div>
+        <div class="options">
+            <div class="option">
+              <input type="radio" id="singleChoice" name="option" class="option-input">
+              <label for="singleChoice" class="option-label">Single choice</label>
+            </div>
+            <div class="option">
+              <input type="radio" id="multipleChoice" name="option" class="option-input">
+              <label for="multipleChoice" class="option-label">Multiple choice</label>
+            </div>
+            <div class="option">
+              <input type="radio" id="trueFalse" name="option" class="option-input">
+              <label for="trueFalse" class="option-label">True / False</label>
+            </div>
+            <div class="option">
+              <input type="radio" id="chooseFromList" name="option" class="option-input">
+              <label for="chooseFromList" class="option-label">Choose from list</label>
+            </div>
+          </div>
+        
+    </div>
 </div>
