@@ -1,4 +1,4 @@
-<div class="main_container">
+<div class="main_container" *ngIf="!gameFinished">
 <div class="container">
   <h2>Scoreboard</h2>
   <table class="table">
@@ -17,3 +17,4 @@
   </table>
 </div>
 </div>
+<app-scoreboard *ngIf="gameFinished" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [totalScore]="maxLevel"></app-scoreboard>

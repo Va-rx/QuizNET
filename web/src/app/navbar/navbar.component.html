@@ -29,6 +29,9 @@
         <li class="nav-item" (click)="logout()">
             <a routerLink="login" class="nav-link">Log out</a>
         </li>
+        <li class="nav-item" *ngIf="role === roles.ADMIN">
+            <a routerLink="final" class="nav-link">Final</a>
+        </li>
     </div>
     </nav>
 </div>

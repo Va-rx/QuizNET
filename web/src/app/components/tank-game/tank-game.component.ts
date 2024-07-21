@@ -7,6 +7,7 @@ import { TestService } from 'src/app/services/test/test.service';
 import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-tank-game',
@@ -22,9 +23,12 @@ export class TankGameComponent implements OnInit {
   currentLevel: number = 0;
   scoreBoard:any[]=[];
   playerScore: number = 0;
+  gameFinished: boolean = false;
+  scoreBoardMap: Map<string, number> = new Map<string, number>();
+  nickname: string = "";
   private socket: any;
 
-  constructor( private dialog: MatDialog, private TestsService: TestService,private socketService:SocketServiceService,private route:ActivatedRoute) {
+  constructor( private dialog: MatDialog, private TestsService: TestService,private socketService:SocketServiceService,private route:ActivatedRoute,private auth:AuthService) {
     this.config = {
       type: Phaser.AUTO,
     //height as window
@@ -48,6 +52,7 @@ export class TankGameComponent implements OnInit {
       },
       scene: [Tanks, UIScene], // Use Example scene here
     };
+    this.nickname=this.auth.getNickname();
   }
 
   ngOnInit() {
@@ -71,14 +76,17 @@ export class TankGameComponent implements OnInit {
         this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
         //resume game
         this.phaserGame.resume();
-        if(this.currentLevel==this.maxLevel){
+        if(this.currentLevel==2){
           console.log("Game Over");
+          this.phaserGame.destroy(true);
+          this.gameFinished=true;
         }
       });
     });
 
     this.socket.on('broadcastScoreBoard',(jsonScoreBoard) =>
       {console.log(jsonScoreBoard);
+        this.scoreBoardMap= new Map(Object.entries(JSON.parse(jsonScoreBoard)));
         this.scoreBoard=Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({username,score}));
       console.log(this.scoreBoard);}
 
