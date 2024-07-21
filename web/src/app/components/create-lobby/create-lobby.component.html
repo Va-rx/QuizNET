@@ -37,3 +37,22 @@
     <li *ngFor="let user of userList">{{ user }}</li>
   </ul>
 </div>
+<div class="main_container" *ngIf="scheduled">
+  <div class="container">
+    <h2>Scoreboard</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let player of scoreBoard">
+          <td>{{ player.username }}</td>
+          <td>{{ player.score }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
