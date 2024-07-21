@@ -76,7 +76,7 @@ export class TankGameComponent implements OnInit {
         this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
         //resume game
         this.phaserGame.resume();
-        if(this.currentLevel==2){
+        if(this.currentLevel==this.maxLevel){
           console.log("Game Over");
           this.phaserGame.destroy(true);
           this.gameFinished=true;
