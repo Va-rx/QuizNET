@@ -10,6 +10,7 @@ import { TankGameComponent } from './components/tank-game/tank-game.component';
 import { CreateMatchmakingComponent } from './components/create-matchmaking/create-matchmaking.component';
 import { TestsComponent } from './components/tests/tests.component';
 import {RegisterComponent} from "./components/register/register.component";
+import { TestDetailsComponent } from './components/test-details/test-details.component';
 import {LoginComponent} from "./components/login/login.component";
 import {authGuard} from "./guards/auth.guard";
 import {HomeComponent} from "./components/home/home.component";
@@ -27,7 +28,8 @@ const routes: Routes = [
   { path: 'tank-game/:id', component: TankGameComponent, canActivate: [authGuard]},
   { path: 'tests', component: TestsComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'register', component: RegisterComponent},
-  { path: 'login', component: LoginComponent}
+  { path: 'login', component: LoginComponent},
+  { path: 'tests/:id', component: TestDetailsComponent, canActivate: [authGuard, RoleGuard]}
 ];
 
 @NgModule({

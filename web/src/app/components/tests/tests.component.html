@@ -3,7 +3,9 @@
     <button class="block add-button">+</button>
     <button 
       class="block" 
-      *ngFor="let test of (tests$ | async); let i = index" >
+      *ngFor="let test of (tests$ | async); let i = index"
+      [routerLink]="['/tests', test.id]"
+      (click)="onTestClick(test)">
       {{test.name}}
   </button>
   </div>

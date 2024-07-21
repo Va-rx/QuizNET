@@ -30,7 +30,8 @@ import { TestsComponent } from './components/tests/tests.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
-import { NavbarComponent } from './navbar/navbar.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { TestDetailsComponent } from './components/test-details/test-details.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     LoginComponent,
     HomeComponent,
     NavbarComponent,
+    TestDetailsComponent,
   ],
     imports: [
         BrowserModule,

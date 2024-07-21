@@ -17,111 +17,112 @@ import {MatDialog} from "@angular/material/dialog";
 export class TestsComponent implements OnInit{
   tests$: Observable<Test[]> = of();
   test: Test = new Test();
-  currentTest!: Test;
-  currentIndex?: number;
-  showForm = false;
-  testQuestions: Question[] = [];
-  allQuestions: Question[] = [];
-  uniqueQuestions: Question[] = [];
-  questionIdsToDelete: number[] = [];
-  questionIdsToAdd: number[] = [];
+  // currentTest!: Test;
+  // currentIndex?: number;
+  // showForm = false;
+  // testQuestions: Question[] = [];
+  // allQuestions: Question[] = [];
+  // uniqueQuestions: Question[] = [];
+  // questionIdsToDelete: number[] = [];
+  // questionIdsToAdd: number[] = [];
 
-  constructor(private testsService: TestService, private setService: SetService, private questionService: QuestionService, private dialog: MatDialog) { }
+  constructor(private testsService: TestService) { }
 
   ngOnInit() {
     this.tests$ = this.testsService.getAll();
-    this.questionService.getAllWithAnswers().subscribe(question => this.allQuestions = question);
-
   }
 
-  setActiveTest(test: Test, index: number): void {
-    this.currentTest = test;
-    this.currentIndex = index;
-    this.setService.getQuestionsByTestId(this.currentTest.id).subscribe(
-      question => {
-        this.testQuestions = question;
-        this.uniqueQuestions = this.allQuestions.filter(question => !this.testQuestions.some(testQuestion => testQuestion.id === question.id));
-      }
-    );
+  onTestClick(test: Test) {
+    this.testsService.selectTest(test);
   }
 
-  onSubmit(data: Test): void {
-    this.testsService.create(data).subscribe(
-      response => {
-        console.log(response);
-        this.showForm = false;
-        this.test = new Test();
+  // setActiveTest(test: Test, index: number): void {
+  //   this.currentTest = test;
+  //   this.currentIndex = index;
+  //   this.setService.getQuestionsByTestId(this.currentTest.id).subscribe(
+  //     question => {
+  //       this.testQuestions = question;
+  //       this.uniqueQuestions = this.allQuestions.filter(question => !this.testQuestions.some(testQuestion => testQuestion.id === question.id));
+  //     }
+  //   );
+  // }
 
-        this.tests$ = this.testsService.getAll();
-      },
-      error => {
-        console.log(error);
-      });
-  }
+  // onSubmit(data: Test): void {
+  //   this.testsService.create(data).subscribe(
+  //     response => {
+  //       console.log(response);
+  //       this.showForm = false;
+  //       this.test = new Test();
 
-  deleteTest(id: number, event: Event): void {
-    event.stopPropagation();
-    console.log("ID:" + id);
-    this.testsService.delete(id).subscribe(
-      response => {
-        console.log(response);
-        setTimeout(() => {
-          this.tests$ = this.testsService.getAll();
-        }, 1000);
-      },
-      error => {
-        console.log(error);
-      });
-  }
-  addQuestionToTest(question: Question, index: number){
-    this.testQuestions.push(question);
-    this.uniqueQuestions = this.uniqueQuestions.filter(q => q.id !== question.id);
-    if (this.questionIdsToDelete.includes(question.id)){
-      this.questionIdsToDelete = this.questionIdsToDelete.filter(q => q !== question.id);
-    }
-    else{
-      this.questionIdsToAdd.push(question.id);
-    }
-  }
+  //       this.tests$ = this.testsService.getAll();
+  //     },
+  //     error => {
+  //       console.log(error);
+  //     });
+  // }
 
-  removeQuestionFromTest(question: Question, index: number){
-      this.testQuestions = this.testQuestions.filter(q => q.id !== question.id);
-      this.uniqueQuestions.push(question);
-      if (this.questionIdsToAdd.includes(question.id)){
-        this.questionIdsToAdd = this.questionIdsToAdd.filter(q => q !== question.id);
-      }
-      else {
-        this.questionIdsToDelete.push(question.id);
-      }
-  }
+  // deleteTest(id: number, event: Event): void {
+  //   event.stopPropagation();
+  //   console.log("ID:" + id);
+  //   this.testsService.delete(id).subscribe(
+  //     response => {
+  //       console.log(response);
+  //       setTimeout(() => {
+  //         this.tests$ = this.testsService.getAll();
+  //       }, 1000);
+  //     },
+  //     error => {
+  //       console.log(error);
+  //     });
+  // }
+  // addQuestionToTest(question: Question, index: number){
+  //   this.testQuestions.push(question);
+  //   this.uniqueQuestions = this.uniqueQuestions.filter(q => q.id !== question.id);
+  //   if (this.questionIdsToDelete.includes(question.id)){
+  //     this.questionIdsToDelete = this.questionIdsToDelete.filter(q => q !== question.id);
+  //   }
+  //   else{
+  //     this.questionIdsToAdd.push(question.id);
+  //   }
+  // }
 
-  async saveQuestions(): Promise<void> {
-    const setsToAdd = this.questionIdsToAdd.map(questionId => {
-      return {testId: this.currentTest.id, questionId: questionId};
-    });
+  // removeQuestionFromTest(question: Question, index: number){
+  //     this.testQuestions = this.testQuestions.filter(q => q.id !== question.id);
+  //     this.uniqueQuestions.push(question);
+  //     if (this.questionIdsToAdd.includes(question.id)){
+  //       this.questionIdsToAdd = this.questionIdsToAdd.filter(q => q !== question.id);
+  //     }
+  //     else {
+  //       this.questionIdsToDelete.push(question.id);
+  //     }
+  // }
 
-    const setsToDelete = this.questionIdsToDelete.map(questionId => {
-      return {testId: this.currentTest.id, questionId: questionId};
-    });
+  // async saveQuestions(): Promise<void> {
+  //   const setsToAdd = this.questionIdsToAdd.map(questionId => {
+  //     return {testId: this.currentTest.id, questionId: questionId};
+  //   });
 
-    if (setsToAdd.length > 0){
-      await this.setService.createAll(setsToAdd).toPromise();
-    }
+  //   const setsToDelete = this.questionIdsToDelete.map(questionId => {
+  //     return {testId: this.currentTest.id, questionId: questionId};
+  //   });
 
-    if (setsToDelete.length > 0){
-      await this.setService.deleteAll(setsToDelete).toPromise();
-    }
-    this.questionIdsToAdd = [];
-    this.questionIdsToDelete = [];
-  }
+  //   if (setsToAdd.length > 0){
+  //     await this.setService.createAll(setsToAdd).toPromise();
+  //   }
 
-  openDialog(question: Question): void {
-    const dialogRef = this.dialog.open(QuestionDetailsComponent, {
-      data: {currentQuestion: question },
-      width: '80vw',
-      height: '80vh'
-    });
-    dialogRef.afterClosed();
-  }
+  //   if (setsToDelete.length > 0){
+  //     await this.setService.deleteAll(setsToDelete).toPromise();
+  //   }
+  //   this.questionIdsToAdd = [];
+  //   this.questionIdsToDelete = [];
+  // }
 
+  // openDialog(question: Question): void {
+  //   const dialogRef = this.dialog.open(QuestionDetailsComponent, {
+  //     data: {currentQuestion: question },
+  //     width: '80vw',
+  //     height: '80vh'
+  //   });
+  //   dialogRef.afterClosed();
+  // }
 }

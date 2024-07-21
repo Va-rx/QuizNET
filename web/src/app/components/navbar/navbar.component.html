@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand" *ngIf="role !== roles.NONE">
+    <a routerLink="" class="navbar-brand" routerLinkActive="active">QuizNET</a>
+    <div class="navbar-nav mr-auto">
+        <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
+            <a routerLink="tests" class="nav-link">Tests</a>
+        </li>
+        <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
+            <a routerLink="Questions" class="nav-link">Questions</a>
+        </li>
+        <li class="nav-item border-right" *ngIf="role === roles.USER" routerLinkActive="active">
+            <a routerLink="join-lobby" class="nav-link">Join Lobby</a>
+        </li>
+        <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
+            <a routerLink="create-matchmaking" class="nav-link">Schedule a test</a>
+        </li>
+        <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
+            <a routerLink="create-matchmaking" class="nav-link">Results</a>
+        </li>
+        <li class="nav-item" (click)="logout()">
+            <a routerLink="login" class="nav-link">Log out</a>
+        </li>
+    </div>
+</nav>

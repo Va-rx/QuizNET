@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../services/auth/auth.service';
-import { Role } from '../models/user.model';
+import { AuthService } from '../../services/auth/auth.service';
+import { Role } from '../../models/user.model';
 
 @Component({
   selector: 'app-navbar',
