@@ -2,7 +2,7 @@ import { Component,OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import io, { Socket } from 'socket.io-client';
 import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
-
+import { AuthService } from 'src/app/services/auth/auth.service';
 @Component({
   selector: 'app-join-lobby',
   templateUrl: './join-lobby.component.html',
@@ -13,9 +13,8 @@ export class JoinLobbyComponent {
   joinCode: string = '';
   userList: string[] = [];
   joined: boolean = false;
-  userName!:string;
 
-  constructor(private router: Router,private socketService:SocketServiceService) { }
+  constructor(private router: Router,private socketService:SocketServiceService,private auth:AuthService) { }
 
   ngOnInit(): void {
     //const joinCode = localStorage.getItem('joinCode'); //podtrzymywanie sesji, jak ktoś odświeży do z autmoatu łaczy się po starym kodzie
@@ -50,8 +49,8 @@ export class JoinLobbyComponent {
   onSubmit(): void {
     // Emit an event to the server
     console.log('Joining lobby with code: ' + this.joinCode);
-    this.socket.emit('joinByCode', this.joinCode,this.userName);
-    this.socketService.setUserId(this.userName);
+    this.socket.emit('joinByCode', this.joinCode,this.auth.getNickname());
+    this.socketService.setUserId(this.auth.getNickname());
     this.socketService.setJoinCode(this.joinCode);
     localStorage.setItem('joinCode', this.joinCode);
 

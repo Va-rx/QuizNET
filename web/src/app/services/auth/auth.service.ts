@@ -52,4 +52,11 @@ export class AuthService {
     this.userRole.next(Role.NONE);
   }
 
+  public getNickname(): string{
+    if (this.user != undefined){
+      return this.user.nickname;
+    }
+    return '';
+  }
+
 }

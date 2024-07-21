@@ -10,8 +10,6 @@
             <div class="form-group">
               <label for="joinCode">Join Code</label>
               <input type="text" class="form-control" id="joinCode" placeholder="Enter join code" [(ngModel)]="joinCode" [ngModelOptions]="{standalone: true}">
-              <label for="userName">User Name</label>
-              <input type="text" class="form-control" id="userName" placeholder="Enter user name" [(ngModel)]="userName" [ngModelOptions]="{standalone: true}">
             </div>
             <button type="submit" *ngIf="!joined" (click)="onSubmit()" class="btn btn-primary">Join Lobby</button>
           </form>
