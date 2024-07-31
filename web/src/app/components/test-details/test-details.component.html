@@ -1,6 +1,6 @@
 <div class="content">
     <div class="panel">
-        <div class="name">
+        <div class="name" (click)="showTestDescr()">
             <p> {{test.name}} </p>
         </div>
         <div class="questions">
@@ -10,7 +10,7 @@
             </div>
         </div>
     </div>
-    <div class="details">
+    <div class="details" *ngIf="selectedQuestion !== null">
         <div class="question">
             <p>
                 {{selectedQuestion.question}}
@@ -34,6 +34,25 @@
               <label for="chooseFromList" class="option-label">Choose from list</label>
             </div>
           </div>
-        
+          <div class="answers">
+            <div *ngFor="let answer of answers; let i = index">
+              <input type="text" [(ngModel)]="answers[i].text" placeholder="Enter your answer here">
+              <button [class.correct]="answers[i].isCorrect" [class.incorrect]="!answers[i].isCorrect" (click)="toggleCorrect(i)">
+              </button>
+            </div>
+            <button (click)="addAnswer()">Add answer</button>
+          </div>
+    </div>
+    <div class="details" *ngIf="selectedTestLabel === true">
+        <div class="question">
+            <p>
+                {{test.name}}
+            </p>
+        </div>
+        <div class="description">
+            <p>
+                {{test.description}}
+            </p>
+        </div>
     </div>
 </div>

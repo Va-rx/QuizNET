@@ -133,3 +133,33 @@
     color: #a57bd5;
     cursor: pointer;
 }
+
+.answers input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    outline: none;
+  }
+  
+  .answers input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .answers input:focus {
+    border-bottom: 1px solid #007BFF;
+  }
+  
+  .answers button {
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .answers button.correct {
+    background-color: green;
+  }
+  
+  .answers button.incorrect {
+    background-color: red;
+  }

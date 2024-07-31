@@ -13,7 +13,8 @@ import { SetService } from 'src/app/services/set/set.service';
 export class TestDetailsComponent implements OnInit {
   test: Test = new Test();
   questions: Question[] = [];
-  selectedQuestion: Question = new Question();
+  selectedQuestion: Question | null = null;
+  selectedTestLabel: boolean = true;
 
   isEditable = false;
 
@@ -35,9 +36,25 @@ export class TestDetailsComponent implements OnInit {
 
   selectQuestion(question: Question) {
     this.selectedQuestion = question;
+    this.selectedTestLabel = false;
+  }
+
+  showTestDescr() {
+    this.selectedQuestion = null;
+    this.selectedTestLabel = true;
   }
 
   toggleEdit() {
     this.isEditable = !this.isEditable;
   }
+
+  answers = [{ text: '', isCorrect: false }];
+
+toggleCorrect(index: number) {
+  this.answers[index].isCorrect = !this.answers[index].isCorrect;
+}
+
+addAnswer() {
+  this.answers.push({ text: '', isCorrect: false });
+}
 }
