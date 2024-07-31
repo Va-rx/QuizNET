@@ -35,7 +35,7 @@ const createTest = async (test) => {
 
 const updateTest = async (id, test) => {
     try {
-        const res = await db.query(`UPDATE tests SET name = $1, description = $2 WHERE id = $3 RETURNING *`, [test.name, test.description, id]);
+        const res = await db.query(`UPDATE tests SET name = $1, description = $2 WHERE test_id = $3 RETURNING *`, [test.name, test.description, id]);
         return res.rows[0];
     } catch (err) {
         console.log(err.message);

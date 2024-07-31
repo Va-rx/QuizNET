@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getTests, createTest, getTestById, deleteTest } = require("../database/database-queries/test-queries");
+const { getTests, createTest, getTestById, deleteTest, updateTest } = require("../database/database-queries/test-queries");
 
 router.post("/", (req, res) => {
     const newTest = req.body;
@@ -50,6 +50,20 @@ router.delete("/:id", (req, res) => {
         .catch(err => {
             res.status(500).send({
                 message: err.message || "Some error occurred while deleting the test."
+            });
+        });
+});
+
+router.put("/:id", (req, res) => {
+    const id = req.params.id;
+    const test = req.body;
+    updateTest(id, test)
+        .then(test => {
+            res.send(test);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while updating the test."
             });
         });
 });

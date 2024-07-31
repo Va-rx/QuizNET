@@ -48,7 +48,7 @@
 
       <div class="question" [ngClass]="{'editing': isEditing}">
         <p *ngIf="!isEditing; else editMode">
-          {{test.name}}
+          {{tempName}}
           <i class="bi bi-pencil" (click)="editTest()"></i>
         </p>
         <ng-template #editMode>
@@ -58,10 +58,19 @@
         </ng-template>
       </div>
 
-        <div class="description">
-            <p>
-                {{test.description}}
-            </p>
+      <div class="description" [ngClass]="{'editing': isEditingDesc}">
+        <p *ngIf="!isEditingDesc; else editModeDesc">
+          {{tempDescription}}
+          <i class="bi bi-pencil" (click)="editDesc()"></i>
+        </p>
+        <ng-template #editModeDesc>
+          <input #inputElement [(ngModel)]="tempDescription" (keydown.enter)="saveTestDescChange()" (keydown.escape)="cancelTestDescChange()"/>
+          <i class="bi bi-x" (click)="cancelTestDescChange()"></i>
+          <i class="bi bi-check2" (click)="saveTestDescChange()"></i>
+        </ng-template>
+      </div>
+        <div class="buttons">
+          <button class="saveChanges" (click)="saveChanges()">Save</button>
         </div>
     </div>
 </div>

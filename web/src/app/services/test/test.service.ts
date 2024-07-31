@@ -36,4 +36,7 @@ export class TestService {
     return this.selectedTest.asObservable();
   }
 
+  updateTest(id: number, data: any): Observable<any> {
+    return this.http.put(`${baseUrl}/${id}`, data);
+  }
 }

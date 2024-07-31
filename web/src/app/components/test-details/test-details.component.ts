@@ -20,26 +20,8 @@ export class TestDetailsComponent implements OnInit {
   isEditable = false;
   isEditing = false;
   tempName!: string;
-
-  @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
-
-  
-  editTest() {
-    this.isEditing = true;
-    this.tempName = this.test.name;
-    setTimeout(() => this.inputElement.nativeElement.focus());
-  }
-  
-  cancelTestLabelChange() {
-    this.isEditing = false;
-  }
-  
-  saveTestLabelChange() {
-    this.isEditing = false;
-    this.test.name = this.tempName;
-  }
-
-
+  isEditingDesc = false;
+  tempDescription?: string;
 
   constructor (private TestService: TestService, private QuestionService: QuestionService, private SetService: SetService) { }
 
@@ -54,6 +36,53 @@ export class TestDetailsComponent implements OnInit {
       else {
         throw new Error('Test is null');
       }
+    });
+    this.tempName = this.test.name;
+    this.tempDescription = this.test.description;
+  }
+  
+  
+
+  @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
+
+  
+  editTest() {
+    this.isEditing = true;
+    this.tempName = this.test.name;
+    setTimeout(() => this.inputElement.nativeElement.focus());
+  }
+  
+  @ViewChild('textareaElement', { static: false }) textareaElement!: ElementRef;
+  
+  editDesc() {
+    this.isEditingDesc = true;
+    this.tempDescription = this.test.description;
+    setTimeout(() => this.inputElement.nativeElement.focus());
+  }
+  
+  cancelTestDescChange() {
+    this.isEditingDesc = false;
+  }
+  
+  saveTestDescChange() {
+    this.isEditingDesc = false;
+  }
+  
+  cancelTestLabelChange() {
+    this.isEditing = false;
+  }
+  
+  saveTestLabelChange() {
+    this.isEditing = false;
+  }
+
+  saveChanges() {
+    let updatedTest: Test = new Test();
+    updatedTest.id = this.test.id;
+    updatedTest.name = this.tempName;
+    updatedTest.description = this.tempDescription;
+    this.TestService.updateTest(this.test.id, updatedTest).subscribe(() => {
+      this.test = updatedTest;
     });
   }
 
