@@ -18,14 +18,23 @@ export class TestDetailsComponent implements OnInit {
 
   isEditable = false;
   isEditing = false;
-
+  tempName!: string;
+  
   editTest() {
     this.isEditing = true;
+    this.tempName = this.test.name;
   }
-
-  saveTest() {
+  
+  cancelTestLabelChange() {
     this.isEditing = false;
   }
+  
+  saveTestLabelChange() {
+    this.isEditing = false;
+    this.test.name = this.tempName;
+  }
+
+
 
   constructor (private TestService: TestService, private QuestionService: QuestionService, private SetService: SetService) { }
 
