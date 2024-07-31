@@ -242,7 +242,7 @@ input {
 
 
   .saveChanges {
-    background-color: #4CAF50;
+    background-color: #695497;
     border: none;
     color: white;
     padding: 12px 22px;
@@ -256,7 +256,7 @@ input {
   }
   
   .saveChanges:hover {
-    background-color: #45a049;
+    background-color: #9662d2;
   }
 
   .saveChanges:disabled {
