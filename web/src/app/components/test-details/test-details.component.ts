@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { TestService } from 'src/app/services/test/test.service';
 import { Test } from 'src/app/models/test.model';
 import { Question } from 'src/app/models/question.model';
-import { QuestionService } from 'src/app/services/question/question.service';
 import { SetService } from 'src/app/services/set/set.service';
 import { ViewChild, ElementRef } from '@angular/core';
 
@@ -14,16 +13,18 @@ import { ViewChild, ElementRef } from '@angular/core';
 export class TestDetailsComponent implements OnInit {
   test: Test = new Test();
   questions: Question[] = [];
+
   selectedQuestion: Question | null = null;
   selectedTestLabel: boolean = true;
 
-  isEditable = false;
-  isEditing = false;
-  tempName!: string;
-  isEditingDesc = false;
-  tempDescription?: string;
+  isEditingTestLabel = false;
+  isEditingTestDescr = false;
+  tempLabel!: string;
+  tempDescr?: string;
+  latestTempLabel!: string;
+  latestTempDescr?: string;
 
-  constructor (private TestService: TestService, private QuestionService: QuestionService, private SetService: SetService) { }
+  constructor (private TestService: TestService, private SetService: SetService) { }
 
   ngOnInit() {
     this.TestService.getSelectedTest().subscribe(test => {
@@ -37,50 +38,50 @@ export class TestDetailsComponent implements OnInit {
         throw new Error('Test is null');
       }
     });
-    this.tempName = this.test.name;
-    this.tempDescription = this.test.description;
+    this.tempLabel = this.test.name;
+    this.tempDescr = this.test.description;
+    this.latestTempLabel = this.test.name;
+    this.latestTempDescr = this.test.description;
   }
   
-  
-
   @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
 
   
-  editTest() {
-    this.isEditing = true;
-    this.tempName = this.test.name;
+  editTestLabel() {
+    this.isEditingTestLabel = true;
     setTimeout(() => this.inputElement.nativeElement.focus());
   }
   
-  @ViewChild('textareaElement', { static: false }) textareaElement!: ElementRef;
-  
-  editDesc() {
-    this.isEditingDesc = true;
-    this.tempDescription = this.test.description;
+  editTestDescr() {
+    this.isEditingTestDescr = true;
     setTimeout(() => this.inputElement.nativeElement.focus());
   }
   
-  cancelTestDescChange() {
-    this.isEditingDesc = false;
+  cancelTestDescrChange() {
+    this.isEditingTestDescr = false;
+    this.tempDescr = this.latestTempDescr;
   }
   
-  saveTestDescChange() {
-    this.isEditingDesc = false;
+  saveTestDescrChange() {
+    this.isEditingTestDescr = false;
+    this.latestTempDescr = this.tempDescr;
   }
   
   cancelTestLabelChange() {
-    this.isEditing = false;
+    this.isEditingTestLabel = false;
+    this.tempLabel = this.latestTempLabel;
   }
   
   saveTestLabelChange() {
-    this.isEditing = false;
+    this.isEditingTestLabel = false;
+    this.latestTempLabel = this.tempLabel;
   }
 
   saveChanges() {
     let updatedTest: Test = new Test();
     updatedTest.id = this.test.id;
-    updatedTest.name = this.tempName;
-    updatedTest.description = this.tempDescription;
+    updatedTest.name = this.tempLabel;
+    updatedTest.description = this.tempDescr;
     this.TestService.updateTest(this.test.id, updatedTest).subscribe(() => {
       this.test = updatedTest;
     });
@@ -94,10 +95,6 @@ export class TestDetailsComponent implements OnInit {
   showTestDescr() {
     this.selectedQuestion = null;
     this.selectedTestLabel = true;
-  }
-
-  toggleEdit() {
-    this.isEditable = !this.isEditable;
   }
 
   answers = [{ text: '', isCorrect: false }];

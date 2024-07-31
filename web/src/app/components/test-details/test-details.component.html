@@ -10,6 +10,36 @@
             </div>
         </div>
     </div>
+
+    <div class="details" *ngIf="selectedTestLabel === true">
+      <div class="question" [ngClass]="{'editing': isEditingTestLabel}">
+        <p *ngIf="!isEditingTestLabel; else editMode">
+          {{tempLabel}}
+          <i class="bi bi-pencil" (click)="editTestLabel()"></i>
+        </p>
+        <ng-template #editMode>
+          <input #inputElement [(ngModel)]="tempLabel" (keydown.enter)="saveTestLabelChange()" (keydown.escape)="cancelTestLabelChange()"/>
+          <i class="bi bi-x" (click)="cancelTestLabelChange()"></i>
+          <i class="bi bi-check2" (click)="saveTestLabelChange()"></i>
+        </ng-template>
+      </div>
+
+      <div class="description" [ngClass]="{'editing': isEditingTestDescr}">
+        <p *ngIf="!isEditingTestDescr; else editModeDesc">
+          {{tempDescr}}
+          <i class="bi bi-pencil" (click)="editTestDescr()"></i>
+        </p>
+        <ng-template #editModeDesc>
+          <input #inputElement [(ngModel)]="tempDescr" (keydown.enter)="saveTestDescrChange()" (keydown.escape)="cancelTestDescrChange()"/>
+          <i class="bi bi-x" (click)="cancelTestDescrChange()"></i>
+          <i class="bi bi-check2" (click)="saveTestDescrChange()"></i>
+        </ng-template>
+      </div>
+        <div class="buttons">
+          <button class="saveChanges" (click)="saveChanges()">Save</button>
+        </div>
+    </div>
+
     <div class="details" *ngIf="selectedQuestion !== null">
         <div class="question">
             <p>
@@ -42,35 +72,5 @@
             </div>
             <button (click)="addAnswer()">Add answer</button>
           </div>
-    </div>
-
-    <div class="details" *ngIf="selectedTestLabel === true">
-
-      <div class="question" [ngClass]="{'editing': isEditing}">
-        <p *ngIf="!isEditing; else editMode">
-          {{tempName}}
-          <i class="bi bi-pencil" (click)="editTest()"></i>
-        </p>
-        <ng-template #editMode>
-          <input #inputElement [(ngModel)]="tempName" (keydown.enter)="saveTestLabelChange()" (keydown.escape)="cancelTestLabelChange()"/>
-          <i class="bi bi-x" (click)="cancelTestLabelChange()"></i>
-          <i class="bi bi-check2" (click)="saveTestLabelChange()"></i>
-        </ng-template>
-      </div>
-
-      <div class="description" [ngClass]="{'editing': isEditingDesc}">
-        <p *ngIf="!isEditingDesc; else editModeDesc">
-          {{tempDescription}}
-          <i class="bi bi-pencil" (click)="editDesc()"></i>
-        </p>
-        <ng-template #editModeDesc>
-          <input #inputElement [(ngModel)]="tempDescription" (keydown.enter)="saveTestDescChange()" (keydown.escape)="cancelTestDescChange()"/>
-          <i class="bi bi-x" (click)="cancelTestDescChange()"></i>
-          <i class="bi bi-check2" (click)="saveTestDescChange()"></i>
-        </ng-template>
-      </div>
-        <div class="buttons">
-          <button class="saveChanges" (click)="saveChanges()">Save</button>
-        </div>
     </div>
 </div>
