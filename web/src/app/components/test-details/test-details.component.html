@@ -52,7 +52,7 @@
           <i class="bi bi-pencil" (click)="editTest()"></i>
         </p>
         <ng-template #editMode>
-          <input [(ngModel)]="tempName"/>
+          <input #inputElement [(ngModel)]="tempName" (keydown.enter)="saveTestLabelChange()" (keydown.escape)="cancelTestLabelChange()"/>
           <i class="bi bi-x" (click)="cancelTestLabelChange()"></i>
           <i class="bi bi-check2" (click)="saveTestLabelChange()"></i>
         </ng-template>

@@ -4,6 +4,7 @@ import { Test } from 'src/app/models/test.model';
 import { Question } from 'src/app/models/question.model';
 import { QuestionService } from 'src/app/services/question/question.service';
 import { SetService } from 'src/app/services/set/set.service';
+import { ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-test-details',
@@ -19,10 +20,14 @@ export class TestDetailsComponent implements OnInit {
   isEditable = false;
   isEditing = false;
   tempName!: string;
+
+  @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
+
   
   editTest() {
     this.isEditing = true;
     this.tempName = this.test.name;
+    setTimeout(() => this.inputElement.nativeElement.focus());
   }
   
   cancelTestLabelChange() {
