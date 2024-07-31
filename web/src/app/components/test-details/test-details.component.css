@@ -258,3 +258,9 @@ input {
   .saveChanges:hover {
     background-color: #45a049;
   }
+
+  .saveChanges:disabled {
+    background-color: #626c76;
+    cursor: not-allowed;
+    transition-duration: 0.3s;
+  }

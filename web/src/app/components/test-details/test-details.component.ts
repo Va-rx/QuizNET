@@ -97,6 +97,10 @@ export class TestDetailsComponent implements OnInit {
     this.selectedTestLabel = true;
   }
 
+  areNewChanges() {
+    return this.tempLabel !== this.test.name|| this.tempDescr !== this.test.description;
+  }
+
   answers = [{ text: '', isCorrect: false }];
 
 toggleCorrect(index: number) {

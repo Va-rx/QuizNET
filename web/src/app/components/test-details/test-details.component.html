@@ -36,7 +36,7 @@
         </ng-template>
       </div>
         <div class="buttons">
-          <button class="saveChanges" (click)="saveChanges()">Save</button>
+          <button class="saveChanges" (click)="saveChanges()" [disabled]="!areNewChanges()">Save</button>
         </div>
     </div>
 
