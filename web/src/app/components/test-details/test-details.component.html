@@ -43,12 +43,21 @@
             <button (click)="addAnswer()">Add answer</button>
           </div>
     </div>
+
     <div class="details" *ngIf="selectedTestLabel === true">
-        <div class="question">
-            <p>
-                {{test.name}}
-            </p>
-        </div>
+
+      <div class="question" [ngClass]="{'editing': isEditing}">
+        <p *ngIf="!isEditing; else editMode">
+          {{test.name}}
+          <i class="bi bi-pencil" (click)="editTest()"></i>
+        </p>
+        <ng-template #editMode>
+          <input [(ngModel)]="test.name"/>
+          <i class="bi bi-x"></i>
+          <i class="bi bi-check2"></i>
+        </ng-template>
+      </div>
+
         <div class="description">
             <p>
                 {{test.description}}

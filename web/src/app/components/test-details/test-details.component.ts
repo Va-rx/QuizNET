@@ -17,6 +17,15 @@ export class TestDetailsComponent implements OnInit {
   selectedTestLabel: boolean = true;
 
   isEditable = false;
+  isEditing = false;
+
+  editTest() {
+    this.isEditing = true;
+  }
+
+  saveTest() {
+    this.isEditing = false;
+  }
 
   constructor (private TestService: TestService, private QuestionService: QuestionService, private SetService: SetService) { }
 
