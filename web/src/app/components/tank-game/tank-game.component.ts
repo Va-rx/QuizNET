@@ -57,7 +57,8 @@ export class TankGameComponent implements OnInit {
 
   ngOnInit() {
     this.socket=this.socketService.getSocket();
-    this.testID= this.route.snapshot.params["id"];
+    //this.testID= this.route.snapshot.params["id"];
+    this.testID=history.state.data;
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.get(this.testID).subscribe((data) => {
       this.questions = data;
@@ -65,6 +66,7 @@ export class TankGameComponent implements OnInit {
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
       this.phaserGame.pause();
+
       const dialogRef = this.dialog.open(QuestionViewComponent, {
         data: { id: this.questions[this.currentLevel].id },
         disableClose: true
@@ -76,8 +78,11 @@ export class TankGameComponent implements OnInit {
         this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
         //resume game
         this.phaserGame.resume();
-        if(this.currentLevel==this.maxLevel){
+        if(this.currentLevel==1){
           console.log("Game Over");
+          this.playerScore+=this.phaserGame.scene.getScene("default")["bonus"];
+          this.playerScore=Math.round(this.playerScore * 100) / 100;
+          this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
           this.phaserGame.destroy(true);
           this.gameFinished=true;
         }

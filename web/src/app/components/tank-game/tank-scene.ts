@@ -86,6 +86,7 @@ class EnemyTurret {
 
   updateHealthBar() {
     if (this.health <= 0) {
+      this.game.turretsKilled+=1;
       this.turret.destroy();
       this.healthBar.clear();
       //destroy whole object
@@ -206,14 +207,18 @@ class Checkpoint {
 
 
 export default class Tanks extends Phaser.Scene {
-
+  turretsKilled=0;
+  pickupsFound=0;
+  allTurrets=0;
+  allPickups=0;
+  bonus=0;
   vec;
   keys;
   tankTurret;
   tankBody;
   currentSpeed = 0;
   bullets; //player bullets group
-  fireRate = 1000;
+  fireRate = 500;
   nextFire = 0;
   testEnemyTurret;
   cursors;
@@ -411,13 +416,16 @@ export default class Tanks extends Phaser.Scene {
 
     this.reloadTimerGraphics = this.scene.get("UIScene").add.graphics();
     this.updateReloadTimer(1);
+
+    this.allTurrets=this.enemyTurrets.length;
   }
 
 
 
   override update() {
-    if(this.reloadTimer+0.02<=1){
-      this.reloadTimer+=0.02;
+    this.bonus=this.calculateBonus();
+    if(this.reloadTimer+0.04<=1){
+      this.reloadTimer+=0.04;
       this.updateReloadTimer(this.reloadTimer);
     }else{
       this.updateReloadTimer(1);
@@ -442,6 +450,7 @@ export default class Tanks extends Phaser.Scene {
     const max_audio_rate=1;
 
     if (this.input.activePointer.isDown) {
+      console.log(this.calculateBonus())
       this.playerFire();
     }
 
@@ -525,6 +534,11 @@ export default class Tanks extends Phaser.Scene {
 
 
 
+  }
+
+  calculateBonus(){
+    const result=(this.pickupsFound+this.turretsKilled)/(this.allPickups+this.allTurrets)
+    return result
   }
 
   updateReloadTimer(percentage) {
@@ -623,6 +637,7 @@ export default class Tanks extends Phaser.Scene {
           if (bodyA.gameObject.name == 'ammo' && bodyB.gameObject.label == 'tankPlayer' || bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.name == 'ammo') {
             //console.log('Player collided with ammo');
             this.addAmmo();
+            this.pickupsFound+=1;
             if (bodyA.gameObject.label != 'tankPlayer') {
               bodyA.gameObject.destroy();
             }
@@ -633,6 +648,7 @@ export default class Tanks extends Phaser.Scene {
         }
       });
     });
+    this.allPickups+=cords.length;
     //Health pickups
     cords = [ [400, 430],[500, 450],[1477, 153],[2582,739],[2964,276],[3832,585],[1477+offset, 153],[2582+offset,739],[2964+offset,276],[3832+offset,585]];
     cords.forEach(cord => {
@@ -645,6 +661,7 @@ export default class Tanks extends Phaser.Scene {
           if (bodyA.gameObject.name == 'health' && bodyB.gameObject.label == 'tankPlayer' || bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.name == 'health') {
             //console.log('Player collided with health');
             this.addHealth();
+            this.pickupsFound+=1;
             if (bodyA.gameObject.label != 'tankPlayer') {
               bodyA.gameObject.destroy();
             }
@@ -655,7 +672,7 @@ export default class Tanks extends Phaser.Scene {
         }
       });
     });
-
+    this.allPickups+=cords.length;
   }
 
 
