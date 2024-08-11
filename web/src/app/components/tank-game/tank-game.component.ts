@@ -32,8 +32,8 @@ export class TankGameComponent implements OnInit {
     this.config = {
       type: Phaser.AUTO,
     //height as window
-      height: Math.min(window.innerHeight-100,800),
-      width: window.innerWidth-300,
+      height: Math.min(window.innerHeight-80,800),
+      width: window.innerWidth,
       physics: {
         default: 'matter',
         matter: {

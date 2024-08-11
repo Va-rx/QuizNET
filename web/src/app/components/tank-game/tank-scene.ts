@@ -13,7 +13,11 @@ class EnemyTurret {
   health = 100;
   healthBar;
   emptyBody;
+  enemyShot;
   disabled = false;
+
+
+
   constructor(index, game, player, x, y,range) {
     this.range = range;
     this.x = x + game.cameras.main.scrollX;
@@ -24,6 +28,9 @@ class EnemyTurret {
     //graphics.strokeCircleShape(circle);
     ///
 
+    this.enemyShot=game.sound.add('enemyShot',{
+      volume:0.1
+    })
     this.game = game;
     this.index = index;
     this.player = player;
@@ -65,7 +72,12 @@ class EnemyTurret {
         }
       }
     }
+
+    // Create circular reload timer
+
+
   }
+
 
   drawHealthBar() {
     this.healthBar = this.game.add.graphics();
@@ -106,6 +118,7 @@ class EnemyTurret {
   fire() {
     if (!this.disabled) {
       if (this.game.time.now > this.nextFire && this.canFire(this.player.x, this.player.y)) {
+        this.enemyShot.play();
         this.turret.anims.play('shoot', true);
         this.nextFire = this.game.time.now + this.fireRate;
         //var bullet = this.bullets.getFirst();
@@ -175,8 +188,12 @@ class Checkpoint {
 
             //emit level complete event
             if(!this.finsihsed){
+              this.game.tankSound.pause()
+              this.game.tankSound.play()
+            this.game.tankSound.volume=0.1;
             this.game.events.emit('levelComplete', this.id);
             this.game.game.events.emit('levelCompleted_SpawnQuestion', this.id);
+
             }
             this.finsihsed = true;
             this.game.matter.world.remove(this.checkpoint);
@@ -196,7 +213,7 @@ export default class Tanks extends Phaser.Scene {
   tankBody;
   currentSpeed = 0;
   bullets; //player bullets group
-  fireRate = 200;
+  fireRate = 1000;
   nextFire = 0;
   testEnemyTurret;
   cursors;
@@ -206,8 +223,14 @@ export default class Tanks extends Phaser.Scene {
   ammoText;
   deaths = 0;
   enemyTurrets:EnemyTurret[]=[];
-
+  tankSound;
+  tankShot;
+  reloadTimerGraphics;
+  reloadTimer=0;
   preload() {
+    this.load.audio('tankRiding', 'assets/games/tankgame/sounds/engine_heavy_loop.ogg');
+    this.load.audio('tankShot', 'assets/games/tankgame/sounds/heavy_canon.ogg');
+    this.load.audio('enemyShot', 'assets/games/tankgame/sounds/heavy_canon.ogg');
     this.load.tilemapTiledJSON('map', 'assets/games/tankgame/MAP/tanktest.json');
     this.load.spritesheet('terrain', 'assets/games/tankgame/Terrains/terrain.png', { frameWidth: 32, frameHeight: 32 });
     this.load.image('tankBody', 'assets/games/tankgame/Camo/Bodies/body_tracks.png');
@@ -220,6 +243,15 @@ export default class Tanks extends Phaser.Scene {
   }
 
   create() {
+    this.tankSound = this.sound.add('tankRiding', {
+      loop: true,
+      volume: 0.5,
+      rate: 0.5,
+  });
+  this.tankShot=this.sound.add('tankShot',{
+    volume:1
+  })
+
     //console.log(this.scene);
     if (this.input.keyboard) {
       this.keys = this.input.keyboard.addKeys('W,S,A,D');
@@ -305,7 +337,7 @@ export default class Tanks extends Phaser.Scene {
     this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody,1502, 590, 300));
     this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody,1757, 240, 300));
     this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody,1760, 430, 300));
-    this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody,2015, 493, 3000));
+    this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody,2015, 493, 300));
     new Checkpoint(2109, 675,this,2,this.tankBody);
     ////////////////////LEVEL 3///////////////////////////////
     this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319, 190, 300));
@@ -331,7 +363,7 @@ export default class Tanks extends Phaser.Scene {
     this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody,1502+offset, 590, 300));
     this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody,1757+offset, 240, 300));
     this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody,1760+offset, 430, 300));
-    this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody,2015+offset, 493, 3000));
+    this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody,2015+offset, 493, 300));
     new Checkpoint(2109+offset, 675,this,6,this.tankBody);
     ////////////////////LEVEL 7///////////////////////////////
     this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319+offset, 190, 300));
@@ -374,15 +406,25 @@ export default class Tanks extends Phaser.Scene {
 
 
     window.addEventListener('resize', this.onWindowResize.bind(this));
+    this.tankSound.play();
 
+
+    this.reloadTimerGraphics = this.scene.get("UIScene").add.graphics();
+    this.updateReloadTimer(1);
   }
 
 
 
   override update() {
+    if(this.reloadTimer+0.02<=1){
+      this.reloadTimer+=0.02;
+      this.updateReloadTimer(this.reloadTimer);
+    }else{
+      this.updateReloadTimer(1);
+    }
+    //console.log(this.tankSound.rate,this.tankSound.volume)
     this.tankTurret.x = this.tankBody.x;
     this.tankTurret.y = this.tankBody.y;
-
     //this.testEnemyTurret.update();
     //this.testEnemyTurret.fire();
     this.enemyTurrets.forEach(turret => {
@@ -394,6 +436,10 @@ export default class Tanks extends Phaser.Scene {
     const point2 = this.tankBody.getBottomRight();
     const speed = 3;
     const angle = this.vec.angle(point1, point2);
+    const idle_audio_rate=0.5;
+    const idle_audio_volume=0.5;
+    const max_audio_volume=1;
+    const max_audio_rate=1;
 
     if (this.input.activePointer.isDown) {
       this.playerFire();
@@ -401,15 +447,34 @@ export default class Tanks extends Phaser.Scene {
 
     if (this.keys.W.isDown) {
       this.tankBody.thrust(speed);
+      if(this.tankSound.rate<max_audio_rate){
+        this.tankSound.rate+=0.01
+      }
+      if(this.tankSound.volume<max_audio_volume){
+        this.tankSound.volume+=0.01
+      }
     }
     else if (this.keys.S.isDown) {
       this.tankBody.thrustBack(speed);
-
+      if(this.tankSound.rate<max_audio_rate){
+        this.tankSound.rate+=0.01
+      }
+      if(this.tankSound.volume<max_audio_volume){
+        this.tankSound.volume+=0.01
+      }
       if (this.keys.A.isDown) {
         this.tankBody.rotation += 0.05;
       }
       else if (this.keys.D.isDown) {
         this.tankBody.rotation -= 0.05;
+      }
+    }
+    else{
+      if(this.tankSound.rate>idle_audio_rate){
+        this.tankSound.rate-=0.01
+      }
+      if(this.tankSound.volume>idle_audio_volume){
+        this.tankSound.volume-=0.01
       }
     }
     if (this.keys.A.isDown && !this.keys.S.isDown) {
@@ -421,7 +486,7 @@ export default class Tanks extends Phaser.Scene {
 
 
 
-    this.matter.overlap(this.tankBody.body, undefined, (bodyA: any, bodyB: any) => {//potencjalny problem z pamiecia jak pocisk nie trafi w czolg to sie nie usuwa
+    this.matter.overlap(this.tankBody.body, undefined, (bodyA: any, bodyB: any) => {
       if (bodyA.gameObject && bodyB.gameObject) {
         if ((bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.label == 'bullet') ||
           (bodyA.gameObject.label == 'bullet' && bodyB.gameObject.label == 'tankPlayer')) {
@@ -462,13 +527,44 @@ export default class Tanks extends Phaser.Scene {
 
   }
 
+  updateReloadTimer(percentage) {
+    const radius = 30; // Radius of the circular timer
+    const thickness = 6; // Thickness of the circular timer
+    const x_cord=50;
+    const y_cord=100;
+    // Clear previous graphics
+    this.reloadTimerGraphics.clear();
+
+    // Draw the background circle (full circle)
+    this.reloadTimerGraphics.lineStyle(thickness, 0x000000, 0.5);
+    this.reloadTimerGraphics.beginPath();
+    this.reloadTimerGraphics.arc(x_cord, y_cord - 50, radius, 0, Phaser.Math.DegToRad(360), false);
+    this.reloadTimerGraphics.strokePath();
+
+    // Draw the foreground circle (progress arc)
+    this.reloadTimerGraphics.lineStyle(thickness, 0x00ff00, 1);
+    this.reloadTimerGraphics.beginPath();
+    this.reloadTimerGraphics.arc(
+      x_cord,
+      y_cord - 50,
+      radius,
+      Phaser.Math.DegToRad(-90),
+      Phaser.Math.DegToRad(-90 + 360 * percentage),
+      false
+    );
+    this.reloadTimerGraphics.strokePath();
+  }
+
   onWindowResize() {
     //change size of game
-    this.game.scale.resize(window.innerWidth-300,  Math.min(window.innerHeight-100,800));
+    this.game.scale.resize(window.innerWidth,  Math.min(window.innerHeight-80,800));
   }
 
   playerFire() {
     if (this.time.now > this.nextFire) {
+      this.tankShot.play()
+      this.reloadTimer=0;
+      this.updateReloadTimer(0);
       this.playerAmmo--;
       this.events.emit('updateAmmo', this.playerAmmo);
       this.nextFire = this.time.now + this.fireRate;
