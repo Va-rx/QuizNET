@@ -1,5 +1,6 @@
 const db = require('../database-connection');
 const allColumns = "test_id as id, name, description";
+const {deleteSetBySetId} = require("./set-queries");
 
 const getTests = async () => {
     try {
@@ -44,6 +45,15 @@ const updateTest = async (id, test) => {
 
 const deleteTest = async (id) => {
     try {
+        const res1 = await db.query(`SELECT set_id FROM sets WHERE test_id = $1`, [id]); // pytanie zostaje dalej w bazie, tylko set usuwane
+        console.log(res1);
+        console.log("DZIALA");
+        if (res1.rowCount > 0) {
+            res1.rows.forEach(rows => {
+                deleteSetBySetId(rows.set_id);
+            })
+        }
+
         const res = await db.query(`DELETE FROM tests WHERE test_id = $1`, [id]);
         return res.rows[0];
     } catch (err) {

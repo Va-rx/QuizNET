@@ -192,9 +192,13 @@ addAnswer() {
 
   async deleteQuestion() {    
     if (this.selectedQuestion !== null) {
-      console.log("works");
-
       await this.QuestionService.delete(this.selectedQuestion.id).subscribe();
+    }
+  }
+
+  async deleteTest() {
+    if (this.test !== null) {
+      await this.TestService.delete(this.test.id).subscribe();
     }
   }
 }
