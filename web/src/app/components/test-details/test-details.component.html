@@ -37,7 +37,7 @@
         </ng-template>
       </div>
         <div class="buttons">
-          <button class="deleteQuestion" (click)="deleteTest()">Delete</button>
+          <button class="deleteQuestion" (click)="deleteTest()">Delete test</button>
           <button class="saveChanges" (click)="saveChanges()" [disabled]="!areNewChanges()">Save</button>
         </div>
     </div>
@@ -79,11 +79,12 @@
                 'bi bi-check-square-fill': tempAnswers[i].isCorrect,
                 'bi bi-x-square-fill': !tempAnswers[i].isCorrect
               }" (click)="toggleCorrect(i)"></i>
+              <i class="bi bi-trash-fill" (click)="deleteAnswer(i)"></i>
             </div>
             <button (click)="addAnswer()">Add answer</button>
           </div>
           <div class="buttons">
-            <button class="deleteQuestion" (click)="deleteQuestion()">Delete</button>
+            <button class="deleteQuestion" (click)="deleteQuestion()">Delete question</button>
             <button class="saveChanges" (click)="saveAnswerChanges()" [disabled]="!areNewAnswerChanges()">Save</button>
           </div>
     </div>

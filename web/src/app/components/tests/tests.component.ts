@@ -36,6 +36,16 @@ export class TestsComponent implements OnInit{
     this.testsService.selectTest(test);
   }
 
+  async createNewTest() {
+    console.log("hmm2");
+    
+    let test = new Test();
+    test.description = "";
+    test.name = "";
+    await this.testsService.create(test).subscribe();
+    this.tests$ = this.testsService.getAll();
+  }
+
   // setActiveTest(test: Test, index: number): void {
   //   this.currentTest = test;
   //   this.currentIndex = index;

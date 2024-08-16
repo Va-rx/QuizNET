@@ -21,6 +21,8 @@ export class TestService {
   }
 
   create(data: any): Observable<any> {
+    console.log("works");
+    
     return this.http.post<Test>(baseUrl, data);
   }
 

@@ -201,6 +201,10 @@ addAnswer() {
       await this.TestService.delete(this.test.id).subscribe();
     }
   }
+
+  async deleteAnswer(id: number) {
+    this.tempAnswers.splice(id, 1);
+  }
 }
 
 function areArraysEqual(arr1: any[], arr2: any[]): boolean {
