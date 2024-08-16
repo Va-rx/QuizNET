@@ -20,9 +20,7 @@ export class TestService {
     return this.http.get<Test[]>(baseUrl);
   }
 
-  create(data: any): Observable<any> {
-    console.log("works");
-    
+  create(data: any): Observable<any> {    
     return this.http.post<Test>(baseUrl, data);
   }
 

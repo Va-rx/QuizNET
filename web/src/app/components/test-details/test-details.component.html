@@ -4,12 +4,12 @@
             <p> {{test.name}} </p>
         </div>
         <div class="questions">
-            <div class="question" *ngFor="let question of questions"
+            <div class="question" *ngFor="let question of tempQuestions"
             (click)="selectQuestion(question)"> 
                 <p> {{question.question}} </p>
             </div>
         </div>
-        <button class="add-question-btn">+</button>
+        <button class="add-question-btn" (click)="addQuestion()">+</button>
     </div>
 
     <div class="details" *ngIf="selectedTestLabel === true">

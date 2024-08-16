@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TestService } from 'src/app/services/test/test.service';
-import { Test } from 'src/app/models/test.model';
+import { Test} from 'src/app/models/test.model';
+import { Set } from 'src/app/models/set.model';
 import { Answer, Question } from 'src/app/models/question.model';
 import { SetService } from 'src/app/services/set/set.service';
 import { ViewChild, ElementRef } from '@angular/core';
@@ -14,6 +15,7 @@ import { AnswerService } from 'src/app/services/answer/answer.service';
 })
 export class TestDetailsComponent implements OnInit {
   test: Test = new Test();
+  tempQuestions: Question[] = [];
   questions: Question[] = [];
   answersToSelectedQuestion: Answer[] = [];
 
@@ -41,6 +43,7 @@ export class TestDetailsComponent implements OnInit {
         this.test = test;
         this.SetService.getQuestionsByTestId(this.test.id).subscribe(questions => {
           this.questions = questions;
+          this.tempQuestions = JSON.parse(JSON.stringify(this.questions));
         });
       }
       else {
@@ -149,15 +152,21 @@ addAnswer() {
 
 
 
-  async saveAnswerChanges(): Promise<void> {    
-    // let updatedQuestion: Question | null = new Question();
-    // updatedQuestion.id = this.selectedQuestion?.id;
-    // updatedQuestion.image_link = this.selectedQuestion?.image_link;
-    // updatedQuestion.question = this.tempQuestion;
-    // updatedQuestion.answers = this.tempAnswers;
-    
-    // console.log(updatedQuestion);
-    // console.log(this.selectedQuestion);
+  async saveAnswerChanges(): Promise<void> {
+    if (this.tempQuestions.length !== this.questions.length) {
+      this.tempQuestions[this.tempQuestions.length - 1].question = this.tempQuestion;
+      this.tempQuestions[this.tempQuestions.length - 1].answers = this.tempAnswers;
+      console.log("creating");
+      
+      this.QuestionService.create(this.tempQuestions[this.tempQuestions.length - 1]).toPromise();
+      let set = new Set();
+      set.questionId = this.tempQuestions[this.tempQuestions.length - 1].id
+      set.testId = this.test.id;
+      this.SetService.create(set).toPromise();
+      return;
+    }
+
+
     if (this.selectedQuestion !== null) {
       this.selectedQuestion.question = this.tempQuestion;
       this.selectedQuestion.answers = this.tempAnswers;
@@ -165,32 +174,16 @@ addAnswer() {
       
       await this.QuestionService.update(this.selectedQuestion.id, this.selectedQuestion).toPromise();
     }
-
-    
-    
-    // if (this.tempAnswers.length !== this.answersToSelectedQuestion.length) {
-      
-    // }
   }
-
-  //   this.QuestionService.update(updatedQuestion.id, updatedQuestion).subscribe(() => {
-  //     this.questions.forEach(function (val) {
-  //       if (quest !== null && val.id === quest.id) {
-  //         val.question = updatedQuestion.question;
-  //         val.answers = updatedQuestion.answers;
-  //       }
-  //     });
-  //     this.selectedQuestion = updatedQuestion;
-  //   }, error => {
-  //     alert('Error while updating question' + error.message);
-  //   });
-  // }
 
   areNewAnswerChanges() { 
     return this.tempQuestion !== this.selectedQuestion?.question || !areArraysEqual(this.tempAnswers, this.answersToSelectedQuestion);
   }
 
   async deleteQuestion() {    
+    if (this.tempQuestions.length +1 === this.questions.length) {
+      this.tempQuestions = this.questions;
+    }
     if (this.selectedQuestion !== null) {
       await this.QuestionService.delete(this.selectedQuestion.id).subscribe();
     }
@@ -204,6 +197,11 @@ addAnswer() {
 
   async deleteAnswer(id: number) {
     this.tempAnswers.splice(id, 1);
+  }
+
+  addQuestion() {
+    let question = new Question();
+    this.tempQuestions.push(question);
   }
 }
 
