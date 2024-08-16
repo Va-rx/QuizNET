@@ -45,6 +45,7 @@ export class QuestionService {
     if (data.image_link) {
       formData.append('image_link', data.image_link);
     }
+    console.log(data);
     return this.http.put(`${baseUrl}/${id}`, formData);
   }
 

@@ -36,6 +36,7 @@ export class QuestionDetailsComponent implements OnInit {
   }
   async updateQuestion(): Promise<void> {
     this.message = '';
+    console.log(this.currentQuestion);
     await this.questionService.update(this.currentQuestion.id, this.currentQuestion).toPromise();
 
     this._snackBar.open('Question save successfully')
@@ -52,7 +53,7 @@ export class QuestionDetailsComponent implements OnInit {
       });
   }
 
-  addAnswer(): void {
+  addAnswer(): void {    
     this.currentQuestion.answers?.push({ answer: '', isCorrect: false, questionId: this.currentQuestion.id });
   }
 

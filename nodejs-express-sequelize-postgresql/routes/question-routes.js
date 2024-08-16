@@ -83,6 +83,7 @@ router.post("/", upload.single('image_link'), (req, res) => {
 });
   
 router.put("/:id", upload.single('image_link'), (req, res) => {
+    console.log("halo");
     const id = req.params.id;
     const updatedQuestion = req.body;
     updatedQuestion.image_link = req.file ? req.file.buffer : null;

@@ -9,6 +9,7 @@
                 <p> {{question.question}} </p>
             </div>
         </div>
+        <button class="add-question-btn">+</button>
     </div>
 
     <div class="details" *ngIf="selectedTestLabel === true">
@@ -41,10 +42,16 @@
     </div>
 
     <div class="details" *ngIf="selectedQuestion !== null">
-        <div class="question">
-            <p>
-                {{selectedQuestion.question}}
+        <div class="question" [ngClass]="{'editing': isEditingTestQuestion}">
+            <p *ngIf="!isEditingTestQuestion; else editMode">
+                {{tempQuestion}}
+                <i class="bi bi-pencil" (click)="editTestQuestion()"></i>
             </p>
+            <ng-template #editMode>
+                <input #inputElement [(ngModel)]="tempQuestion" (keydown.enter)="saveTestQuestionChange()" (keydown.escape)="cancelTestQuestionChange()"/>
+                <i class="bi bi-x" (click)="cancelTestQuestionChange()"></i>
+                <i class="bi bi-check2" (click)="saveTestQuestionChange()"></i>
+            </ng-template>
         </div>
         <div class="options">
             <div class="option">
@@ -65,12 +72,18 @@
             </div>
           </div>
           <div class="answers">
-            <div *ngFor="let answer of answers; let i = index">
-              <input type="text" [(ngModel)]="answers[i].text" placeholder="Enter your answer here">
-              <button [class.correct]="answers[i].isCorrect" [class.incorrect]="!answers[i].isCorrect" (click)="toggleCorrect(i)">
-              </button>
+            <div class="answer" *ngFor="let answer of tempAnswers let i = index">
+              <input type="text" [(ngModel)]="tempAnswers[i].answer" placeholder="Enter your answer here">
+              <i [ngClass]="{
+                'bi bi-check-square-fill': tempAnswers[i].isCorrect,
+                'bi bi-x-square-fill': !tempAnswers[i].isCorrect
+              }" (click)="toggleCorrect(i)"></i>
             </div>
             <button (click)="addAnswer()">Add answer</button>
+          </div>
+          <div class="buttons">
+            <button class="deleteQuestion" (click)="deleteQuestion()">Delete</button>
+            <button class="saveChanges" (click)="saveAnswerChanges()" [disabled]="!areNewAnswerChanges()">Save</button>
           </div>
     </div>
 </div>
