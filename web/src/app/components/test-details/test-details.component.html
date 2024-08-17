@@ -1,10 +1,10 @@
 <div class="content">
     <div class="panel">
-        <div class="name" (click)="showTestDescr()">
+        <div class="name" (click)="showTestDetails()">
             <p> {{test.name}} </p>
         </div>
         <div class="questions">
-            <div class="question" *ngFor="let question of tempQuestions"
+            <div class="question" *ngFor="let question of questions"
             (click)="selectQuestion(question)"> 
                 <p> {{question.question}} </p>
             </div>
@@ -12,37 +12,36 @@
         <button class="add-question-btn" (click)="addQuestion()">+</button>
     </div>
 
-    <div class="details" *ngIf="selectedTestLabel === true">
+    <div class="details" *ngIf="selectedTestDetails === true">
       <div class="question" [ngClass]="{'editing': isEditingTestLabel}">
-        <p *ngIf="!isEditingTestLabel; else editMode">
-          {{tempLabel}}
+        <p *ngIf="!isEditingTestLabel; else labelEditMode">
+          {{testTempLabel}}
           <i class="bi bi-pencil" (click)="editTestLabel()"></i>
         </p>
-        <ng-template #editMode>
-          <input #inputElement [(ngModel)]="tempLabel" (keydown.enter)="saveTestLabelChange()" (keydown.escape)="cancelTestLabelChange()"/>
+        <ng-template #labelEditMode>
+          <input #inputElement [(ngModel)]="testTempLabel" (keydown.enter)="saveTestLabelChange()" (keydown.escape)="cancelTestLabelChange()"/>
           <i class="bi bi-x" (click)="cancelTestLabelChange()"></i>
           <i class="bi bi-check2" (click)="saveTestLabelChange()"></i>
         </ng-template>
       </div>
-
-      <div class="description" [ngClass]="{'editing': isEditingTestDescr}">
-        <p *ngIf="!isEditingTestDescr; else editModeDesc">
-          {{tempDescr}}
-          <i class="bi bi-pencil" (click)="editTestDescr()"></i>
+      <div class="description" [ngClass]="{'editing': isEditingTestDescription}">
+        <p *ngIf="!isEditingTestDescription; else descriptionEditMode">
+          {{testTempDescription}}
+          <i class="bi bi-pencil" (click)="editTestDescription()"></i>
         </p>
-        <ng-template #editModeDesc>
-          <input #inputElement [(ngModel)]="tempDescr" (keydown.enter)="saveTestDescrChange()" (keydown.escape)="cancelTestDescrChange()"/>
-          <i class="bi bi-x" (click)="cancelTestDescrChange()"></i>
-          <i class="bi bi-check2" (click)="saveTestDescrChange()"></i>
+        <ng-template #descriptionEditMode>
+          <input #inputElement [(ngModel)]="testTempDescription" (keydown.enter)="saveTestDescriptionChange()" (keydown.escape)="cancelTestDescriptionChange()"/>
+          <i class="bi bi-x" (click)="cancelTestDescriptionChange()"></i>
+          <i class="bi bi-check2" (click)="saveTestDescriptionChange()"></i>
         </ng-template>
       </div>
         <div class="buttons">
           <button class="deleteQuestion" (click)="deleteTest()" [routerLink]="['/tests']">Delete test</button>
-          <button class="saveChanges" (click)="saveChanges()" [disabled]="!areNewChanges()">Save</button>
+          <button class="saveChanges" (click)="saveTestDetailsChanges()" [disabled]="!areNewTestDetailsChanges()">Save</button>
         </div>
     </div>
 
-    <div class="details" *ngIf="selectedQuestion !== null">
+    <div class="details" *ngIf="selectedTestQuestion !== null">
         <div class="question" [ngClass]="{'editing': isEditingTestQuestion}">
             <p *ngIf="!isEditingTestQuestion; else editMode">
                 {{tempQuestion}}
@@ -73,12 +72,12 @@
             </div>
           </div>
           <div class="answers">
-            <div class="answer" *ngFor="let answer of tempAnswers let i = index">
-              <input type="text" [(ngModel)]="tempAnswers[i].answer" placeholder="Enter your answer here">
+            <div class="answer" *ngFor="let answer of questionTempAnswers let i = index">
+              <input type="text" [(ngModel)]="questionTempAnswers[i].answer" placeholder="Enter your answer here">
               <i [ngClass]="{
-                'bi bi-check-square-fill': tempAnswers[i].isCorrect,
-                'bi bi-x-square-fill': !tempAnswers[i].isCorrect
-              }" (click)="toggleCorrect(i)"></i>
+                'bi bi-check-square-fill': questionTempAnswers[i].isCorrect,
+                'bi bi-x-square-fill': !questionTempAnswers[i].isCorrect
+              }" (click)="changeGoodFalseAnswer(i)"></i>
               <i class="bi bi-trash-fill" (click)="deleteAnswer(i)"></i>
             </div>
             <button (click)="addAnswer()">Add answer</button>
