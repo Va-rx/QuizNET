@@ -32,6 +32,7 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { TestDetailsComponent } from './components/test-details/test-details.component';
+import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { TestDetailsComponent } from './components/test-details/test-details.com
     HomeComponent,
     NavbarComponent,
     TestDetailsComponent,
+    ScoreboardComponent,
   ],
     imports: [
         BrowserModule,

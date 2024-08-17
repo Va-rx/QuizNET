@@ -372,6 +372,9 @@ export default class Tanks extends Phaser.Scene {
       });
     });
 
+
+    window.addEventListener('resize', this.onWindowResize.bind(this));
+
   }
 
 
@@ -457,6 +460,11 @@ export default class Tanks extends Phaser.Scene {
 
 
 
+  }
+
+  onWindowResize() {
+    //change size of game
+    this.game.scale.resize(window.innerWidth-300,  Math.min(window.innerHeight-100,800));
   }
 
   playerFire() {

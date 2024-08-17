@@ -15,6 +15,7 @@ import {LoginComponent} from "./components/login/login.component";
 import {authGuard} from "./guards/auth.guard";
 import {HomeComponent} from "./components/home/home.component";
 import {RoleGuard} from "./guards/role.guard";
+import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [authGuard] },
   { path: 'Questions', component: QuestionsListComponent, canActivate: [authGuard, RoleGuard]},
@@ -27,6 +28,7 @@ const routes: Routes = [
   { path :'create-matchmaking', component: CreateMatchmakingComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'tank-game/:id', component: TankGameComponent, canActivate: [authGuard]},
   { path: 'tests', component: TestsComponent, canActivate: [authGuard, RoleGuard]},
+  {path: 'final',component:ScoreboardComponent, canActivate: [authGuard]},
   { path: 'register', component: RegisterComponent},
   { path: 'login', component: LoginComponent},
   { path: 'tests/:id', component: TestDetailsComponent, canActivate: [authGuard, RoleGuard]}

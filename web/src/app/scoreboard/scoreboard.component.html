@@ -1,0 +1,19 @@
+<div class="scoreboard-container">
+  <div class="scoreboard">
+    <h2>Scoreboard</h2>
+    <ul>
+      <li *ngFor="let entry of scoreboard | keyvalue" [ngClass]="{'current-player': entry.key === currentPlayer}">
+        <span class="username">{{ entry.key }}</span>
+        <span class="score">{{ entry.value }}</span>
+      </li>
+    </ul>
+  </div>
+  <div class="progress-container">
+    <h3>{{ currentPlayer }} Total Score:</h3>
+    <div class="pie-chart" [ngStyle]="{'background': 'conic-gradient(#4caf50 ' + currentPlayerPercentage + '%, #ddd ' + currentPlayerPercentage + '%)'}">
+      <div class="center">
+        {{ currentPlayerPercentage.toFixed(1) }}%
+      </div>
+    </div>
+  </div>
+</div>

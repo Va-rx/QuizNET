@@ -1,4 +1,4 @@
-import { Component,Inject,Input,OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import io from 'socket.io-client';
 import { FormControl } from '@angular/forms';
 
@@ -14,22 +14,21 @@ export class CreateLobbyComponent implements OnInit {
   joinCode: string = '';
   userList: string[] = [];
   created: boolean = false;
-  lobbyName!:string;
-  userName:string="Creator";
+  lobbyName!: string;
+  userName: string = "Creator";
   scheduled: boolean = false;
+  scoreBoard: any[] = [];
 
 
   @Input() test: any;
-  @Input() date !:Date|null;
-  @Input() time !:Date|null;
+  @Input() date !: Date | null;
+  @Input() time !: Date | null;
   @Input() game: any;
 
-  constructor(private socketService:SocketServiceService) { }
+  constructor(private socketService: SocketServiceService) { }
 
   ngOnInit(): void {
-    // Connect to Socket.io server
-    //this.socket = io('http://localhost:8080'); // Adjust URL accordingly
-    this.socket=this.socketService.getSocket();
+    this.socket = this.socketService.getSocket();
     this.socket.on('joinCode', (code: string) => {
       console.log('Received join code:', code);
       this.joinCode = code;
@@ -40,6 +39,12 @@ export class CreateLobbyComponent implements OnInit {
       this.userList = users;
     });
 
+    this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
+      this.scoreBoard = Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({ username, score }));
+    }
+
+    );
+
   }
 
   // Method to handle form submission
@@ -48,12 +53,12 @@ export class CreateLobbyComponent implements OnInit {
     console.log(this.lobbyName);
     console.log(this.userName);
     this.socketService.setUserId(this.userName);
-    this.socket.emit('requestJoinCode',this.userName,this.lobbyName);
+    this.socket.emit('requestJoinCode', this.userName, this.lobbyName);
 
   }
 
   onStartGame(): void {
-    this.socket.emit('startGame',this.date,this.time,this.game,this.test);
+    this.socket.emit('startGame', this.date, this.time, this.game, this.test);
     this.scheduled = true;
   }
 }
