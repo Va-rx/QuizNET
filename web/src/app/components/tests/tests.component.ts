@@ -3,6 +3,7 @@ import {Observable, of} from 'rxjs';
 import { Test } from 'src/app/models/test.model';
 import { TestService } from 'src/app/services/test/test.service';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tests',
@@ -13,7 +14,7 @@ export class TestsComponent implements OnInit{
   tests$: Observable<Test[]> = of();
   test: Test = new Test();
 
-  constructor(private testService: TestService) { }
+  constructor(private testService: TestService, private router: Router) { }
 
   ngOnInit() {
     this.tests$ = this.testService.getAll();
@@ -28,8 +29,19 @@ export class TestsComponent implements OnInit{
     this.calculateNewTestSufix().subscribe(sufix => {
       newTest.name = "New test" + sufix;
       newTest.description = "";
-      this.testService.create(newTest).subscribe();
-      this.tests$ = this.testService.getAll();
+
+      this.testService.create(newTest).subscribe({
+        next: (response) => {
+          const newTestId = response.test_id;
+          newTest.id = newTestId;
+          this.testService.setSelectedTest(newTest);
+          // this.tests$ = this.testService.getAll();
+          this.router.navigate(['/tests/', newTestId]);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      })
     })
   }
 

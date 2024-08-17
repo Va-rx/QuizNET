@@ -36,6 +36,10 @@ export class TestService {
     return this.selectedTest.asObservable();
   }
 
+  setSelectedTest(data: any) {
+    this.selectedTest.next(data);
+  }
+
   updateTest(id: number, data: any): Observable<any> {
     return this.http.put(`${baseUrl}/${id}`, data);
   }
