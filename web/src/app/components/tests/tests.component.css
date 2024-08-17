@@ -3,11 +3,22 @@
   align-items: flex-start;
   justify-content: center;
   
-  height: 90%;
+  height: 92%;
   width: 100%;
 
   zoom: 140%;
+
+  overflow:hidden;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
 }
+
+/* uncomment to hide scrollbar */
+/* .content::-webkit-scrollbar {
+  display: none;
+} */
 
 .panels {
   height: 100%;
