@@ -37,7 +37,7 @@
         </ng-template>
       </div>
         <div class="buttons">
-          <button class="deleteQuestion" (click)="deleteTest()">Delete test</button>
+          <button class="deleteQuestion" (click)="deleteTest()" [routerLink]="['/tests']">Delete test</button>
           <button class="saveChanges" (click)="saveChanges()" [disabled]="!areNewChanges()">Save</button>
         </div>
     </div>
