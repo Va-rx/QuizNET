@@ -26,11 +26,12 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { CreateMatchmakingComponent } from './components/create-matchmaking/create-matchmaking.component';
-import { CreateTestComponent } from './components/create-test/create-test.component';
+import { TestsComponent } from './components/tests/tests.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
-import { NavbarComponent } from './navbar/navbar.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { TestDetailsComponent } from './components/test-details/test-details.component';
 import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 
 @NgModule({
@@ -46,11 +47,12 @@ import { ScoreboardComponent } from './scoreboard/scoreboard.component';
     QuestionViewComponent,
     AnswerViewComponent,
     CreateMatchmakingComponent,
-    CreateTestComponent,
+    TestsComponent,
     RegisterComponent,
     LoginComponent,
     HomeComponent,
     NavbarComponent,
+    TestDetailsComponent,
     ScoreboardComponent,
   ],
     imports: [

@@ -1,0 +1,12 @@
+<div class="content">
+  <div class="panels">
+    <button class="block add-button" (click)="createNewTest()">+</button>
+    <button 
+      class="block" 
+      *ngFor="let test of (tests$ | async); let i = index"
+      [routerLink]="['/tests', test.id]"
+      (click)="onTestClick(test)">
+      {{test.name}}
+  </button>
+  </div>
+</div>

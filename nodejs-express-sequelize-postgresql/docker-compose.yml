@@ -11,6 +11,7 @@ services:
         ports:
             - "5432:5432"
         volumes:
+            - db-data:/var/lib/postgresql/data
             - ./dbInit:/docker-entrypoint-initdb.d
         networks:
             - quiznet-network
@@ -23,3 +24,6 @@ networks:
     quiznet-network:
         driver: bridge
         external: true
+
+volumes:
+    db-data:

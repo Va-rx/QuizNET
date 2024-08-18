@@ -1,5 +1,6 @@
 const db = require('../database-connection');
 const {getAnswerById, createAnswer, updateAnswer} = require("./answer-queries");
+const {deleteSetBySetId} = require("./set-queries");
 const allColumns = "question_id as id, question, image_link";
 
 const getQuestions = async () => {
@@ -81,6 +82,13 @@ const updateQuestion = async (id, question) => {
 
 const deleteQuestion = async (id) => {
     try {
+        const res1 = await db.query(`SELECT set_id FROM sets WHERE question_id = $1`, [id]);
+        console.log(res1);
+        if (res1.rowCount > 0) {
+            console.log("hm");
+            await deleteSetBySetId(res1.rows[0].set_id);
+        }
+
         const res = await db.query(`DELETE FROM questions WHERE question_id = $1`, [id]);
         return res.rows[0];
     } catch (err) {

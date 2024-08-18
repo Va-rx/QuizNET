@@ -28,14 +28,16 @@ export class QuestionService {
     return this.http.get<Question>(`${baseUrl}/answers/${id}`);
   }
 
-  create(data: any): Observable<any> {
+  create(data: any): Observable<any> {    
     const formData = new FormData();
     formData.append('question', data.question);
     formData.append('answers', JSON.stringify(data.answers));
     if (data.image_link) {
       formData.append('image_link', data.image_link);
     }
-    return this.http.post(baseUrl, formData);
+    console.log(data);
+    
+    return this.http.post<Question>(baseUrl, formData);
   }
 
   update(id: any, data: any): Observable<any> {

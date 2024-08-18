@@ -41,11 +41,21 @@ const deleteSet = async (set) => {
     }
 }
 
+const deleteSetBySetId = async (id) => {
+    try {
+        const res = await db.query(`DELETE FROM sets WHERE set_id = $1`, [id]);
+        return res.rows[0];
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
 
 
 module.exports = {
     getSets,
     getQuestionsByTestId,
     addQuestionToTest,
-    deleteSet
+    deleteSet,
+    deleteSetBySetId
 }
