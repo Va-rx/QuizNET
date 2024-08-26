@@ -14,6 +14,19 @@ const getTests = async () => {
 const getTestById = async (id) => {
     try {
         const res = await db.query(`
+        SELECT ${allColumns}
+        FROM tests
+        WHERE test_id = $1
+    `, [id]);        
+    return res.rows[0];
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+const getQuestionsForTest = async (id) => {
+    try {
+        const res = await db.query(`
         SELECT q.question_id as id, q.question, q.image_link
         FROM questions q
         JOIN sets s ON q.question_id = s.question_id
@@ -64,5 +77,6 @@ module.exports = {
     getTestById,
     createTest,
     updateTest,
-    deleteTest
+    deleteTest,
+    getQuestionsForTest
 }

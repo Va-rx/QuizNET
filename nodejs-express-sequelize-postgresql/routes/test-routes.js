@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getTests, createTest, getTestById, deleteTest, updateTest } = require("../database/database-queries/test-queries");
+const { getTests, createTest, getTestById, deleteTest, updateTest, getQuestionsForTest } = require("../database/database-queries/test-queries");
 
 router.post("/", (req, res) => {
     const newTest = req.body;
@@ -37,6 +37,19 @@ router.get("/:id", (req, res) => {
         .catch(err => {
             res.status(500).send({
                 message: err.message || `Some error occurred while retrieving test_set with id=${id}.`
+            });
+        });
+});
+
+router.get("/:id/questions", (req, res) => {
+    const id = req.params.id;
+    getQuestionsForTest
+        .then(test_set => {
+            res.send(test_set);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || `Some error occurred while retrieving all questions for test with id=${id}.`
             });
         });
 });

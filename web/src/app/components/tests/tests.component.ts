@@ -20,10 +20,6 @@ export class TestsComponent implements OnInit{
     this.tests$ = this.testService.getAll();
   }
 
-  onTestClick(test: Test) {
-    this.testService.selectTest(test);
-  }
-
   createNewTest() {    
     let newTest = new Test();
     this.calculateNewTestSufix().subscribe(sufix => {
@@ -34,7 +30,6 @@ export class TestsComponent implements OnInit{
         next: (response) => {
           const newTestId = response.test_id;
           newTest.id = newTestId;
-          this.testService.setSelectedTest(newTest);
           // this.tests$ = this.testService.getAll();
           this.router.navigate(['/tests/', newTestId]);
         },

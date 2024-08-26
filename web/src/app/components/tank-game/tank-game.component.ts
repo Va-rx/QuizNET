@@ -59,9 +59,9 @@ export class TankGameComponent implements OnInit {
     this.socket=this.socketService.getSocket();
     this.testID= this.route.snapshot.params["id"];
     this.phaserGame = new Phaser.Game(this.config);
-    this.TestsService.get(this.testID).subscribe((data) => {
-      this.questions = data;
-    });
+    // this.TestsService.get(this.testID).subscribe((data) => {
+    //   this.questions = data;
+    // });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
       this.phaserGame.pause();

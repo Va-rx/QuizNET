@@ -4,8 +4,7 @@
     <button 
       class="block" 
       *ngFor="let test of (tests$ | async); let i = index"
-      [routerLink]="['/tests', test.id]"
-      (click)="onTestClick(test)">
+      [routerLink]="['/tests', test.id]">
       {{test.name}}
   </button>
   </div>

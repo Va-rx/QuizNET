@@ -7,6 +7,8 @@ import { SetService } from 'src/app/services/set/set.service';
 import { ViewChild, ElementRef } from '@angular/core';
 import { QuestionService } from 'src/app/services/question/question.service';
 import { AnswerService } from 'src/app/services/answer/answer.service';
+import { ActivatedRoute } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-test-details',
@@ -45,26 +47,36 @@ export class TestDetailsComponent implements OnInit {
 
   @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
 
-  constructor (private testService: TestService, private setService: SetService, private questionService: QuestionService, private answerService: AnswerService) { }
+  constructor (private testService: TestService, private setService: SetService, private questionService: QuestionService, private answerService: AnswerService, private route: ActivatedRoute) { }
 
 
-  ngOnInit() {
-    this.testService.getSelectedTest().subscribe(test => {
-      if (test !== null) {
-        this.test = test;
-        this.setService.getQuestionsByTestId(this.test.id).subscribe(questions => {
-          this.questions = questions;
-        });
-      }
-      else {
-        throw new Error('Test is null');
-      }
-    });
+  async ngOnInit() {
+    let id = parseInt(this.route.snapshot.paramMap.get('id')!, 10);
+    this.test = await firstValueFrom(this.testService.get(id));
+    console.log(this.test);
     this.testTempLabel = this.test.name;
     this.testLatestTempLabel = this.testTempLabel;
-
+  
     this.testTempDescription = this.test.description ?? "";
     this.testLatestTempDescription = this.testTempDescription;
+
+    this.setService.getQuestionsByTestId(this.test.id).subscribe(questions => {
+      this.questions = questions;
+      console.log("questions:", this.questions);
+    })
+    // console.log(id);    
+    // this.testService.get(id).subscribe(test => {
+    //   this.test = test;
+    //   console.log(this.test);
+    //   this.setService.getQuestionsByTestId(this.test.id).subscribe(questions => {
+    //     this.questions = questions;
+    //   })
+    //   this.testTempLabel = this.test.name;
+    //   this.testLatestTempLabel = this.testTempLabel;
+  
+    //   this.testTempDescription = this.test.description ?? "";
+    //   this.testLatestTempDescription = this.testTempDescription;
+    // })
   }
 
   showTestDetails() {
