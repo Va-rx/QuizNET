@@ -29,6 +29,7 @@ export class QuestionService {
   }
 
   create(data: any): Observable<any> {    
+    console.log("CREATING!")
     const formData = new FormData();
     formData.append('question', data.question);
     formData.append('answers', JSON.stringify(data.answers));

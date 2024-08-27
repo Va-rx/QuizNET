@@ -54,6 +54,7 @@ const createQuestion = async (question) => {
                 await createAnswer(answer);
             }
         }
+        return res.rows[0];
     } catch (err) {
         console.log(err.message);
     }

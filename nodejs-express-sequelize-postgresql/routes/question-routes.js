@@ -69,6 +69,8 @@ router.get("/:id", (req, res) => {
 })
   
 router.post("/", upload.single('image_link'), (req, res) => {
+    console.log("creating new question");
+    console.log(req.body);
     const newQuestion = req.body;
     newQuestion.image_link = req.file ? req.file.buffer : null;
     createQuestion(newQuestion)

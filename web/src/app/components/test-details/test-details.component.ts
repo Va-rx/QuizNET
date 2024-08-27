@@ -200,15 +200,22 @@ export class TestDetailsComponent implements OnInit {
       this.selectedTestQuestion.question = this.tempQuestion;
       this.selectedTestQuestion.answers = this.questionTempAnswers;
       this.questionAnswers = this.questionTempAnswers.map(answer => Object.assign({}, answer));
-      await this.questionService.update(this.selectedTestQuestion?.id, this.selectedTestQuestion).toPromise();
+      this.questionService.update(this.selectedTestQuestion?.id, this.selectedTestQuestion).toPromise();
     }
     }
 
   // TODO
-  addQuestion() {
+  async addQuestion() {
     let question = new Question();
     question.question = "New Question";
+    question.answers = [];
     this.selectQuestion(question);
+    let obj = await this.questionService.create(question).toPromise()
+    this.questions.push(question);
+    let set = new Set();
+    set.questionId = obj.question_id;
+    set.testId = this.test.id;
+    await this.setService.create(set).toPromise();
   }
 
   deleteQuestion() {}
