@@ -149,7 +149,7 @@ export class TestDetailsComponent implements OnInit {
     this.selectedTestDetails = false;
 
     this.questionAnswers = question.answers || [];
-    this.questionTempAnswers = JSON.parse(JSON.stringify(this.questionAnswers));
+    this.questionTempAnswers = this.questionAnswers.map(answer => Object.assign({}, answer));
 
     this.tempQuestion = this.selectedTestQuestion.question;
     this.latestTempQuestion = this.tempQuestion;
@@ -179,6 +179,8 @@ export class TestDetailsComponent implements OnInit {
   addAnswer() {
     if (this.selectedTestQuestion !== null) {
       this.questionTempAnswers.push({ answer: '', isCorrect: false, questionId: this.selectedTestQuestion.id});
+      console.log(this.questionTempAnswers);
+      console.log(this.questionAnswers);
     } else {
       console.error("Question is null");
     }
@@ -197,20 +199,9 @@ export class TestDetailsComponent implements OnInit {
     if (this.selectedTestQuestion !== null) {
       this.selectedTestQuestion.question = this.tempQuestion;
       this.selectedTestQuestion.answers = this.questionTempAnswers;
-      this.questionAnswers = this.questionTempAnswers;
+      this.questionAnswers = this.questionTempAnswers.map(answer => Object.assign({}, answer));
       await this.questionService.update(this.selectedTestQuestion?.id, this.selectedTestQuestion).toPromise();
     }
-    // if (this.tempQuestions.length)
-
-    // TODO: Update answer changes when deleted answers!!!
-    // if (this.questionTempAnswers.length >= this.questionAnswers.length) {
-    //   if (this.selectedTestQuestion !== null) {
-    //     this.selectedTestQuestion.question = this.tempQuestion;
-    //     this.selectedTestQuestion.answers = this.questionTempAnswers;
-    //     this.questionAnswers = this.questionTempAnswers;
-    //     await this.questionService.update(this.selectedTestQuestion?.id, this.selectedTestQuestion).toPromise();
-    //   }
-
     }
 
   // TODO
