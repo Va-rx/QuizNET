@@ -211,6 +211,7 @@ export class TestDetailsComponent implements OnInit {
     question.answers = [];
     this.selectQuestion(question);
     let obj = await this.questionService.create(question).toPromise()
+    question.id = obj.question_id;
     this.questions.push(question);
     let set = new Set();
     set.questionId = obj.question_id;
