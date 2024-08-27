@@ -219,33 +219,13 @@ export class TestDetailsComponent implements OnInit {
     await this.setService.create(set).toPromise();
   }
 
-  deleteQuestion() {}
-  // saveAnswerChanges() {}
-
-
-  // async saveAnswerChanges(): Promise<void> {
-  //   if (this.tempQuestions.length !== this.questions.length) {
-  //     this.tempQuestions[this.tempQuestions.length - 1].question = this.tempQuestion;
-  //     this.tempQuestions[this.tempQuestions.length - 1].answers = this.tempAnswers;
-  //     console.log("creating");
-      
-  //     this.QuestionService.create(this.tempQuestions[this.tempQuestions.length - 1]).toPromise();
-  //     let set = new Set();
-  //     set.questionId = this.tempQuestions[this.tempQuestions.length - 1].id
-  //     set.testId = this.test.id;
-  //     this.SetService.create(set).toPromise();
-  //     return;
-  //   }
-
-
-  //   if (this.selectedQuestion !== null) {
-  //     this.selectedQuestion.question = this.tempQuestion;
-  //     this.selectedQuestion.answers = this.tempAnswers;
-  //     console.log(this.selectedQuestion);
-      
-  //     await this.QuestionService.update(this.selectedQuestion.id, this.selectedQuestion).toPromise();
-  //   }
-  // }
+  async deleteQuestion() {
+    if (this.selectedTestQuestion !== null) {
+      let id = this.selectedTestQuestion.id;
+      await this.questionService.delete(id).toPromise();
+      this.questions = this.questions.filter(question => question.id !== id);
+      }
+  }
 }
 
 function areArraysEqual(arr1: any[], arr2: any[]): boolean {
