@@ -10,6 +10,15 @@ const getAnswers = async () => {
     }
 }
 
+const getAnswersForQuestion = async (id) => {
+    try {
+        const res = await db.query(`SELECT ${allColumns} FROM answers WHERE question_id = $1`, [id]);
+        return res.rows;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
 const getAnswerById = async (id) => {
     try {
         const res = await db.query(`SELECT ${allColumns} FROM answers WHERE question_id = $1`, [id]);
@@ -51,5 +60,6 @@ module.exports = {
     getAnswerById,
     createAnswer,
     updateAnswer,
-    deleteAnswer
+    deleteAnswer,
+    getAnswersForQuestion
 }

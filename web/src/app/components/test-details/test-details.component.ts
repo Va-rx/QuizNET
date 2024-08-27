@@ -194,19 +194,24 @@ export class TestDetailsComponent implements OnInit {
 
   // Better handle that when we dont know if we just modify the existing question or creating a new one. TODO!!!
   async saveAnswerChanges() {
+    if (this.selectedTestQuestion !== null) {
+      this.selectedTestQuestion.question = this.tempQuestion;
+      this.selectedTestQuestion.answers = this.questionTempAnswers;
+      this.questionAnswers = this.questionTempAnswers;
+      await this.questionService.update(this.selectedTestQuestion?.id, this.selectedTestQuestion).toPromise();
+    }
     // if (this.tempQuestions.length)
 
     // TODO: Update answer changes when deleted answers!!!
-    if (this.questionTempAnswers.length >= this.questionAnswers.length) {
-      if (this.selectedTestQuestion !== null) {
-        this.selectedTestQuestion.question = this.tempQuestion;
-        this.selectedTestQuestion.answers = this.questionTempAnswers;
-        this.questionAnswers = this.questionTempAnswers;
-        await this.questionService.update(this.selectedTestQuestion?.id, this.selectedTestQuestion).toPromise();
-      }
+    // if (this.questionTempAnswers.length >= this.questionAnswers.length) {
+    //   if (this.selectedTestQuestion !== null) {
+    //     this.selectedTestQuestion.question = this.tempQuestion;
+    //     this.selectedTestQuestion.answers = this.questionTempAnswers;
+    //     this.questionAnswers = this.questionTempAnswers;
+    //     await this.questionService.update(this.selectedTestQuestion?.id, this.selectedTestQuestion).toPromise();
+    //   }
 
     }
-  }
 
   // TODO
   addQuestion() {

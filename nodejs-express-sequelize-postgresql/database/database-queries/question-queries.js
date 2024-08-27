@@ -1,5 +1,5 @@
 const db = require('../database-connection');
-const {getAnswerById, createAnswer, updateAnswer} = require("./answer-queries");
+const {getAnswerById, createAnswer, updateAnswer, getAnswersForQuestion} = require("./answer-queries");
 const {deleteSetBySetId} = require("./set-queries");
 const allColumns = "question_id as id, question, image_link";
 
@@ -64,6 +64,18 @@ const updateQuestion = async (id, question) => {
         const res =  question.image_link !== null ? await db.query(`UPDATE questions SET question = $1, image_link = $2 WHERE question_id = $3 RETURNING *`, [question.question, question.image_link, id]) : await db.query(`UPDATE questions SET question = $1 WHERE question_id = $2 RETURNING *`, [question.question, id]);
         if (res.rows[0]){
             let parsedAnswers = JSON.parse(question.answers);
+            let updatedIds = [];
+            for (const answer of parsedAnswers) {
+                updatedIds.push(answer.id);
+            }
+            
+            const oldIds = await getAnswersForQuestion(id);
+            for (const answer of oldIds) {
+                if (!updatedIds.includes(answer.id)) {
+                    await db.query(`DELETE FROM answers WHERE answer_id = $1`, [answer.id]);
+                }
+            }
+
             for (const answer of parsedAnswers ){
                 if (answer.id){
                     await updateAnswer(answer.id, answer);
