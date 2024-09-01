@@ -244,6 +244,7 @@ export default class Tanks extends Phaser.Scene {
     this.load.image('bullet', 'assets/games/firstgame/assets/bomb.png');
     this.load.spritesheet('towers_walls_blank', 'assets/games/tankgame/Camo/Towers/towers_walls_blank.png', { frameWidth: 32, frameHeight: 32 });
     this.load.image('ammo', 'assets/games/tankgame/ammo.png');
+    this.load.image('star', 'assets/games/firstgame/assets/star.png');
     this.load.image('health', 'assets/games/tankgame/health.png');
   }
 
@@ -298,7 +299,7 @@ export default class Tanks extends Phaser.Scene {
     this.tankBody.setFriction(0.3);
     this.tankBody.label = "tankPlayer";
     //this.cameras.main.startFollow(this.tankBody, true);
-    this.cameras.main.setBounds(0, 0, 10000,800); // Set your game world bounds
+    this.cameras.main.setBounds(0, 0, 10000,800);
     this.cameras.main.startFollow(this.tankBody, true);
     if (this.input.keyboard) {
       this.cursors = this.input.keyboard.createCursorKeys();
@@ -423,6 +424,12 @@ export default class Tanks extends Phaser.Scene {
 
 
   override update() {
+    if(this.tankBody.y>800){
+      this.cameras.main.setBounds(0, 0, 10000,1100);
+    }
+    else{
+      this.cameras.main.setBounds(0, 0, 10000,800);
+    }
     this.bonus=this.calculateBonus();
     if(this.reloadTimer+0.04<=1){
       this.reloadTimer+=0.04;
@@ -450,7 +457,6 @@ export default class Tanks extends Phaser.Scene {
     const max_audio_rate=1;
 
     if (this.input.activePointer.isDown) {
-      console.log(this.calculateBonus())
       this.playerFire();
     }
 
@@ -650,7 +656,7 @@ export default class Tanks extends Phaser.Scene {
     });
     this.allPickups+=cords.length;
     //Health pickups
-    cords = [ [400, 430],[500, 450],[1477, 153],[2582,739],[2964,276],[3832,585],[1477+offset, 153],[2582+offset,739],[2964+offset,276],[3832+offset,585]];
+    cords = [ [400, 430],[500, 450],[1477, 153],[2582,739],[2964,276],[3832,585],[1477+offset, 153],[2582+offset+20,739],[2964+offset,276],[3832+offset,585]];
     cords.forEach(cord => {
       let health = this.matter.add.image(cord[0], cord[1], 'health');
       health.setName('health');
@@ -673,6 +679,30 @@ export default class Tanks extends Phaser.Scene {
       });
     });
     this.allPickups+=cords.length;
+
+    //Star pickups
+    cords = [[1760,896],[3861,1044],[3141,890],[5318,895] ];
+    cords.forEach(cord => {
+      let star = this.matter.add.image(cord[0], cord[1], 'star');
+      star.setName('star');
+      star.setSensor(true);
+      star.setOnCollide((pair) => {
+        const { bodyA, bodyB } = pair;
+        if (bodyA.gameObject && bodyB.gameObject) {
+          if (bodyA.gameObject.name == 'star' && bodyB.gameObject.label == 'tankPlayer' || bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.name == 'star') {
+            //console.log('Player collided with star');
+            //this.addHealth();
+            //this.pickupsFound+=1;
+            if (bodyA.gameObject.label != 'tankPlayer') {
+              bodyA.gameObject.destroy();
+            }
+            else {
+              bodyB.gameObject.destroy();
+            }
+          }
+        }
+      });
+    });
   }
 
 
