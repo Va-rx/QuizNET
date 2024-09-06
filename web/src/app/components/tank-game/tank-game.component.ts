@@ -8,6 +8,8 @@ import { SocketServiceService } from 'src/app/services/socket/socket-service.ser
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import {UserResultsService} from "../../services/user-results/user-results.service";
+import {UserAnswersService} from "../../services/user-answers/user-answers.service";
 
 @Component({
   selector: 'app-tank-game',
@@ -28,7 +30,13 @@ export class TankGameComponent implements OnInit {
   nickname: string = "";
   private socket: any;
 
-  constructor( private dialog: MatDialog, private TestsService: TestService,private socketService:SocketServiceService,private route:ActivatedRoute,private auth:AuthService) {
+  constructor( private dialog: MatDialog,
+               private TestsService: TestService,
+               private socketService:SocketServiceService,
+               private route:ActivatedRoute,
+               private auth:AuthService,
+               private userAnswersService: UserAnswersService,
+               private userResultsService: UserResultsService) {
     this.config = {
       type: Phaser.AUTO,
     //height as window
@@ -80,6 +88,11 @@ export class TankGameComponent implements OnInit {
         this.phaserGame.resume();
         if(this.currentLevel==1){
           console.log("Game Over");
+          let results = this.userAnswersService.getWrappedResult(this.testID);
+          this.userResultsService.create(results).subscribe(data=>{
+            console.log(data);
+          });
+
           this.playerScore+=this.phaserGame.scene.getScene("default")["bonus"];
           this.playerScore=Math.round(this.playerScore * 100) / 100;
           this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
