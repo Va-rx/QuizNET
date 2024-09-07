@@ -8,6 +8,8 @@ import { SocketServiceService } from 'src/app/services/socket/socket-service.ser
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import {UserResultsService} from "../../services/user-results/user-results.service";
+import {UserAnswersService} from "../../services/user-answers/user-answers.service";
 
 @Component({
   selector: 'app-tank-game',
@@ -19,6 +21,7 @@ export class TankGameComponent implements OnInit {
   config: Phaser.Types.Core.GameConfig;
   questions: Question[] = [];
   testID: number = 1;
+  historyTestId: number = -1;
   maxLevel: number = 9;
   currentLevel: number = 0;
   scoreBoard:any[]=[];
@@ -28,7 +31,13 @@ export class TankGameComponent implements OnInit {
   nickname: string = "";
   private socket: any;
 
-  constructor( private dialog: MatDialog, private TestsService: TestService,private socketService:SocketServiceService,private route:ActivatedRoute,private auth:AuthService) {
+  constructor( private dialog: MatDialog,
+               private TestsService: TestService,
+               private socketService:SocketServiceService,
+               private route:ActivatedRoute,
+               private auth:AuthService,
+               private userAnswersService: UserAnswersService,
+               private userResultsService: UserResultsService) {
     this.config = {
       type: Phaser.AUTO,
     //height as window
@@ -58,7 +67,8 @@ export class TankGameComponent implements OnInit {
   ngOnInit() {
     this.socket=this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
-    this.testID=history.state.data;
+    this.testID=history.state.data.testId;
+    this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.get(this.testID).subscribe((data) => {
       this.questions = data;
@@ -80,6 +90,11 @@ export class TankGameComponent implements OnInit {
         this.phaserGame.resume();
         if(this.currentLevel==1){
           console.log("Game Over");
+          let results = this.userAnswersService.getWrappedResult(this.historyTestId);
+          this.userResultsService.create(results).subscribe(data=>{
+            console.log(data);
+          });
+
           this.playerScore+=this.phaserGame.scene.getScene("default")["bonus"];
           this.playerScore=Math.round(this.playerScore * 100) / 100;
           this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())

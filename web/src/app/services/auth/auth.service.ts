@@ -59,4 +59,8 @@ export class AuthService {
     return '';
   }
 
+  public getUserId(): number {
+    return this.user?.id ?? -1
+  }
+
 }
