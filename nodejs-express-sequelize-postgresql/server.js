@@ -93,19 +93,15 @@ io.on("connection", (socket) => {
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
   
-    cron.schedule(`${minute} ${hour} ${day} ${month} *`, () => {
-      generateQuizXML(test_id).then((xml) => {
-        createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()}).then((test) => {
-            console.log('testHistory generated');
-        }).catch((err) => {
-          console.log(err);
-        });
-      })
+    cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
+
+      const xml = await generateQuizXML(test_id);
+      const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
 
       if (session) {
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id);
           }
         });
       }

@@ -21,6 +21,7 @@ export class TankGameComponent implements OnInit {
   config: Phaser.Types.Core.GameConfig;
   questions: Question[] = [];
   testID: number = 1;
+  historyTestId: number = -1;
   maxLevel: number = 9;
   currentLevel: number = 0;
   scoreBoard:any[]=[];
@@ -66,7 +67,8 @@ export class TankGameComponent implements OnInit {
   ngOnInit() {
     this.socket=this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
-    this.testID=history.state.data;
+    this.testID=history.state.data.testId;
+    this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.get(this.testID).subscribe((data) => {
       this.questions = data;
@@ -88,7 +90,7 @@ export class TankGameComponent implements OnInit {
         this.phaserGame.resume();
         if(this.currentLevel==1){
           console.log("Game Over");
-          let results = this.userAnswersService.getWrappedResult(this.testID);
+          let results = this.userAnswersService.getWrappedResult(this.historyTestId);
           this.userResultsService.create(results).subscribe(data=>{
             console.log(data);
           });
