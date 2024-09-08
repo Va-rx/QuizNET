@@ -96,6 +96,16 @@ export class TankGameComponent implements OnInit {
       console.log(this.scoreBoard);}
 
     );
+
+    this.phaserGame.scene.game.events.on('shareHealth',()=>{
+      console.log("SHARING HEALTH WITH OTHER USER")
+      console.log(this.nickname)
+      this.socket.emit('shareHealth',this.nickname)
+    })
+
+    this.socket.on('receiveHealth',(userName) => {
+      console.log("You received apteczka from user: "+userName);
+    })
   }
   ngOnDestroy() {
     this.phaserGame.destroy(true);

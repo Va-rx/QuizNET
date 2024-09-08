@@ -228,6 +228,8 @@ export default class Tanks extends Phaser.Scene {
   reloadTimerGraphics;
   reloadTimer=0;
   playerBulletDmg=20;
+  pickedUpHealth=0;
+
   preload() {
     this.load.audio('tankRiding', 'assets/games/tankgame/sounds/engine_heavy_loop.ogg');
     this.load.audio('tankShot', 'assets/games/tankgame/sounds/heavy_canon.ogg');
@@ -256,7 +258,7 @@ export default class Tanks extends Phaser.Scene {
 
     //console.log(this.scene);
     if (this.input.keyboard) {
-      this.keys = this.input.keyboard.addKeys('W,S,A,D');
+      this.keys = this.input.keyboard.addKeys('W,S,A,D,F');
     }
 
     //shwo fps
@@ -442,6 +444,12 @@ export default class Tanks extends Phaser.Scene {
       turret.update();
       turret.fire();
     });
+
+    if(Phaser.Input.Keyboard.JustDown(this.keys.F)){
+      this.game.events.emit("shareHealth");
+      console.log("F pressed")
+      console.log(this.pickedUpHealth)
+    }
 
     const point1 = this.tankBody.getTopRight();
     const point2 = this.tankBody.getBottomRight();
@@ -664,6 +672,9 @@ export default class Tanks extends Phaser.Scene {
             //console.log('Player collided with health');
             this.addHealth();
             this.pickupsFound+=1;
+            ////
+            this.pickedUpHealth+=1;
+            ////
             if (bodyA.gameObject.label != 'tankPlayer') {
               bodyA.gameObject.destroy();
             }
