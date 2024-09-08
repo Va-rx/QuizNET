@@ -17,7 +17,6 @@ class EnemyTurret {
   disabled = false;
 
 
-
   constructor(index, game, player, x, y,range) {
     this.range = range;
     this.x = x + game.cameras.main.scrollX;
@@ -58,13 +57,13 @@ class EnemyTurret {
             //console.log('Player bullet collided with Turret');
             if (bodyB.gameObject.label == 'bullet') {
               //PLAYER HIT DAMAGE = 10
-              this.health -= 20;
+              this.health -= this.game.playerBulletDmg;
               bodyB.gameObject.destroy();
               this.updateHealthBar();
             }
             else {
               //PLAYER HIT DAMAGE = 10
-              this.health -= 20;
+              this.health -= this.game.playerBulletDmg;
               bodyB.gameObject.destroy();
               this.updateHealthBar();
             }
@@ -72,10 +71,6 @@ class EnemyTurret {
         }
       }
     }
-
-    // Create circular reload timer
-
-
   }
 
 
@@ -232,6 +227,7 @@ export default class Tanks extends Phaser.Scene {
   tankShot;
   reloadTimerGraphics;
   reloadTimer=0;
+  playerBulletDmg=20;
   preload() {
     this.load.audio('tankRiding', 'assets/games/tankgame/sounds/engine_heavy_loop.ogg');
     this.load.audio('tankShot', 'assets/games/tankgame/sounds/heavy_canon.ogg');
@@ -693,6 +689,7 @@ export default class Tanks extends Phaser.Scene {
             //console.log('Player collided with star');
             //this.addHealth();
             //this.pickupsFound+=1;
+            this.playerBulletDmg+=2;
             if (bodyA.gameObject.label != 'tankPlayer') {
               bodyA.gameObject.destroy();
             }
