@@ -1,3 +1,5 @@
+import { Sleeping } from "matter";
+import { Tilemaps } from "phaser";
 import { bindCallback } from "rxjs";
 
 class EnemyTurret {
@@ -248,10 +250,13 @@ export default class Tanks extends Phaser.Scene {
   }
 
   create() {
+    this.createTutorialDialog();
     this.game.events.on("receiveHealth_inPhaser",(userName)=>{
       console.log("IN GAME RECEIVE MEDKIT WORKS"+userName)
       this.pickedUpHealth+=1;
       this.events.emit("updateMedkits",this.pickedUpHealth)
+      this.drawDialogMsg(userName);
+
     })
     this.tankSound = this.sound.add('tankRiding', {
       loop: true,
@@ -453,8 +458,8 @@ export default class Tanks extends Phaser.Scene {
 
     if (Phaser.Input.Keyboard.JustDown(this.keys.F)) {
       if(this.pickedUpHealth>0){
+        this.drawDialogMsg_share()
         this.game.events.emit("shareHealth");
-        console.log("F pressed")
         this.pickedUpHealth-=1;
         this.events.emit("updateMedkits",this.pickedUpHealth)
       }
@@ -730,7 +735,133 @@ export default class Tanks extends Phaser.Scene {
     });
   }
 
+  drawDialogMsg(userName){
+    const dialogBox = this.add.text(
+      Number(this.sys.game.config.width) / 2,
+      Number(this.sys.game.config.height) / 2,
+      `User: ${userName} sent you a MedKit!`,
+      {
+        fontSize: '20px',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+        padding: { x: 10, y: 10 },
+        align: 'center'
+      }
+    ).setOrigin(0.5);
 
+    this.time.delayedCall(3000, () => {
+      dialogBox.destroy();
+    });
+  }
+
+  drawDialogMsg_share(){
+    const dialogBox = this.add.text(
+      Number(this.sys.game.config.width) / 2,
+      Number(this.sys.game.config.height) / 2,
+      `You shared a MedKit with other user, Good Job!`,
+      {
+        fontSize: '20px',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+        padding: { x: 10, y: 10 },
+        align: 'center'
+      }
+    ).setOrigin(0.5);
+
+    this.time.delayedCall(3000, () => {
+      dialogBox.destroy();
+    });
+  }
+
+  createTutorialDialog() {
+    // Get the screen dimensions
+    const screenWidth = Number(this.sys.game.config.width);
+    const screenHeight = Number(this.sys.game.config.height);
+
+    // Create a semi-transparent background to darken the game behind the dialog
+    const backgroundOverlay = this.add.graphics();
+    backgroundOverlay.fillStyle(0x000000, 0.5);
+    backgroundOverlay.fillRect(0, 0, screenWidth, screenHeight);
+
+    // Create the dialog box graphics (background)
+    const dialogWidth = 400;
+    const dialogHeight = 300;
+    const dialogX = (screenWidth / 2) - (dialogWidth / 2);
+    const dialogY = (screenHeight / 2) - (dialogHeight / 2);
+
+    const dialogBox = this.add.graphics().setDepth(1);
+    dialogBox.fillStyle(0x2d2d2d, 1); // Dark grey background
+    dialogBox.fillRoundedRect(dialogX, dialogY, dialogWidth, dialogHeight, 20); // Rounded corners
+
+    // Create a border around the dialog box
+    dialogBox.lineStyle(4, 0xffffff, 1);
+    dialogBox.strokeRoundedRect(dialogX, dialogY, dialogWidth, dialogHeight, 20);
+
+    // Define the tutorial text content
+    const tutorialText =
+      "Welcome to the Game!\n\n" +
+      "In this game, you can pick up Medkits that will be added to your inventory.\n\n" +
+      "Press 'E' to use a Medkit on yourself.\n" +
+      "Press 'F' to share it with another player!\n\n" +
+      "Good luck and have fun!";
+
+    const tutorialTextStyle = {
+      fontSize: '18px',
+      color: '#ffffff',
+      align: 'center',
+      wordWrap: { width: dialogWidth - 40, useAdvancedWrap: true }
+    };
+
+    // Create the text object
+    const tutorialTextObject = this.add.text(0, 0, tutorialText, tutorialTextStyle).setDepth(1);
+
+    // Measure the text size and adjust position to center it vertically within a specific area
+    const textBounds = tutorialTextObject.getBounds();
+    const textMaxHeight = dialogHeight - 100; // Leave space for the button (around 100px)
+
+    tutorialTextObject.setPosition(
+      dialogX + (dialogWidth / 2) - (textBounds.width / 2), // Center horizontally
+      dialogY + (textMaxHeight / 2) - (textBounds.height / 2) + 20 // Center vertically with padding
+    );
+
+    // Add a close button in the dialog box
+    const closeButton = this.add.text(
+      screenWidth / 2,
+      dialogY + dialogHeight - 40,  // Position the button below the text
+      "Click to Start",
+      {
+        fontSize: '22px',
+        color: '#ffcc00',
+        backgroundColor: '#333',
+        padding: { x: 10, y: 5 }
+      }
+    ).setOrigin(0.5).setInteractive().setDepth(1); // Ensure the button is above everything else
+
+    // Add an animation to the dialog box to fade in
+    this.tweens.add({
+      targets: [dialogBox, tutorialTextObject, closeButton],
+      alpha: { from: 0, to: 1 },
+      duration: 500,
+      ease: 'Power2'
+    });
+
+    // Close the dialog when the button is clicked
+    closeButton.on('pointerdown', () => {
+      // Fade out and destroy the dialog elements
+      this.tweens.add({
+        targets: [backgroundOverlay, dialogBox, tutorialTextObject, closeButton],
+        alpha: { from: 1, to: 0 },
+        duration: 500,
+        ease: 'Power2',
+        onComplete: () => {
+          backgroundOverlay.destroy();
+          dialogBox.destroy();
+          tutorialTextObject.destroy();
+          closeButton.destroy();
+        }
+      });
+    });
+}
 
 
 }
