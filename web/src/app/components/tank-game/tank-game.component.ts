@@ -105,6 +105,7 @@ export class TankGameComponent implements OnInit {
 
     this.socket.on('receiveHealth',(userName) => {
       console.log("You received apteczka from user: "+userName);
+      this.phaserGame.events.emit("receiveHealth_inPhaser",userName)
     })
   }
   ngOnDestroy() {
