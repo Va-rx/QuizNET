@@ -1,0 +1,34 @@
+.main-card {
+  background-color: #343a40;
+}
+
+.question-card {
+  background-color: #24242c;
+}
+
+mat-card, .mat-list-item, mat-card-subtitle{
+  color: white;
+}
+
+
+.answer-container{
+  display: grid;
+  position: relative;
+  color: white;
+  .answer{
+    color: white;
+  }
+
+  mat-icon {
+    position: absolute;
+    right: 0;
+  }
+
+  .correct{
+    color: #4caf50;
+  }
+
+  .incorrect{
+    color: #f44336;
+  }
+}
