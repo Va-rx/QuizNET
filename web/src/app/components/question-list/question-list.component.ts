@@ -41,7 +41,7 @@ export class QuestionsListComponent implements OnInit {
   }
 
   removeAllQuestions(): void {
-     this.questions$ = this.questionService.deleteAll();
+    //  this.questions$ = this.questionService.deleteAll();
      this.filteredQuestions$ = this.questions$;
   }
 }

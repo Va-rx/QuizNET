@@ -1,20 +1,20 @@
 <div class="main_container" *ngIf="!gameFinished">
-<div class="container">
-  <h2>Scoreboard</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Score</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let player of scoreBoard">
-        <td>{{ player.username }}</td>
-        <td>{{ player.score }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-</div>
-<app-scoreboard *ngIf="gameFinished" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [totalScore]="maxLevel"></app-scoreboard>
+  <div class="container">
+    <h2>Scoreboard</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let player of scoreBoard">
+          <td>{{ player.username }}</td>
+          <td>{{ player.score }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+  <app-scoreboard *ngIf="gameFinished" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [totalScore]="maxLevel"></app-scoreboard>

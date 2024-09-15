@@ -3,6 +3,7 @@ CREATE TABLE answers (
     question_id int  NOT NULL,
     answer varchar(100)  NOT NULL,
     is_correct boolean  NOT NULL,
+    points int  NOT NULL,
     CONSTRAINT answers_pk PRIMARY KEY (answer_id)
 );
 
@@ -10,6 +11,7 @@ CREATE TABLE questions (
     question_id int  NOT NULL,
     question varchar(300)  NOT NULL,
     image_link bytea NULL,
+    type varchar NOT NULL,
     CONSTRAINT questions_pk PRIMARY KEY (question_id)
 );
 
@@ -17,6 +19,7 @@ CREATE TABLE sets (
     set_id int  NOT NULL,
     test_id int  NOT NULL,
     question_id int  NOT NULL,
+    question_position int  NOT NULL,
     CONSTRAINT sets_pk PRIMARY KEY (set_id)
 );
 
@@ -42,8 +45,10 @@ CREATE TABLE roles (
 
 CREATE TABLE tests (
     test_id int  NOT NULL,
-    name varchar(50)  NOT NULL,
-    description varchar(500)  NULL,
+    name varchar(70)  NOT NULL,
+    description varchar(1000)  NULL,
+    created_date timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT tests_pk PRIMARY KEY (test_id)
 );
 

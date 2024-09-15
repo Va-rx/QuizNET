@@ -12,6 +12,7 @@ export class QuestionService {
 
   constructor(private http: HttpClient) { }
 
+
   getAll(): Observable<Question[]> {
     return this.http.get<Question[]>(baseUrl);
   }
@@ -29,16 +30,11 @@ export class QuestionService {
   }
 
   create(data: any): Observable<any> {    
-    console.log("CREATING!")
-    const formData = new FormData();
-    formData.append('question', data.question);
-    formData.append('answers', JSON.stringify(data.answers));
-    if (data.image_link) {
-      formData.append('image_link', data.image_link);
-    }
-    console.log(data);
-    
-    return this.http.post<Question>(baseUrl, formData);
+    return this.http.post<Question>(baseUrl, data);
+  }
+
+  updater(data: any): Observable<any> {
+    return this.http.put(`${baseUrl}/${data.id}`, data);
   }
 
   update(id: any, data: any): Observable<any> {
@@ -55,12 +51,12 @@ export class QuestionService {
     return this.http.delete(`${baseUrl}/${id}`);
   }
 
-  deleteAll(): Observable<any> {
-    return this.http.delete(baseUrl);
+  getWithDetails(id: number): Observable<any> {
+    return this.http.get(`${baseUrl}/${id}/questions/${id}`);
   }
 
-  // I would delete this
-  findByQuestionDesciption(question: any): Observable<Question[]> {
-    return this.http.get<Question[]>(`${baseUrl}?question=${question}`);
+  updateQuestion(id: number, question: Question): Observable<any> {
+    console.log('update!');
+    return this.http.patch(`${baseUrl}/${id}`, question);
   }
 }

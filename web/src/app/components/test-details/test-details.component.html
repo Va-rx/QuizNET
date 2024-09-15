@@ -4,33 +4,38 @@
             <p> {{test.name}} </p>
         </div>
         <div class="questions">
-            <div class="question" *ngFor="let question of questions"
-            (click)="selectQuestion(question)"> 
+            <div class="question" *ngFor="let question of test.questions; let i = index"
+            (click)="selectQuestion(i)">
                 <p> {{question.question}} </p>
             </div>
         </div>
         <button class="add-question-btn" (click)="addQuestion()">+</button>
     </div>
 
-    <div class="details" *ngIf="selectedTestDetails === true">
+    <div class="details" *ngIf="chosenView === 'test'">
+      <div class="questionBox">
       <div class="question" [ngClass]="{'editing': isEditingTestLabel}">
         <p *ngIf="!isEditingTestLabel; else labelEditMode">
-          {{testTempLabel}}
+          {{editedTest.name}}
           <i class="bi bi-pencil" (click)="editTestLabel()"></i>
         </p>
         <ng-template #labelEditMode>
-          <input #inputElement [(ngModel)]="testTempLabel" (keydown.enter)="saveTestLabelChange()" (keydown.escape)="cancelTestLabelChange()"/>
+          <input #inputElement [(ngModel)]="editedTest.name" (keydown.enter)="saveTestLabelChange()" (keydown.escape)="cancelTestLabelChange()"/>
           <i class="bi bi-x" (click)="cancelTestLabelChange()"></i>
           <i class="bi bi-check2" (click)="saveTestLabelChange()"></i>
         </ng-template>
       </div>
+      <div class="maxPointsBox">
+        <p>Max: {{editedTest.max_points}}pt. </p>
+      </div>
+      </div>
       <div class="description" [ngClass]="{'editing': isEditingTestDescription}">
         <p *ngIf="!isEditingTestDescription; else descriptionEditMode">
-          {{testTempDescription}}
+          {{editedTest.description}}
           <i class="bi bi-pencil" (click)="editTestDescription()"></i>
         </p>
         <ng-template #descriptionEditMode>
-          <input #inputElement [(ngModel)]="testTempDescription" (keydown.enter)="saveTestDescriptionChange()" (keydown.escape)="cancelTestDescriptionChange()"/>
+          <input #inputElement [(ngModel)]="editedTest.description" (keydown.enter)="saveTestDescriptionChange()" (keydown.escape)="cancelTestDescriptionChange()"/>
           <i class="bi bi-x" (click)="cancelTestDescriptionChange()"></i>
           <i class="bi bi-check2" (click)="saveTestDescriptionChange()"></i>
         </ng-template>
@@ -41,50 +46,58 @@
         </div>
     </div>
 
-    <div class="details" *ngIf="selectedTestQuestion !== null">
+    <div class="details" *ngIf="chosenView === 'question'">
+      <div class="questionBox">
         <div class="question" [ngClass]="{'editing': isEditingTestQuestion}">
             <p *ngIf="!isEditingTestQuestion; else editMode">
-                {{tempQuestion}}
+                {{selectedQuestion.question}}
                 <i class="bi bi-pencil" (click)="editTestQuestion()"></i>
             </p>
             <ng-template #editMode>
-                <input #inputElement [(ngModel)]="tempQuestion" (keydown.enter)="saveTestQuestionChange()" (keydown.escape)="cancelTestQuestionChange()"/>
+                <input #inputElement [(ngModel)]="selectedQuestion.question" (keydown.enter)="saveTestQuestionChange()" (keydown.escape)="cancelTestQuestionChange()"/>
                 <i class="bi bi-x" (click)="cancelTestQuestionChange()"></i>
                 <i class="bi bi-check2" (click)="saveTestQuestionChange()"></i>
             </ng-template>
         </div>
+        <div class="maxPointsBox">
+          <p>Max: {{getQuestionMaxPoints()}}pt. </p>
+        </div>
+      </div>
         <div class="options">
-            <div class="option">
-              <input type="radio" id="singleChoice" name="option" class="option-input">
+          <div class="option">
+              <input type="radio" id="singleChoice" name="option" class="option-input" [(ngModel)]="selectedQuestion.type" value="single">
               <label for="singleChoice" class="option-label">Single choice</label>
             </div>
             <div class="option">
-              <input type="radio" id="multipleChoice" name="option" class="option-input">
+              <input type="radio" id="multipleChoice" name="option" class="option-input" [(ngModel)]="selectedQuestion.type" value="multi">
               <label for="multipleChoice" class="option-label">Multiple choice</label>
             </div>
-            <div class="option">
+            <!-- <div class="option">
               <input type="radio" id="trueFalse" name="option" class="option-input">
               <label for="trueFalse" class="option-label">True / False</label>
             </div>
             <div class="option">
               <input type="radio" id="chooseFromList" name="option" class="option-input">
               <label for="chooseFromList" class="option-label">Choose from list</label>
-            </div>
+            </div> -->
           </div>
           <div class="answers">
-            <div class="answer" *ngFor="let answer of questionTempAnswers let i = index">
-              <input type="text" [(ngModel)]="questionTempAnswers[i].answer" placeholder="Enter your answer here">
+            <div class="answer" *ngFor="let answer of selectedQuestion.answers; let i = index">
+              <input type="text" [(ngModel)]="answer.answer" placeholder="Enter your answer here">
               <i [ngClass]="{
-                'bi bi-check-square-fill': questionTempAnswers[i].isCorrect,
-                'bi bi-x-square-fill': !questionTempAnswers[i].isCorrect
-              }" (click)="changeGoodFalseAnswer(i)"></i>
-              <i class="bi bi-trash-fill" (click)="deleteAnswer(i)"></i>
+                    'bi bi-check-square-fill': answer.isCorrect,
+                    'bi bi-x-square-fill': !answer.isCorrect
+                  }" 
+                 (click)="changeGoodFalseAnswer(i)">
+              </i>
+              <input type="number" [(ngModel)]="answer.points" class="points-input" />
+              <i class="bi bi-trash-fill" (click)="deleteAnswer(answer)"></i>
             </div>
-            <button (click)="addAnswer()">Add answer</button>
+            <button class="addAnswer" (click)="createAddAnswer()">Add answer</button>
           </div>
           <div class="buttons">
             <button class="deleteQuestion" (click)="deleteQuestion()">Delete question</button>
-            <button class="saveChanges" (click)="saveAnswerChanges()" [disabled]="!areNewAnswerChanges()">Save</button>
+            <button class="saveChanges" (click)="saveQuestionChanges()" [disabled]="!areNewQuestionChanges()">Save</button>
           </div>
     </div>
 </div>

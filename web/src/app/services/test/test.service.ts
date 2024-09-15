@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {BehaviorSubject, Observable} from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 import { Test } from '../../models/test.model';
 
 const baseUrl = 'http://localhost:8080/api/tests';
@@ -8,19 +8,22 @@ const baseUrl = 'http://localhost:8080/api/tests';
   providedIn: 'root'
 })
 export class TestService {
-  private selectedTest = new BehaviorSubject<Test | null>(null);
 
   constructor(private http: HttpClient) { }
-
-  get(id: number): Observable<any> {
-    return this.http.get(`${baseUrl}/${id}`);
-  }
 
   getAll(): Observable<any> {
     return this.http.get<Test[]>(baseUrl);
   }
 
-  create(data: any): Observable<any> {    
+  get(id: number): Observable<any> {
+    return this.http.get(`${baseUrl}/${id}`);
+  }
+
+  getWithDetails(id: number): Observable<any> {
+    return this.http.get(`${baseUrl}/${id}/details`);
+  }
+
+  create(data: any): Observable<any> {
     return this.http.post<Test>(baseUrl, data);
   }
 
@@ -28,7 +31,11 @@ export class TestService {
     return this.http.delete(`${baseUrl}/${id}`);
   }
 
-  updateTest(id: number, data: any): Observable<any> {
-    return this.http.put(`${baseUrl}/${id}`, data);
+  update(data: any): Observable<any> {
+    return this.http.put(`${baseUrl}/${data.id}`, data);
+  }
+
+  addQuestion(data: any, id: number): Observable<any> {
+    return this.http.post(`${baseUrl}/${id}/questions`, data);
   }
 }

@@ -1,85 +1,95 @@
 const express = require('express');
 const router = express.Router();
 
-const { getTests, createTest, getTestById, deleteTest, updateTest, getQuestionsForTest } = require("../database/database-queries/test-queries");
+const { getTests, createTest, getTest, updateTest, deleteTest, getTestDetails, addQuestionToTest } = require('../database/database-queries/test-queries');
 
-router.post("/", (req, res) => {
-    const newTest = req.body;
-    createTest(newTest)
-        .then(test_set => {
-            res.send(test_set);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the test_set."
-            });
-        });
+router.get("/", async (req, res) => {
+    try {
+        const result = await getTests();
+        res.status(200).send(result.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Internal server error' });
+    }
 });
 
-router.get("/", (req, res) => {
-    getTests()
-        .then(test_sets => {
-            res.send(test_sets);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving test_sets."
-            });
-        });
-});
-
-router.get("/:id", (req, res) => {
-    const id = req.params.id;
-    getTestById(id)
-        .then(test_set => {
-            res.send(test_set);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || `Some error occurred while retrieving test_set with id=${id}.`
-            });
-        });
-});
-
-router.get("/:id/questions", (req, res) => {
-    const id = req.params.id;
-    getQuestionsForTest
-        .then(test_set => {
-            res.send(test_set);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || `Some error occurred while retrieving all questions for test with id=${id}.`
-            });
-        });
-});
-
-router.delete("/:id", (req, res) => {
-    const id = req.params.id;
-    deleteTest(id)
-        .then(test=> {
-            res.send(test);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while deleting the test."
-            });
-        });
-});
-
-router.put("/:id", (req, res) => {
-    const id = req.params.id;
+router.post("/", async (req, res) => {
     const test = req.body;
-    updateTest(id, test)
-        .then(test => {
-            res.send(test);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while updating the test."
-            });
-        });
+    try {
+        const result = await createTest(test);
+        res.status(201).send(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Internal server error' });
+    }
+
 });
 
+router.get("/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const result = await getTest(id);
+        if (result.rows.length === 0) {
+            res.status(404).send({ message: 'Test not found' });
+        }
+        res.status(200).send(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Internal server error' });
+    }
+});
+
+router.put("/:id", async (req, res) => {
+    const test = req.body;
+    try {
+        const result = await updateTest(test);
+        if (result.rows.length === 0) {
+            res.status(404).send({ message: 'Test not found' });
+        }
+        res.status(200).send(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+
+    }
+});
+
+router.delete("/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const rowsAffected = await deleteTest(id);
+        if (rowsAffected > 0) {
+            res.status(200).send({ message: `${rowsAffected} row(s) deleted` });
+        } else {
+            res.status(404).send({ message: 'No rows found to delete' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Internal server error' });
+    }
+});
+
+router.get("/:id/details", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const test_details = (await getTestDetails(id));
+        // dodać ewentualnie czy dobry test_id
+        res.status(200).send(test_details);
+    } catch (error)  {
+        console.error(error);
+        res.status(500).send({ error: 'Internal server error' });
+    }
+});
+
+router.post("/:id/questions", async (req, res) => {
+    const test_id = req.params.id;
+    const question = req.body;
+    try {
+        const result = await addQuestionToTest(question, test_id);
+        res.status(201).send(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Internal server error' });
+    }
+})
 
 module.exports = router;

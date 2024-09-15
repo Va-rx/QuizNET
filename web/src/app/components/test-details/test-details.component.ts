@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { TestService } from 'src/app/services/test/test.service';
 import { Test} from 'src/app/models/test.model';
-import { Set } from 'src/app/models/set.model';
-import { Answer, Question } from 'src/app/models/question.model';
-import { SetService } from 'src/app/services/set/set.service';
+import { Question } from 'src/app/models/question.model';
+import { Answer } from 'src/app/models/question.model';
 import { ViewChild, ElementRef } from '@angular/core';
 import { QuestionService } from 'src/app/services/question/question.service';
-import { AnswerService } from 'src/app/services/answer/answer.service';
 import { ActivatedRoute } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { AnswerService } from 'src/app/services/answer/answer.service';
 
 @Component({
   selector: 'app-test-details',
@@ -17,71 +15,53 @@ import { firstValueFrom } from 'rxjs';
 })
 export class TestDetailsComponent implements OnInit {
   test: Test = new Test();
-  questions: Question[] = [];
+  editedTest: Test = new Test();
 
-  selectedTestDetails: boolean = true;
-  selectedTestQuestion: Question | null = null;
+  selectedQuestion: Question = new Question();
+  answerIdsToDelete: number[] = [];
 
-  // test details variables
-
-  testTempLabel: string = "";
-  testLatestTempLabel: string = "";
-
-  testTempDescription: string = "";
-  testLatestTempDescription: string = "";
+  chosenView!: string;
 
   isEditingTestLabel = false;
   isEditingTestDescription = false;
-
-  // test question variables
-
-  tempQuestion: string = "";
-  latestTempQuestion: string = ""
-
-  questionAnswers: Answer[] = [];
-  questionTempAnswers: Answer[] = [];
-
   isEditingTestQuestion = false;
-
-
 
   @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
 
-  constructor (private testService: TestService, private setService: SetService, private questionService: QuestionService, private answerService: AnswerService, private route: ActivatedRoute) { }
+  constructor (private testService: TestService, private questionService: QuestionService, private answerService: AnswerService, private route: ActivatedRoute) { }
 
 
-  async ngOnInit() {
+  ngOnInit() {
     let id = parseInt(this.route.snapshot.paramMap.get('id')!, 10);
-    this.test = await firstValueFrom(this.testService.get(id));
-    console.log(this.test);
-    this.testTempLabel = this.test.name;
-    this.testLatestTempLabel = this.testTempLabel;
-  
-    this.testTempDescription = this.test.description ?? "";
-    this.testLatestTempDescription = this.testTempDescription;
 
-    this.setService.getQuestionsByTestId(this.test.id).subscribe(questions => {
-      this.questions = questions;
-      console.log("questions:", this.questions);
-    })
-    // console.log(id);    
-    // this.testService.get(id).subscribe(test => {
-    //   this.test = test;
-    //   console.log(this.test);
-    //   this.setService.getQuestionsByTestId(this.test.id).subscribe(questions => {
-    //     this.questions = questions;
-    //   })
-    //   this.testTempLabel = this.test.name;
-    //   this.testLatestTempLabel = this.testTempLabel;
-  
-    //   this.testTempDescription = this.test.description ?? "";
-    //   this.testLatestTempDescription = this.testTempDescription;
-    // })
+    this.testService.getWithDetails(id).subscribe({
+            next: (test) => {
+              this.test = test;
+              this.editedTest = JSON.parse(JSON.stringify(this.test)); // deep copy
+              this.showTestDetails();
+      
+              for (let i = 0; i < this.test.questions.length; i++) {
+                this.questionService.get(this.test.questions[i].id).subscribe({
+                  next: (question) => {
+                    this.test.questions[i].answers = question.answers;
+                    this.test.questions[i].answers.forEach(answer => {
+                      answer.questionId = question.id;
+                    })
+
+                    this.editedTest.questions[i].answers = JSON.parse(JSON.stringify(this.test.questions[i].answers));
+                }
+              });
+            }
+            console.log(this.test);
+         }});
   }
 
   showTestDetails() {
-    this.selectedTestQuestion = null;
-    this.selectedTestDetails = true;
+    this.chosenView = 'test';
+  }
+
+  showQuestion() {
+    this.chosenView = 'question';
   }
 
   
@@ -92,12 +72,11 @@ export class TestDetailsComponent implements OnInit {
 
   cancelTestLabelChange() {
     this.isEditingTestLabel = false;
-    this.testTempLabel = this.testLatestTempLabel;
+    this.editedTest.name = this.test.name;
   }
   
   saveTestLabelChange() {
     this.isEditingTestLabel = false;
-    this.testLatestTempLabel = this.testTempLabel;
   }
   
 
@@ -108,51 +87,46 @@ export class TestDetailsComponent implements OnInit {
   
   cancelTestDescriptionChange() {
     this.isEditingTestDescription = false;
-    this.testTempDescription = this.testLatestTempDescription;
+    this.editedTest.description = this.test.description;
   }
   
   saveTestDescriptionChange() {
     this.isEditingTestDescription = false;
-    this.testLatestTempDescription = this.testLatestTempDescription;
   }
 
 
   areNewTestDetailsChanges() {
-    return this.testTempLabel !== this.test.name|| this.testTempDescription !== this.test.description;
+    return this.test.name !== this.editedTest.name || this.test.description !== this.editedTest.description;
   }
 
   saveTestDetailsChanges() {
-    let updatedTest: Test = new Test();
-    updatedTest.id = this.test.id;
-    updatedTest.name = this.testTempLabel;
-    updatedTest.description = this.testTempDescription;
-    this.testService.updateTest(this.test.id, updatedTest).subscribe(() => {
-      this.test = updatedTest;
-    }, error => {
-      alert('Error while updating test' + error.message);
-    });
-  }
-
-
-  async deleteTest() {
-    if (this.test !== null) {
-      await this.testService.delete(this.test.id).subscribe();
+    const updatedTest = {
+      "id": this.editedTest.id,
+      "name": this.editedTest.name,
+      "description": this.editedTest.description
     }
+
+    this.testService.update(updatedTest).subscribe((newTest) => {
+      this.test.name = newTest.name;
+      this.test.description = newTest.description;
+    })
+  }
+
+  deleteTest() {
+    this.testService.delete(this.test.id).subscribe({
+      next: (response) => {
+        console.log("test deleted successfully: ", response);
+      },
+      error: (response) => {
+        console.log("test deleted not success: ", response);
+      }
+    })
   }
 
 
-// Question handlers
-
-
-  selectQuestion(question: Question) {
-    this.selectedTestQuestion = question;
-    this.selectedTestDetails = false;
-
-    this.questionAnswers = question.answers || [];
-    this.questionTempAnswers = this.questionAnswers.map(answer => Object.assign({}, answer));
-
-    this.tempQuestion = this.selectedTestQuestion.question;
-    this.latestTempQuestion = this.tempQuestion;
+  selectQuestion(question_index_arr: number) {
+    this.selectedQuestion = this.editedTest.questions[question_index_arr];
+    this.showQuestion();
   }
 
 
@@ -163,68 +137,128 @@ export class TestDetailsComponent implements OnInit {
 
   saveTestQuestionChange() { 
     this.isEditingTestQuestion = false;
-    this.latestTempQuestion = this.tempQuestion;
   }
 
   cancelTestQuestionChange() { 
     this.isEditingTestQuestion = false;
-    this.tempQuestion = this.latestTempQuestion;
+    this
   }
 
 
   changeGoodFalseAnswer(index: number) {
-    this.questionTempAnswers[index].isCorrect = !this.questionTempAnswers[index].isCorrect;
+    this.selectedQuestion.answers[index].isCorrect = !this.selectedQuestion.answers[index].isCorrect;
   }
 
-  addAnswer() {
-    if (this.selectedTestQuestion !== null) {
-      this.questionTempAnswers.push({ answer: '', isCorrect: false, questionId: this.selectedTestQuestion.id});
-      console.log(this.questionTempAnswers);
-      console.log(this.questionAnswers);
-    } else {
-      console.error("Question is null");
+  createAddAnswer() {
+    this.selectedQuestion.answers.push(new Answer(this.selectedQuestion.id));
+    console.log(this.selectedQuestion.answers);
+  }
+
+  deleteAnswer(answer: Answer) {
+    if (answer.id) {
+      this.answerIdsToDelete.push(answer.id);
+    }
+
+    const index = this.selectedQuestion.answers.findIndex(ans => ans.id === answer.id);
+    if (index !== -1) {
+      this.selectedQuestion.answers.splice(index, 1);
     }
   }
 
-  deleteAnswer(id: number) {
-    this.questionTempAnswers.splice(id, 1);
-  }
-
-  areNewAnswerChanges() { 
-    return this.tempQuestion !== this.selectedTestQuestion?.question || !areArraysEqual(this.questionTempAnswers, this.questionAnswers);
-  }
-
-  // Better handle that when we dont know if we just modify the existing question or creating a new one. TODO!!!
-  async saveAnswerChanges() {
-    if (this.selectedTestQuestion !== null) {
-      this.selectedTestQuestion.question = this.tempQuestion;
-      this.selectedTestQuestion.answers = this.questionTempAnswers;
-      this.questionAnswers = this.questionTempAnswers.map(answer => Object.assign({}, answer));
-      this.questionService.update(this.selectedTestQuestion?.id, this.selectedTestQuestion).toPromise();
-    }
-    }
-
-  // TODO
-  async addQuestion() {
-    let question = new Question();
-    question.question = "New Question";
-    question.answers = [];
-    this.selectQuestion(question);
-    let obj = await this.questionService.create(question).toPromise()
-    question.id = obj.question_id;
-    this.questions.push(question);
-    let set = new Set();
-    set.questionId = obj.question_id;
-    set.testId = this.test.id;
-    await this.setService.create(set).toPromise();
-  }
-
-  async deleteQuestion() {
-    if (this.selectedTestQuestion !== null) {
-      let id = this.selectedTestQuestion.id;
-      await this.questionService.delete(id).toPromise();
-      this.questions = this.questions.filter(question => question.id !== id);
+  areNewQuestionChanges() {
+    for (const question of this.test.questions) {
+      if (question.id === this.selectedQuestion.id) {
+        return this.selectedQuestion.question !== question.question || 
+                this.selectedQuestion.type !== question.type ||
+                !areArraysEqual(this.selectedQuestion.answers, question.answers);
       }
+    }
+    throw new Error('Question ids in looking for new changes doesnt match');
+  }
+
+  saveQuestionChanges() {
+    this.answerIdsToDelete.forEach(answer_id => {
+      this.answerService.deleteAnswer(answer_id).subscribe();
+    });
+
+    this.selectedQuestion.answers.forEach(answer => {
+      if (answer.id) {
+        this.answerService.updateAnswer(answer.id, answer).subscribe((res) => {
+        })
+      } else {
+        this.answerService.createAnswer(answer).subscribe((res) => {
+        })
+      }
+    })
+
+    this.questionService.updateQuestion(this.selectedQuestion.id, this.selectedQuestion).subscribe({
+      next: (updatedQuestion) => {
+        const index = this.test.questions.findIndex(question => question.id === this.selectedQuestion.id);
+
+        this.selectedQuestion.question = updatedQuestion.question;
+        this.selectedQuestion.type = updatedQuestion.type;
+        this.selectedQuestion.image_link = updatedQuestion.image_link;
+
+        this.test.questions[index] = JSON.parse(JSON.stringify(this.selectedQuestion));
+        this.test.questions = [...this.test.questions];
+
+      },
+      error: (err) => {
+        console.log('Something went wrong with question update: ', err);
+      }
+    })
+  }
+
+  addQuestion() {
+    this.questionService.create(new Question()).subscribe({
+      next: (newQuestion) => {
+        this.testService.addQuestion(newQuestion, this.test.id).subscribe({
+          next: (response) => {
+            let question = {
+              ...newQuestion,
+              answers: [],
+              position: response.position
+            };
+
+            this.test.questions.push(question);
+            this.editedTest.questions.push(JSON.parse(JSON.stringify(question)));
+
+            this.selectQuestion(this.test.questions.length-1);                  
+          }
+        })
+      }
+    })
+  }
+
+  deleteQuestion() {
+    this.questionService.delete(this.selectedQuestion.id).subscribe({
+      next: () => {
+        const questionIndex = this.test.questions.indexOf(this.selectedQuestion);
+
+        this.test.questions.splice(questionIndex, 1);
+        this.editedTest.questions.splice(questionIndex, 1);
+        this.showTestDetails();
+      },
+      error: (err) => {
+        console.log('Deleting question error: ', err);
+      }
+    })
+  }
+
+  checkForProperAnswerPoints() {
+    // this.selectedQuestion.answers.forEach(answer => {
+    //   if (answer.isCorrect && answer.points <= 0) {
+    //     return false;
+    //   }
+    // });
+  }
+
+  getQuestionMaxPoints() {
+    let res = 0;
+    this.selectedQuestion.answers.forEach(answer => {
+      if (answer.isCorrect) res += answer.points;
+    })
+    return res;
   }
 }
 

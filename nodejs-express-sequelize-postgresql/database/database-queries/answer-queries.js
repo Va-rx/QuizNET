@@ -1,65 +1,33 @@
 const db = require('../database-connection');
-const allColumns = "answer_id as id, question_id as \"questionId\", answer, is_correct as \"isCorrect\"";
 
-const getAnswers = async () => {
+const deleteAnswer = (id) => {
     try {
-        const res = await db.query(`SELECT ${allColumns} FROM answers`);
-        return res.rows;
+        console.log(id);
+        return db.query(`DELETE FROM answers WHERE answer_id = $1`, [id]);
     } catch (err) {
-        console.log(err.message);
+        console.error('db query delete answer error: ', err);
     }
 }
 
-const getAnswersForQuestion = async (id) => {
+const updateAnswer = (id, answer) => {
     try {
-        const res = await db.query(`SELECT ${allColumns} FROM answers WHERE question_id = $1`, [id]);
-        return res.rows;
+        return db.query(`UPDATE answers SET question_id = $1, answer = $2, is_correct = $3, points = $4 WHERE answer_id = $5
+                         RETURNING question_id as questionId, answer, is_correct as isCorrect, points`, [answer.questionId, answer.answer, answer.isCorrect, answer.points, id]);
     } catch (err) {
-        console.log(err.message);
+        console.error('db query update answer error: ', err);
     }
 }
 
-const getAnswerById = async (id) => {
+const createAnswer = (answer) => {
     try {
-        const res = await db.query(`SELECT ${allColumns} FROM answers WHERE question_id = $1`, [id]);
-        return res.rows;
+        return db.query(`INSERT INTO answers (question_id, answer, is_correct, points) VALUES ($1, $2, $3, $4) RETURNING question_id as questionId, answer, is_correct as isCorrect, points`, [answer.questionId, answer.answer, answer.isCorrect, answer.points]);
     } catch (err) {
-        console.log(err.message);
-    }
-}
-
-const createAnswer = async (answer) => {
-    try {
-        const res = await db.query(`INSERT INTO answers (question_id, answer, is_correct) VALUES ($1, $2, $3) RETURNING *`, [answer.questionId, answer.answer, answer.isCorrect]);
-        return res.rows[0];
-    } catch (err) {
-        console.log(err.message);
-    }
-}
-
-const updateAnswer = async (id, answer) => {
-    try {
-        const res = await db.query(`UPDATE answers SET question_id = $1, answer = $2, is_correct = $3 WHERE answer_id = $4 RETURNING *`, [answer.questionId, answer.answer, answer.isCorrect, id]);
-        return res.rows[0];
-    } catch (err) {
-        console.log(err.message);
-    }
-}
-
-const deleteAnswer = async (id) => {
-    try {
-        const res = await db.query(`DELETE FROM answers WHERE id = $1`, [id]);
-        return res.rows[0];
-    } catch (err) {
-        console.log(err.message);
+        console.error('db query create answer error: ', err);
     }
 }
 
 module.exports = {
-    getAnswers,
-    getAnswerById,
-    createAnswer,
-    updateAnswer,
     deleteAnswer,
-    getAnswersForQuestion
+    updateAnswer,
+    createAnswer
 }

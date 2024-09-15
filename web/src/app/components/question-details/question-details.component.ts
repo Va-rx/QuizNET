@@ -1,7 +1,7 @@
 import {Component, Inject, Input, OnInit, Optional} from '@angular/core';
 import { QuestionService } from 'src/app/services/question/question.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Question } from 'src/app/models/question.model';
+import { Answer, Question } from 'src/app/models/question.model';
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
@@ -53,8 +53,8 @@ export class QuestionDetailsComponent implements OnInit {
       });
   }
 
-  addAnswer(): void {    
-    this.currentQuestion.answers?.push({ answer: '', isCorrect: false, questionId: this.currentQuestion.id });
+  addAnswer(): void {
+    // this.currentQuestion.answers?.push({ answer: '', isCorrect: false, questionId: this.currentQuestion.id });
   }
 
   onFileChange(event: any) {

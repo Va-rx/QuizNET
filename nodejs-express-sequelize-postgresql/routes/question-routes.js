@@ -1,127 +1,71 @@
 const express = require('express');
-const upload = require('./upload');
 const router = express.Router();
-const { getQuestions, getQuestionById, updateQuestion, deleteQuestion, deleteQuestions, createQuestion,
-    getQuestionByIdWithAnswers, getQuestionsWithAnswers
-} = require("../database/database-queries/question-queries");
+const db = require('../database/database-connection');
+const e = require('express');
+
+const { getQuestion, getAnswersToQuestion, deleteQuestion, updateQuestion, createQuestion } = require("../database/database-queries/question-queries");
 
 
-router.get("/",(req, res) => {
-    getQuestions()
-    .then(questions => {
-        questions.map(question => {
-            question.image_link = question.image_link ? question.image_link.toString('base64'): null;
-        });
-      res.send(questions);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while retrieving all questions."
-      });
-    });
-  });
-  
-router.get("/answers/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
     const id = req.params.id;
-    getQuestionByIdWithAnswers(id)
-    .then(question => {
-        if (question.image_link){//if no image link is present, it will be null
-          question.image_link = question.image_link.toString('base64');          
+    try {
+        const question = (await getQuestion(id)).rows;
+        if (question.length === 0) {
+            res.status(404).send({ message: 'Question not found' });
         }
-        res.send(question);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while retrieving question with specified id."
-      });
-    });
+
+        const answers = (await getAnswersToQuestion(id)).rows;
+        
+        const result = {
+            ...question[0],
+            answers: answers
+        }
+
+        res.status(200).send(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Internal server error' });
+    }
 })
 
-router.get("/answers",(req, res) => {
-    getQuestionsWithAnswers()
-        .then(questions => {
-            questions.map(question => {
-                question.image_link = question.image_link ? question.image_link.toString('base64'): null;
-            });
-            res.send(questions);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving all questions."
-            });
-        });
-});
-
-router.get("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
     const id = req.params.id;
-    getQuestionById(id)
-        .then(question => {
-            if (question.image_link){//if no image link is present, it will be null
-                question.image_link = question.image_link.toString('base64');
-            }
-            res.send(question);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving question with specified id."
-            });
-        });
+    try {
+        const rowsAffected = await deleteQuestion(id);
+        if (rowsAffected > 0) {
+            res.status(200).send({ message: `${rowsAffected} row(s) deleted` });
+        } else {
+            res.status(404).send({ message: 'No rows found to delete' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Internal server error' });
+    }
 })
-  
-router.post("/", upload.single('image_link'), (req, res) => {
-    console.log("creating new question");
-    console.log(req.body);
-    const newQuestion = req.body;
-    newQuestion.image_link = req.file ? req.file.buffer : null;
-    createQuestion(newQuestion)
-    .then(question => {
-      res.send(question);
-    })
-    .catch (err => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the question."
-      });
-    });
-});
-  
-router.put("/:id", upload.single('image_link'), (req, res) => {
-    const id = req.params.id;
-    const updatedQuestion = req.body;
-    updatedQuestion.image_link = req.file ? req.file.buffer : null;
-    updateQuestion(id, updatedQuestion)
-    .then(question => {
-      res.send(question);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while updating the question."
-      });
-    });
-});
-  
-router.delete("/:id", (req, res) => {
-    const id = req.params.id;
-    deleteQuestion(id)
-    .then(question => {
-      res.send(question);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while deleting the question."
-      });
-    });
-});
 
-router.delete("/", (req, res) => {
-    deleteQuestions()
-    .then(questions => {
-      res.send(questions);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while deleting all questions."
-      });
-    });
-});
+router.patch("/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const question = req.body;
+
+        const result = (await updateQuestion(id, question));
+        res.status(200).send(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Internal server error' });
+    }
+})
+
+router.post("/", async (req, res) => {
+    const question = req.body;
+    try {
+        const updatedQuestion = (await createQuestion(question)).rows[0];
+        res.status(201).send(updatedQuestion);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Internal server error' });
+    }
+})
+
 
 module.exports = router;

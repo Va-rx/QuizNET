@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AddQuestionComponent } from './components/add-question/add-question.component';
 import { QuestionDetailsComponent } from './components/question-details/question-details.component';
 import { QuestionsListComponent } from './components/question-list/question-list.component';
 
@@ -37,7 +36,6 @@ import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 @NgModule({
   declarations: [
     AppComponent,
-    AddQuestionComponent,
     QuestionDetailsComponent,
     QuestionsListComponent,
     CreateLobbyComponent,

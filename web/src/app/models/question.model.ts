@@ -1,12 +1,20 @@
 export class Question {
-  id?: any;
-  question: string = '';
+  id!: number;
+  position?: number;
+  question!: string;
   image_link?: string | null | File;
-  answers?: Answer[];
+  type!: string;
+  answers!: Answer[];
 }
 
 export class Answer {
-  questionId?: number;
-  answer!: string;
-  isCorrect?: boolean;
+  id?: number;
+  questionId!: number;
+  answer: string = '';
+  isCorrect: boolean = false;
+  points: number = 0;
+
+  constructor(questionId: number) {
+    this.questionId = questionId;
+  }
 }
