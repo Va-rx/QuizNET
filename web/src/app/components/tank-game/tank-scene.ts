@@ -1,7 +1,3 @@
-import { Sleeping } from "matter";
-import { Tilemaps } from "phaser";
-import { bindCallback } from "rxjs";
-
 class EnemyTurret {
   index;
   game;
@@ -27,7 +23,6 @@ class EnemyTurret {
     //const circle = new Phaser.Geom.Circle(this.x, this.y, this.range);
     //const graphics = game.add.graphics({ lineStyle: { color: 0xff0000 } });
     //graphics.strokeCircleShape(circle);
-    ///
 
     this.enemyShot = game.sound.add('enemyShot', {
       volume: 0.1
@@ -84,6 +79,7 @@ class EnemyTurret {
   updateHealthBar() {
     if (this.health <= 0) {
       this.game.turretsKilled += 1;
+      this.game.BARTLE_turrets_destroyed+=1;
       this.turret.destroy();
       this.healthBar.clear();
       //destroy whole object
@@ -233,6 +229,11 @@ export default class Tanks extends Phaser.Scene {
   playerBulletDmg = 20;
   pickedUpHealth = 0;
 
+  ///////BARTLE STATS///////
+  BARTLE_stars_picked=0;
+  BARTLE_medkits_shared=0;
+  BARTLE_turrets_destroyed=0;
+
   preload() {
     this.load.audio('tankRiding', 'assets/games/tankgame/sounds/engine_heavy_loop.ogg');
     this.load.audio('tankShot', 'assets/games/tankgame/sounds/heavy_canon.ogg');
@@ -267,12 +268,9 @@ export default class Tanks extends Phaser.Scene {
       volume: 1
     })
 
-    //console.log(this.scene);
     if (this.input.keyboard) {
       this.keys = this.input.keyboard.addKeys('W,S,A,D,F,E');
     }
-
-    //shwo fps
 
     // Generate a tilemap
     let mappy = this.make.tilemap({ key: 'map' });
@@ -285,7 +283,6 @@ export default class Tanks extends Phaser.Scene {
         topLayer.setCollisionByProperty({ collides: true });
         this.matter.world.convertTilemapLayer(topLayer);
         this.matter.world.getAllBodies().forEach(body => {
-          // Set the label property of each body
           body.gameObject.label = 'stationaryObject';
         });
       }
@@ -295,11 +292,6 @@ export default class Tanks extends Phaser.Scene {
     this.spawnPickups.apply(this);
     this.events.emit('updateHealth', this.playerHealth);
     this.events.emit('updateAmmo', this.playerAmmo);
-
-
-    //
-
-
 
     this.tankBody = this.matter.add.image(128, 128, 'tankBody');
     this.tankBody.setAngle(-90);
@@ -460,6 +452,7 @@ export default class Tanks extends Phaser.Scene {
       if(this.pickedUpHealth>0){
         this.drawDialogMsg_share()
         this.game.events.emit("shareHealth");
+        this.BARTLE_medkits_shared+=1;
         this.pickedUpHealth-=1;
         this.events.emit("updateMedkits",this.pickedUpHealth)
       }
@@ -613,14 +606,9 @@ export default class Tanks extends Phaser.Scene {
       this.playerAmmo--;
       this.events.emit('updateAmmo', this.playerAmmo);
       this.nextFire = this.time.now + this.fireRate;
-      //var bullet = this.bullets.getFirst();
       var bullet = this.matter.add.image(128, 128, 'bullet');
       bullet.setPosition(this.tankBody.x, this.tankBody.y);
       bullet.setSensor(true);
-      //bullet.setMass(0.000000000000000000000000000001);
-      //bullet.thrust(0.0002);
-      //bullet.setVelocityX(-10);
-      //bullet.setVelocityY(-10);
       const deltax = this.input.activePointer.x + this.cameras.main.scrollX - bullet.x;
       const deltay = this.input.activePointer.y + this.cameras.main.scrollY - bullet.y;
       const bulletSpeed = 50;
@@ -630,12 +618,7 @@ export default class Tanks extends Phaser.Scene {
       const yVelocity = normalizedDeltay * bulletSpeed;
 
       bullet.setVelocity(xVelocity, yVelocity);
-      //bullet.setCollidesWith(0);
       bullet.setName("bulletPlayer");
-
-
-
-
     }
   }
 
@@ -722,6 +705,7 @@ export default class Tanks extends Phaser.Scene {
             //console.log('Player collided with star');
             //this.addHealth();
             //this.pickupsFound+=1;
+            this.BARTLE_stars_picked+=1;
             this.playerBulletDmg += 2;
             if (bodyA.gameObject.label != 'tankPlayer') {
               bodyA.gameObject.destroy();
@@ -824,7 +808,7 @@ export default class Tanks extends Phaser.Scene {
       dialogY + (textMaxHeight / 2) - (textBounds.height / 2) + 20 // Center vertically with padding
     );
 
-    // Add a close button in the dialog box
+    // Add a close button (optional for display, but not required for closing the dialog)
     const closeButton = this.add.text(
       screenWidth / 2,
       dialogY + dialogHeight - 40,  // Position the button below the text
@@ -835,7 +819,7 @@ export default class Tanks extends Phaser.Scene {
         backgroundColor: '#333',
         padding: { x: 10, y: 5 }
       }
-    ).setOrigin(0.5).setInteractive().setDepth(1); // Ensure the button is above everything else
+    ).setOrigin(0.5).setDepth(1);
 
     // Add an animation to the dialog box to fade in
     this.tweens.add({
@@ -845,8 +829,9 @@ export default class Tanks extends Phaser.Scene {
       ease: 'Power2'
     });
 
-    // Close the dialog when the button is clicked
-    closeButton.on('pointerdown', () => {
+    // Close the dialog when clicking anywhere on the backgroundOverlay
+    backgroundOverlay.setInteractive(new Phaser.Geom.Rectangle(0, 0, screenWidth, screenHeight), Phaser.Geom.Rectangle.Contains);
+    backgroundOverlay.once('pointerdown', () => {
       // Fade out and destroy the dialog elements
       this.tweens.add({
         targets: [backgroundOverlay, dialogBox, tutorialTextObject, closeButton],
@@ -862,6 +847,9 @@ export default class Tanks extends Phaser.Scene {
       });
     });
 }
+  calculateBartle(){
+
+  }
 
 
 }
@@ -929,7 +917,7 @@ export class UIScene extends Phaser.Scene {
 
     ourGame.events.on('levelComplete', (id) => {
       this.levelsCompleted++;
-      const levelText = this.children.list[3] as Phaser.GameObjects.Text;
+      const levelText = this.children.list[4] as Phaser.GameObjects.Text;
       levelText.setText('Levels:' + this.levelsCompleted);
     });
     // Define medkit box dimensions
@@ -962,7 +950,7 @@ export class UIScene extends Phaser.Scene {
   }
 
   updateDeaths(deaths) {
-    const deathsText = this.children.list[2] as Phaser.GameObjects.Text;
+    const deathsText = this.children.list[3] as Phaser.GameObjects.Text;
     deathsText.setText('Deaths: ' + deaths);
   }
   updateAmmoCount(playerAmmo) {

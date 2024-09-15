@@ -27,6 +27,10 @@ export class TankGameComponent implements OnInit {
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   nickname: string = "";
   private socket: any;
+  starsPicked:number=0;
+  medkitsShared:number=0;
+  turretsDestroyed:number=0;
+  totalTurrets:number=0;
 
   constructor( private dialog: MatDialog, private TestsService: TestService,private socketService:SocketServiceService,private route:ActivatedRoute,private auth:AuthService) {
     this.config = {
@@ -58,8 +62,8 @@ export class TankGameComponent implements OnInit {
   ngOnInit() {
     this.socket=this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
-    //this.testID=history.state.data;
-    this.testID=2
+    this.testID=history.state.data;
+    //this.testID=2 REVERT THIS, ONLY FOR TESTING
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.get(this.testID).subscribe((data) => {
       this.questions = data;
@@ -78,9 +82,15 @@ export class TankGameComponent implements OnInit {
         this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
         //resume game
         this.phaserGame.resume();
-        if(this.currentLevel==this.maxLevel){
+        if(this.currentLevel==this.maxLevel){//REVERT THIS TO ==this.maxLevel for user experience
           console.log("Game Over");
           this.playerScore+=this.phaserGame.scene.getScene("default")["bonus"];
+          ////////SET PARAMETERS FOR BARTLE//////
+          this.starsPicked=this.phaserGame.scene.getScene("default")["BARTLE_stars_picked"];
+          this.medkitsShared=this.phaserGame.scene.getScene("default")["BARTLE_medkits_shared"];
+          this.turretsDestroyed=this.phaserGame.scene.getScene("default")["BARTLE_turrets_destroyed"];
+          this.totalTurrets=this.phaserGame.scene.getScene("default")["allTurrets"];
+          ///////////////////////////////////////
           this.playerScore=Math.round(this.playerScore * 100) / 100;
           this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
           this.phaserGame.destroy(true);
