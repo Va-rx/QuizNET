@@ -1,6 +1,7 @@
 const db = require('../database-connection');
 const allColumns = "test_id as id, name, description";
 const {deleteSetBySetId} = require("./set-queries");
+const {getAnswerById} = require("./answer-queries");
 
 const getTests = async () => {
     try {
@@ -20,6 +21,23 @@ const getTestById = async (id) => {
         WHERE s.test_id = $1
     `, [id]);        
     return res.rows;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+const getTestByIdWithAnswers = async (id) => {
+    try {
+        const res = await db.query(`
+        SELECT q.question_id as id, q.question, q.image_link
+        FROM questions q
+        JOIN sets s ON q.question_id = s.question_id
+        WHERE s.test_id = $1
+    `, [id]);
+        for (const row of res.rows) {
+            row.answers = await getAnswerById(row.id);
+        }
+        return res.rows;
     } catch (err) {
         console.log(err.message);
     }
@@ -64,5 +82,6 @@ module.exports = {
     getTestById,
     createTest,
     updateTest,
-    deleteTest
+    deleteTest,
+    getTestByIdWithAnswers
 }
