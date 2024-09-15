@@ -15,5 +15,26 @@
         {{ currentPlayerPercentage.toFixed(1) }}%
       </div>
     </div>
+
+<div class="bartle-metrics">
+  <h3>Bartle Taxonomy Personality</h3>
+  <div class="metric">
+    <span>Explorer:</span>
+    <div class="progress-bar" [ngStyle]="{'width': explorerScore + '%'}"></div>
+    <span>{{ explorerScore.toFixed(1) }}%</span>
+  </div>
+  <div class="metric">
+    <span>Socializer:</span>
+    <div class="progress-bar" [ngStyle]="{'width': socializerScore + '%'}"></div>
+    <span>{{ socializerScore.toFixed(1) }}%</span>
+  </div>
+  <div class="metric">
+    <span>Achiever:</span>
+    <div class="progress-bar" [ngStyle]="{'width': achieverScore + '%'}"></div>
+    <span>{{ achieverScore.toFixed(1) }}%</span>
   </div>
 </div>
+  </div>
+</div>
+
+

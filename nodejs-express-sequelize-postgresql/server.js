@@ -48,7 +48,28 @@ const userToSocket = new Map();
 const socketToUser = new Map();
 io.on("connection", (socket) => {
   console.log("A user connected" + socket.id);
+  //Handle Health sharing
+  socket.on("shareHealth",(userName)=>{
+    const session = getSessionBySocket(socket);
+    const filteredUsers = session.users
+    .map((socket) => socketToUser.get(socket))
+    .filter((user) => user !== userName && user !== 'Creator');
 
+    console.log(filteredUsers);
+
+    if (filteredUsers.length > 0) {
+      const randomUser = filteredUsers[Math.floor(Math.random() * filteredUsers.length)];
+      console.log(randomUser);
+      console.log(userToSocket.get(randomUser))
+      console.log(userToSocket)
+      userToSocket.get(randomUser).user[0].emit("receiveHealth",userName);
+    } else {
+      console.log("No valid users found.");
+    }
+
+
+  })
+  
   // Handle event coordinator request for join code
   socket.on("requestJoinCode", (userName, lobbyName) => {
     console.log(

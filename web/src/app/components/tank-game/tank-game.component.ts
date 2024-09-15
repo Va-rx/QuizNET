@@ -30,6 +30,10 @@ export class TankGameComponent implements OnInit {
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   nickname: string = "";
   private socket: any;
+  starsPicked:number=0;
+  medkitsShared:number=0;
+  turretsDestroyed:number=0;
+  totalTurrets:number=0;
 
   constructor( private dialog: MatDialog,
                private TestsService: TestService,
@@ -76,7 +80,6 @@ export class TankGameComponent implements OnInit {
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
       this.phaserGame.pause();
-
       const dialogRef = this.dialog.open(QuestionViewComponent, {
         data: { id: this.questions[this.currentLevel].id },
         disableClose: true
@@ -88,7 +91,7 @@ export class TankGameComponent implements OnInit {
         this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
         //resume game
         this.phaserGame.resume();
-        if(this.currentLevel==1){
+        if(this.currentLevel==this.maxLevel){//REVERT THIS TO ==this.maxLevel for user experience
           console.log("Game Over");
           let results = this.userAnswersService.getWrappedResult(this.historyTestId);
           this.userResultsService.create(results).subscribe(data=>{
@@ -96,6 +99,12 @@ export class TankGameComponent implements OnInit {
           });
 
           this.playerScore+=this.phaserGame.scene.getScene("default")["bonus"];
+          ////////SET PARAMETERS FOR BARTLE//////
+          this.starsPicked=this.phaserGame.scene.getScene("default")["BARTLE_stars_picked"];
+          this.medkitsShared=this.phaserGame.scene.getScene("default")["BARTLE_medkits_shared"];
+          this.turretsDestroyed=this.phaserGame.scene.getScene("default")["BARTLE_turrets_destroyed"];
+          this.totalTurrets=this.phaserGame.scene.getScene("default")["allTurrets"];
+          ///////////////////////////////////////
           this.playerScore=Math.round(this.playerScore * 100) / 100;
           this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
           this.phaserGame.destroy(true);
@@ -111,6 +120,17 @@ export class TankGameComponent implements OnInit {
       console.log(this.scoreBoard);}
 
     );
+
+    this.phaserGame.scene.game.events.on('shareHealth',()=>{
+      console.log("SHARING HEALTH WITH OTHER USER")
+      console.log(this.nickname)
+      this.socket.emit('shareHealth',this.nickname)
+    })
+
+    this.socket.on('receiveHealth',(userName) => {
+      console.log("You received apteczka from user: "+userName);
+      this.phaserGame.events.emit("receiveHealth_inPhaser",userName)
+    })
   }
   ngOnDestroy() {
     this.phaserGame.destroy(true);

@@ -17,4 +17,9 @@
   </table>
 </div>
 </div>
-<app-scoreboard *ngIf="gameFinished" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [totalScore]="maxLevel"></app-scoreboard>
+<app-scoreboard *ngIf="gameFinished" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [totalScore]="maxLevel"
+[BARTLE_stars_picked]="starsPicked"
+[BARTLE_medkits_shared]="medkitsShared"
+[BARTLE_turrets_destroyed]="turretsDestroyed"
+[allTurrets]="totalTurrets">
+></app-scoreboard>

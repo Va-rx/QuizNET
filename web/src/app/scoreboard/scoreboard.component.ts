@@ -9,8 +9,15 @@ export class ScoreboardComponent implements OnChanges{
   @Input() scoreboard: Map<string, number> = new Map<string, number>();
   @Input() currentPlayer: string = '';
   @Input() totalScore: number = 0;//max amount of points
+  @Input() BARTLE_stars_picked: number = 0; // Points for Explorer (max 4)
+  @Input() BARTLE_medkits_shared: number = 0; // Points for Socializer (max 10)
+  @Input() BARTLE_turrets_destroyed: number = 0; // Points for Achiever (normalized by allTurrets)
+  @Input() allTurrets: number = 0; // Total number of turrets for normalization
   currentPlayerScore: number = 0;
   currentPlayerPercentage: number = 0;
+  explorerScore: number = 0;
+  socializerScore: number = 0;
+  achieverScore: number = 0;
   constructor() {
   }
   ngOnChanges(changes: SimpleChanges): void {
@@ -24,5 +31,11 @@ export class ScoreboardComponent implements OnChanges{
     this.currentPlayerScore = this.scoreboard.get(this.currentPlayer) || 0;
     console.log(this.currentPlayerScore);
     this.currentPlayerPercentage = (this.currentPlayerScore / this.totalScore) * 100;
+
+    // Cap and normalize Bartle scores
+    const cappedMedkitsShared = Math.min(this.BARTLE_medkits_shared, 10); // Max 10 for Socializer
+    this.explorerScore = (this.BARTLE_stars_picked / 4) * 100; // Max 4 points
+    this.socializerScore = (cappedMedkitsShared / 10) * 100; // Max 10 points
+    this.achieverScore = (this.BARTLE_turrets_destroyed / this.allTurrets) * 100; // Normalized by total turrets
   }
 }
