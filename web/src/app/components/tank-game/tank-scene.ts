@@ -719,10 +719,14 @@ export default class Tanks extends Phaser.Scene {
     });
   }
 
-  drawDialogMsg(userName){
+  drawDialogMsg(userName) {
+    // Get the main camera
+    const camera = this.cameras.main;
+
+    // Create a dialog box and position it relative to the camera's center
     const dialogBox = this.add.text(
-      Number(this.sys.game.config.width) / 2,
-      Number(this.sys.game.config.height) / 2,
+      camera.worldView.x + camera.width / 2,
+      camera.worldView.y + camera.height / 2,
       `User: ${userName} sent you a MedKit!`,
       {
         fontSize: '20px',
@@ -733,16 +737,27 @@ export default class Tanks extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
+    // Automatically destroy the dialog box after 3 seconds
     this.time.delayedCall(3000, () => {
       dialogBox.destroy();
     });
-  }
 
-  drawDialogMsg_share(){
+    // Ensure the dialog box stays centered if the camera moves
+    this.events.on('cameraupdate', () => {
+      dialogBox.setPosition(
+        camera.worldView.x + camera.width / 2,
+        camera.worldView.y + camera.height / 2
+      );
+    });
+}
+
+  drawDialogMsg_share() {
+    // Get the center of the camera, not the game world
+    const camera = this.cameras.main;
     const dialogBox = this.add.text(
-      Number(this.sys.game.config.width) / 2,
-      Number(this.sys.game.config.height) / 2,
-      `You shared a MedKit with other user, Good Job!`,
+      camera.worldView.x + camera.width / 2,
+      camera.worldView.y + camera.height / 2,
+      `You shared a MedKit with another user, Good Job!`,
       {
         fontSize: '20px',
         color: '#ffffff',
@@ -752,10 +767,19 @@ export default class Tanks extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
+    // Destroy the dialog box after 3 seconds
     this.time.delayedCall(3000, () => {
       dialogBox.destroy();
     });
-  }
+
+    // Ensure the dialog box follows the camera if it moves
+    this.events.on('cameraupdate', () => {
+      dialogBox.setPosition(
+        camera.worldView.x + camera.width / 2,
+        camera.worldView.y + camera.height / 2
+      );
+    });
+}
 
   createTutorialDialog() {
     // Get the screen dimensions
