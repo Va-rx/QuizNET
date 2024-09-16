@@ -17,16 +17,16 @@
             <mat-card-title>{{question.question}}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <mat-list>
-              <mat-list-item *ngFor="let answer of question.answers">
+            <ul>
+              <li *ngFor="let answer of question.answers">
                  <div class="answer-container">
-                  {{answer.answer}}
+                   {{answer.answer}}
                   <mat-icon *ngIf="answer.isCorrect && answer.selected" class="correct">check</mat-icon>
                   <mat-icon *ngIf="!answer.isCorrect && answer.selected" class="incorrect">close</mat-icon>
                 </div>
-              </mat-list-item>
-
-            </mat-list>
+                <div class="divider"></div>
+              <li>
+            </ul>
           </mat-card-content>
         </mat-card>
       </mat-card-content>

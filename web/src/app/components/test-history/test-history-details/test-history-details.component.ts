@@ -13,7 +13,6 @@ export class TestHistoryDetailsComponent implements OnInit {
 
   test!: TestHistory;
   testId!: number;
-  answers!: any;
   constructor(private userResultsService: UserResultsService, private route: ActivatedRoute ) {}
 
   ngOnInit(): void {

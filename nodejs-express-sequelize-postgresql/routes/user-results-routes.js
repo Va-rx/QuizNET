@@ -42,7 +42,7 @@ router.get("/:id/:userId", async (req, res) => {
     }
     const answerIds = parsedAnswers.answers.question.flatMap(q => q.answer.map(a => parseInt(a)));
 
-    const test1 = {
+    const userTest = {
         createdAt: test.createdAt,
         testName: parsedResult.test.$.name,
         description: parsedResult.test.$.description,
@@ -57,7 +57,7 @@ router.get("/:id/:userId", async (req, res) => {
             }))
         }))
     };
-    res.json(test1);
+    res.json(userTest);
 });
 
 module.exports = router;

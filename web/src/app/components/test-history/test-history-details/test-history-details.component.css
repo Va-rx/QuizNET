@@ -12,7 +12,12 @@ mat-card, .mat-list-item, mat-card-subtitle{
 
 
 .answer-container{
+  padding: 6px 32px 6px 12px;
+  border: #3a4753 1px solid;
+  border-radius: 10px;
   display: grid;
+  word-wrap: break-word;
+  white-space: normal;
   position: relative;
   color: white;
   .answer{
@@ -21,7 +26,8 @@ mat-card, .mat-list-item, mat-card-subtitle{
 
   mat-icon {
     position: absolute;
-    right: 0;
+    right: 12px;
+    top: 6px;
   }
 
   .correct{
@@ -32,3 +38,14 @@ mat-card, .mat-list-item, mat-card-subtitle{
     color: #f44336;
   }
 }
+li {
+  list-style-type: none;
+  padding: 0;
+  margin: 7px 0;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
+
