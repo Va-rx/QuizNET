@@ -2,7 +2,6 @@ const db = require('../database-connection');
 
 const deleteAnswer = (id) => {
     try {
-        console.log(id);
         return db.query(`DELETE FROM answers WHERE answer_id = $1`, [id]);
     } catch (err) {
         console.error('db query delete answer error: ', err);
