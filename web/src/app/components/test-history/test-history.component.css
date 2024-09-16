@@ -1,0 +1,33 @@
+.test {
+  background-color: #2b2b35;
+  display: flex;
+  margin: 10px auto 0;
+  border: solid #695497 3px;
+  transition: transform 0.3s ease;
+  background-color: rgba(36, 36, 44, 0.8);
+  min-width: 30%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  color: #d4d6d9;
+  border-radius: 20px;
+}
+
+.test:hover {
+  transform: scale(1.05);
+  border: solid #9662d2 3px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+
+.btn {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 100px; /* adjust height as needed */
+}
+
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

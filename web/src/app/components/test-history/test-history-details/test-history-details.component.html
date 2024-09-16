@@ -1,0 +1,44 @@
+<div class="container">
+  <div class="mt-md-4" *ngIf="test; else emptyTest">
+    <mat-card class="main-card">
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>{{test.testName}}</mat-card-title>
+
+          <mat-card-subtitle>
+            <h6>{{test.description}}</h6>
+            <p class="mt-2">Created at: {{test.createdAt | date: 'yyyy-MM-dd'}}</p>
+          </mat-card-subtitle>
+        </mat-card-title-group>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-card *ngFor="let question of test.questions" class="mt-3 question-card">
+          <mat-card-header>
+            <mat-card-title>{{question.question}}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ul>
+              <li *ngFor="let answer of question.answers">
+                 <div class="answer-container">
+                   {{answer.answer}}
+                  <mat-icon *ngIf="answer.isCorrect && answer.selected" class="correct">check</mat-icon>
+                  <mat-icon *ngIf="!answer.isCorrect && answer.selected" class="incorrect">close</mat-icon>
+                </div>
+                <div class="divider"></div>
+              <li>
+            </ul>
+          </mat-card-content>
+        </mat-card>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <ng-template #emptyTest>
+    <div class="d-flex justify-content-center align-items-center mt-5">
+      <h4 class="text-muted
+        text-center">Test not found</h4>
+    </div>
+  </ng-template>
+</div>
+
+

@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Question} from "../../models/question.model";
 import {AuthService} from "../auth/auth.service";
+import {TestHistory} from "../../models/test-history.model";
 
 const baseUrl = 'http://localhost:8080/api/user-results';
 @Injectable({
@@ -18,8 +19,8 @@ export class UserResultsService {
     return this.http.post(baseUrl, data);
   }
 
-  get(id: number): Observable<Question[]> {
-    return this.http.get<Question[]>(`${baseUrl}/${id}/${this.userId}`);
+  get(testId: number): Observable<TestHistory> {
+    return this.http.get<TestHistory>(`${baseUrl}/${testId}/${this.userId}`);
   }
 
 }

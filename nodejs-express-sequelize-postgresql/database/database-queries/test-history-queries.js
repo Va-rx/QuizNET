@@ -21,7 +21,7 @@ const getAllTestHistory = async () => {
 
 const getAllTestHistoryConnectedToUser = async (userId) => {
     try {
-        const res = await db.query(`SELECT ${allColumns} FROM test_history WHERE user_id = $1`, [userId]);
+        const res = await db.query(`select th.test_name as \"testName\", th.created_at as \"createdAt\", th.id from test_history th inner join user_results ur on th.id = ur.test_history_id where user_id = $1`, [userId]);
         return res.rows;
     } catch (err) {
         console.log(err.message);
@@ -40,5 +40,6 @@ const createTestHistory = async (testHistory) => {
 module.exports = {
     getTestHistoryById,
     createTestHistory,
-    getAllTestHistory
+    getAllTestHistory,
+    getAllTestHistoryConnectedToUser
 }

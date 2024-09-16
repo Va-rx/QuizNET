@@ -33,6 +33,9 @@ import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { TestDetailsComponent } from './components/test-details/test-details.component';
 import { ScoreboardComponent } from './scoreboard/scoreboard.component';
+import { TestHistoryComponent } from './components/test-history/test-history.component';
+import { TestHistoryDetailsComponent } from './components/test-history/test-history-details/test-history-details.component';
+import {MatListModule} from "@angular/material/list";
 
 @NgModule({
   declarations: [
@@ -54,23 +57,26 @@ import { ScoreboardComponent } from './scoreboard/scoreboard.component';
     NavbarComponent,
     TestDetailsComponent,
     ScoreboardComponent,
+    TestHistoryComponent,
+    TestHistoryDetailsComponent,
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        FormsModule,
-        HttpClientModule,
-        MatButtonModule,
-        MatDialogModule,
-        MatCardModule,
-        MatInputModule,
-        MatIconModule,
-        MatCheckboxModule,
-        BrowserAnimationsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatSnackBarModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatCardModule,
+    MatInputModule,
+    MatIconModule,
+    MatCheckboxModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSnackBarModule,
+    MatListModule
+  ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]
 })
