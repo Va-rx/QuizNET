@@ -45,7 +45,7 @@ const deleteTest = async (id) => {
         rows_affected += (await db.query(`DELETE FROM sets WHERE test_id = $1`, [id])).rowCount;
 
         for (const question_id of questions_ids) {
-            rows_affected += (await deleteQuestion(question_id)).rowCount;
+            rows_affected += (await deleteQuestion(question_id));
         }
 
         rows_affected += (await db.query(`DELETE FROM tests WHERE test_id = $1`, [id])).rowCount

@@ -6,7 +6,7 @@
         <div class="questions">
             <div class="question" *ngFor="let question of test.questions; let i = index"
             (click)="selectQuestion(i)">
-                <p> {{question.question}} </p>
+                <p> {{question.id}}{{question.question}} </p>
             </div>
         </div>
         <button class="add-question-btn" (click)="addQuestion()">+</button>

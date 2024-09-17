@@ -141,7 +141,13 @@ export class TestDetailsComponent implements OnInit {
 
   cancelTestQuestionChange() { 
     this.isEditingTestQuestion = false;
-    this
+    
+    for (let i = 0; i < this.test.questions.length; i++) {
+      if (this.test.questions[i].id === this.selectedQuestion.id) {
+        this.selectedQuestion.question = this.test.questions[i].question;
+      }
+    }
+
   }
 
 
@@ -177,6 +183,15 @@ export class TestDetailsComponent implements OnInit {
   }
 
   saveQuestionChanges() {
+    if (!this.checkForProperAnswersPoints()) {
+      alert('Answers has wrong points assigned.');
+      return;
+    }
+    if (!this.checkForProperQuestionType()) {
+      alert('Question has wrong type.');
+      return;
+    }
+
     this.answerIdsToDelete.forEach(answer_id => {
       this.answerService.deleteAnswer(answer_id).subscribe();
     });
@@ -219,9 +234,14 @@ export class TestDetailsComponent implements OnInit {
               answers: [],
               position: response.position
             };
+            
+            console.log('dodalem pytanie!: ', question);
 
             this.test.questions.push(question);
             this.editedTest.questions.push(JSON.parse(JSON.stringify(question)));
+
+            console.log(this.test);
+            console.log(this.editedTest);
 
             this.selectQuestion(this.test.questions.length-1);                  
           }
@@ -233,11 +253,18 @@ export class TestDetailsComponent implements OnInit {
   deleteQuestion() {
     this.questionService.delete(this.selectedQuestion.id).subscribe({
       next: () => {
-        const questionIndex = this.test.questions.indexOf(this.selectedQuestion);
+        console.log(this.test.questions);
+        console.log(this.selectedQuestion);
+        for (let i = 0; i < this.test.questions.length; i++) {
+          if (this.test.questions[i].id === this.selectedQuestion.id) {
+            console.log(i);
 
-        this.test.questions.splice(questionIndex, 1);
-        this.editedTest.questions.splice(questionIndex, 1);
-        this.showTestDetails();
+            this.test.questions.splice(i, 1);
+            this.editedTest.questions.splice(i, 1);
+            this.showTestDetails();
+            break;
+          }
+        }
       },
       error: (err) => {
         console.log('Deleting question error: ', err);
@@ -245,12 +272,22 @@ export class TestDetailsComponent implements OnInit {
     })
   }
 
-  checkForProperAnswerPoints() {
-    // this.selectedQuestion.answers.forEach(answer => {
-    //   if (answer.isCorrect && answer.points <= 0) {
-    //     return false;
-    //   }
-    // });
+  checkForProperAnswersPoints() {
+    for (let i = 0; i < this.selectedQuestion.answers.length; i++) {
+      if (this.selectedQuestion.answers[i].isCorrect && this.selectedQuestion.answers[i].points <= 0) return false;
+      if (!this.selectedQuestion.answers[i].isCorrect && this.selectedQuestion.answers[i].points > 0) return false;
+    }
+    return true;
+  }
+
+  checkForProperQuestionType() {
+    let correctAnswers = 0;
+    for (let i = 0; i < this.selectedQuestion.answers.length; i++) {
+      if (this.selectedQuestion.answers[i].isCorrect) correctAnswers += 1;
+    }
+    if (correctAnswers < 1) return false;
+    if (this.selectedQuestion.type === 'single' && correctAnswers != 1) return false
+    return true;
   }
 
   getQuestionMaxPoints() {
