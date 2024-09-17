@@ -37,13 +37,13 @@ export class QuestionDetailsComponent implements OnInit {
   async updateQuestion(): Promise<void> {
     this.message = '';
     console.log(this.currentQuestion);
-    await this.questionService.update(this.currentQuestion.id, this.currentQuestion).toPromise();
+    await this.questionService.updateQuestion(this.currentQuestion.id, this.currentQuestion).toPromise();
 
     this._snackBar.open('Question save successfully')
   }
 
   deleteQuestion(): void {
-    this.questionService.delete(this.currentQuestion.id)
+    this.questionService.deleteQuestion(this.currentQuestion.id)
       .subscribe({
         next: (res) => {
           console.log(res);

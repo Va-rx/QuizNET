@@ -18,21 +18,21 @@ export class QuestionsListComponent implements OnInit {
   constructor(private questionService: QuestionService) { }
 
   ngOnInit(): void {
-    this.questions$ = this.questionService.getAllWithAnswers();
+    // this.questions$ = this.questionService.getAllWithAnswers();
 
-    const searchedQuestion$ = this.title.valueChanges.pipe(
-      startWith(this.title.value)
-    );
-    this.filteredQuestions$ = combineLatest([this.questions$, searchedQuestion$]).pipe(
-      map(([questions, searchedQuestion]) =>
-        questions.filter(
-          (question) =>
-            searchedQuestion === '' ||
-            question.question.toLowerCase().includes(searchedQuestion ? searchedQuestion.toLowerCase() : '')
+    // const searchedQuestion$ = this.title.valueChanges.pipe(
+    //   startWith(this.title.value)
+    // );
+    // this.filteredQuestions$ = combineLatest([this.questions$, searchedQuestion$]).pipe(
+    //   map(([questions, searchedQuestion]) =>
+    //     questions.filter(
+    //       (question) =>
+    //         searchedQuestion === '' ||
+    //         question.question.toLowerCase().includes(searchedQuestion ? searchedQuestion.toLowerCase() : '')
 
-        )
-      )
-    );
+    //     )
+    //   )
+    // );
   }
 
   setActiveQuestion(question: Question, index: number): void {

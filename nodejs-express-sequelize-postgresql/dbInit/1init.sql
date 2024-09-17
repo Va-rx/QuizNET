@@ -52,6 +52,22 @@ CREATE TABLE tests (
     CONSTRAINT tests_pk PRIMARY KEY (test_id)
 );
 
+CREATE TABLE test_history (
+    id int  NOT NULL,
+    test_name varchar(50)  NOT NULL,
+    content varchar(100000)  NOT NULL,
+    created_at timestamp  NOT NULL,
+    CONSTRAINT test_history_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE user_results (
+    id int  NOT NULL,
+    user_id int  NOT NULL,
+    test_history_id int  NOT NULL,
+    answers varchar(10000)  NOT NULL,
+    CONSTRAINT user_results_pk  PRIMARY KEY (id)
+);
+
 ALTER TABLE answers ADD CONSTRAINT answers_questions
     FOREIGN KEY (question_id)
     REFERENCES questions (question_id)
@@ -80,6 +96,12 @@ ALTER TABLE users ADD CONSTRAINT users_roles
     INITIALLY IMMEDIATE
 ;
 
+ALTER TABLE user_results ADD CONSTRAINT user_results_users
+    FOREIGN KEY (test_history_id)
+    REFERENCES test_history (id)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
 
 CREATE SEQUENCE tests_id_seq;
 ALTER TABLE tests ALTER COLUMN test_id SET DEFAULT nextval('tests_id_seq');
@@ -95,6 +117,12 @@ ALTER TABLE answers ALTER COLUMN answer_id SET DEFAULT nextval('answers_id_seq')
 
 CREATE SEQUENCE users_id_seq;
 ALTER TABLE users ALTER COLUMN user_id SET DEFAULT nextval('users_id_seq');
+
+CREATE SEQUENCE test_history_id_seq;
+ALTER TABLE test_history ALTER COLUMN id SET DEFAULT nextval('test_history_id_seq');
+
+CREATE SEQUENCE user_results_id_seq;
+ALTER TABLE user_results ALTER COLUMN id SET DEFAULT nextval('user_results_id_seq');
 
 ALTER TABLE questions
 ALTER COLUMN question_id SET DATA TYPE INTEGER,

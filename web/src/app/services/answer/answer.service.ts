@@ -11,15 +11,12 @@ export class AnswerService {
 
   constructor(private http: HttpClient) { }
 
-  create(data: any): Observable<any> {
-    return this.http.post(baseUrl, data);
-  }
 
-  getAll(): Observable<any> {
+  getAllAnswers(): Observable<any> {
     return this.http.get(baseUrl);
   }
 
-  get(id: number): Observable<any> {
+  getAnswer(id: number): Observable<any> {
     return this.http.get(`${baseUrl}/${id}`);
   }
 

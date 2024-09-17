@@ -8,6 +8,8 @@ import { SocketServiceService } from 'src/app/services/socket/socket-service.ser
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import {UserResultsService} from "../../services/user-results/user-results.service";
+import {UserAnswersService} from "../../services/user-answers/user-answers.service";
 
 @Component({
   selector: 'app-tank-game',
@@ -19,6 +21,7 @@ export class TankGameComponent implements OnInit {
   config: Phaser.Types.Core.GameConfig;
   questions: Question[] = [];
   testID: number = 1;
+  historyTestId: number = -1;
   maxLevel: number = 9;
   currentLevel: number = 0;
   scoreBoard:any[]=[];
@@ -27,8 +30,18 @@ export class TankGameComponent implements OnInit {
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   nickname: string = "";
   private socket: any;
+  starsPicked:number=0;
+  medkitsShared:number=0;
+  turretsDestroyed:number=0;
+  totalTurrets:number=0;
 
-  constructor( private dialog: MatDialog, private TestsService: TestService,private socketService:SocketServiceService,private route:ActivatedRoute,private auth:AuthService) {
+  constructor( private dialog: MatDialog,
+               private TestsService: TestService,
+               private socketService:SocketServiceService,
+               private route:ActivatedRoute,
+               private auth:AuthService,
+               private userAnswersService: UserAnswersService,
+               private userResultsService: UserResultsService) {
     this.config = {
       type: Phaser.AUTO,
     //height as window
@@ -58,10 +71,13 @@ export class TankGameComponent implements OnInit {
   ngOnInit() {
     this.socket=this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
-    this.testID=history.state.data;
+    this.testID=history.state.data.testId;
+    this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
-    this.TestsService.get(this.testID).subscribe((data) => {
-      this.questions = data;
+    this.TestsService.getTestDetails(this.testID).subscribe((data) => {
+      console.log(data);
+      this.questions = data.questions;
+      // this.maxLevel = data.quesions.length;
     });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
@@ -78,9 +94,20 @@ export class TankGameComponent implements OnInit {
         this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
         //resume game
         this.phaserGame.resume();
-        if(this.currentLevel==1){
+        if(this.currentLevel==this.maxLevel){//REVERT THIS TO ==this.maxLevel for user experience
           console.log("Game Over");
+          let results = this.userAnswersService.getWrappedResult(this.historyTestId);
+          this.userResultsService.create(results).subscribe(data=>{
+            console.log(data);
+          });
+
           this.playerScore+=this.phaserGame.scene.getScene("default")["bonus"];
+          ////////SET PARAMETERS FOR BARTLE//////
+          this.starsPicked=this.phaserGame.scene.getScene("default")["BARTLE_stars_picked"];
+          this.medkitsShared=this.phaserGame.scene.getScene("default")["BARTLE_medkits_shared"];
+          this.turretsDestroyed=this.phaserGame.scene.getScene("default")["BARTLE_turrets_destroyed"];
+          this.totalTurrets=this.phaserGame.scene.getScene("default")["allTurrets"];
+          ///////////////////////////////////////
           this.playerScore=Math.round(this.playerScore * 100) / 100;
           this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
           this.phaserGame.destroy(true);
@@ -96,6 +123,17 @@ export class TankGameComponent implements OnInit {
       console.log(this.scoreBoard);}
 
     );
+
+    this.phaserGame.scene.game.events.on('shareHealth',()=>{
+      console.log("SHARING HEALTH WITH OTHER USER")
+      console.log(this.nickname)
+      this.socket.emit('shareHealth',this.nickname)
+    })
+
+    this.socket.on('receiveHealth',(userName) => {
+      console.log("You received apteczka from user: "+userName);
+      this.phaserGame.events.emit("receiveHealth_inPhaser",userName)
+    })
   }
   ngOnDestroy() {
     this.phaserGame.destroy(true);

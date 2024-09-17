@@ -1,0 +1,51 @@
+.main-card {
+  background-color: #343a40;
+}
+
+.question-card {
+  background-color: #24242c;
+}
+
+mat-card, .mat-list-item, mat-card-subtitle{
+  color: white;
+}
+
+
+.answer-container{
+  padding: 6px 32px 6px 12px;
+  border: #3a4753 1px solid;
+  border-radius: 10px;
+  display: grid;
+  word-wrap: break-word;
+  white-space: normal;
+  position: relative;
+  color: white;
+  .answer{
+    color: white;
+  }
+
+  mat-icon {
+    position: absolute;
+    right: 12px;
+    top: 6px;
+  }
+
+  .correct{
+    color: #4caf50;
+  }
+
+  .incorrect{
+    color: #f44336;
+  }
+}
+li {
+  list-style-type: none;
+  padding: 0;
+  margin: 7px 0;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
+

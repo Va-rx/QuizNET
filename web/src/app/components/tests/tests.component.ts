@@ -14,7 +14,7 @@ export class TestsComponent implements OnInit{
   constructor(private testService: TestService, private router: Router) { }
 
   ngOnInit() {
-    this.testService.getAll().subscribe({
+    this.testService.getAllTests().subscribe({
       next: tests => {
         this.tests = tests;
       },
@@ -27,7 +27,7 @@ export class TestsComponent implements OnInit{
   createNewTest() {
     let test = new Test();
 
-    this.testService.create(test).subscribe({
+    this.testService.createTest(test).subscribe({
       next: res_test => {
         test = res_test;
         this.router.navigate([`/tests/`, test.id]);

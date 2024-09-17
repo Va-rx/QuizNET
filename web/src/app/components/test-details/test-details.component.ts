@@ -34,14 +34,14 @@ export class TestDetailsComponent implements OnInit {
   ngOnInit() {
     let id = parseInt(this.route.snapshot.paramMap.get('id')!, 10);
 
-    this.testService.getWithDetails(id).subscribe({
+    this.testService.getTestDetails(id).subscribe({
             next: (test) => {
               this.test = test;
               this.editedTest = JSON.parse(JSON.stringify(this.test)); // deep copy
               this.showTestDetails();
       
               for (let i = 0; i < this.test.questions.length; i++) {
-                this.questionService.get(this.test.questions[i].id).subscribe({
+                this.questionService.getQuestion(this.test.questions[i].id).subscribe({
                   next: (question) => {
                     this.test.questions[i].answers = question.answers;
                     this.test.questions[i].answers.forEach(answer => {
@@ -106,14 +106,14 @@ export class TestDetailsComponent implements OnInit {
       "description": this.editedTest.description
     }
 
-    this.testService.update(updatedTest).subscribe((newTest) => {
+    this.testService.updateTest(updatedTest.id, updatedTest).subscribe((newTest) => {
       this.test.name = newTest.name;
       this.test.description = newTest.description;
     })
   }
 
   deleteTest() {
-    this.testService.delete(this.test.id).subscribe({
+    this.testService.deleteTest(this.test.id).subscribe({
       next: (response) => {
         console.log("test deleted successfully: ", response);
       },
@@ -225,9 +225,9 @@ export class TestDetailsComponent implements OnInit {
   }
 
   addQuestion() {
-    this.questionService.create(new Question()).subscribe({
+    this.questionService.createQuestion(new Question()).subscribe({
       next: (newQuestion) => {
-        this.testService.addQuestion(newQuestion, this.test.id).subscribe({
+        this.testService.addQuestion(this.test.id, newQuestion).subscribe({
           next: (response) => {
             let question = {
               ...newQuestion,
@@ -251,7 +251,7 @@ export class TestDetailsComponent implements OnInit {
   }
 
   deleteQuestion() {
-    this.questionService.delete(this.selectedQuestion.id).subscribe({
+    this.questionService.deleteQuestion(this.selectedQuestion.id).subscribe({
       next: () => {
         console.log(this.test.questions);
         console.log(this.selectedQuestion);

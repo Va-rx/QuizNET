@@ -1,0 +1,10 @@
+<div class="container">
+  <div class="row">
+    <div *ngFor="let test of tests" class="col-12 col-md-6 col-lg-4 mb-3">
+      <button class="btn test w-100 text-left d-flex flex-column justify-content-between" (click)="navigateByTestId(test.id)">
+        <p class="mb-2 text-truncate test-name">{{test.testName}}</p>
+        <p class="mb-0 small text-muted created-at">{{test.createdAt | date: 'yyyy-MM-dd'}}</p>
+      </button>
+    </div>
+  </div>
+</div>

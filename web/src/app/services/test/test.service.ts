@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Test } from '../../models/test.model';
+import { Question } from 'src/app/models/question.model';
 
 const baseUrl = 'http://localhost:8080/api/tests';
 @Injectable({
@@ -11,31 +12,31 @@ export class TestService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<any> {
+  getAllTests(): Observable<any> {
     return this.http.get<Test[]>(baseUrl);
   }
 
-  get(id: number): Observable<any> {
+  getTest(id: number): Observable<any> {
     return this.http.get(`${baseUrl}/${id}`);
   }
 
-  getWithDetails(id: number): Observable<any> {
+  getTestDetails(id: number): Observable<any> {
     return this.http.get(`${baseUrl}/${id}/details`);
   }
 
-  create(data: any): Observable<any> {
-    return this.http.post<Test>(baseUrl, data);
+  createTest(test: Test): Observable<any> {
+    return this.http.post<Test>(baseUrl, test);
   }
 
-  delete(id: number): Observable<any> {
+  deleteTest(id: number): Observable<any> {
     return this.http.delete(`${baseUrl}/${id}`);
   }
 
-  update(data: any): Observable<any> {
-    return this.http.put(`${baseUrl}/${data.id}`, data);
+  updateTest(id: number, test: any): Observable<any> {
+    return this.http.put(`${baseUrl}/${id}`, test);
   }
 
-  addQuestion(data: any, id: number): Observable<any> {
-    return this.http.post(`${baseUrl}/${id}/questions`, data);
+  addQuestion(id: number, question: Question): Observable<any> {
+    return this.http.post(`${baseUrl}/${id}/questions`, question);
   }
 }
