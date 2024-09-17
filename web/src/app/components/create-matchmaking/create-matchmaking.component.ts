@@ -22,10 +22,12 @@ export class CreateMatchmakingComponent implements OnInit {
   ngOnInit(): void {
     this.loadTestSets();
     this.loadGames();
+    console.log('hm?');
   }
 
   loadTestSets(): void {
     this.testsService.getAllTests().subscribe((data: any[]) => {
+      console.log(data);
       this.testSets = data;
     });
   }

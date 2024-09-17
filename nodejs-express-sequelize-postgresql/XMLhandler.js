@@ -1,14 +1,16 @@
 const {getTestByIdWithAnswers} = require("./database/database-queries/test-queries");
+const {getTestMaxPoints} = require("./database/database-queries/test-queries");
 const xmlbuilder = require("xmlbuilder");
 const xml2js = require("xml2js");
 
 async function generateQuizXML(test) {
     const testWithAnswers = await getTestByIdWithAnswers(test.id);
-    const quiz = xmlbuilder.create('test').att('name', test.name).att('description', test.description);
+    const testMaxPoints = await getTestMaxPoints(test.id);
+    const quiz = xmlbuilder.create('test').att('name', test.name).att('description', test.description).att('max_points', testMaxPoints);
     testWithAnswers.forEach(q => {
-        const question = quiz.ele('questions', { question: q.question, id: q.id});
+        const question = quiz.ele('questions', { question: q.question, id: q.id, max_points: q.max_points});
         q.answers.forEach(answer => {
-            question.ele('answers', { isCorrect: answer.isCorrect.toString(), answer: answer.answer, id: answer.id });
+            question.ele('answers', { isCorrect: answer.isCorrect.toString(), answer: answer.answer, id: answer.id, points: answer.points });
         });
     });
     return quiz.end({ pretty: true });

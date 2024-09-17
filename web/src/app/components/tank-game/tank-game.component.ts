@@ -22,7 +22,7 @@ export class TankGameComponent implements OnInit {
   questions: Question[] = [];
   testID: number = 1;
   historyTestId: number = -1;
-  maxLevel: number = 9;
+  maxLevel: number = 1;
   currentLevel: number = 0;
   scoreBoard:any[]=[];
   playerScore: number = 0;
@@ -34,6 +34,7 @@ export class TankGameComponent implements OnInit {
   medkitsShared:number=0;
   turretsDestroyed:number=0;
   totalTurrets:number=0;
+  testMaxPoints:number=0;
 
   constructor( private dialog: MatDialog,
                private TestsService: TestService,
@@ -69,6 +70,7 @@ export class TankGameComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('start!');
     this.socket=this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
     this.testID=history.state.data.testId;
@@ -77,7 +79,8 @@ export class TankGameComponent implements OnInit {
     this.TestsService.getTestDetails(this.testID).subscribe((data) => {
       console.log(data);
       this.questions = data.questions;
-      // this.maxLevel = data.quesions.length;
+      this.maxLevel = data.questions.length;
+      this.testMaxPoints = data.max_points;
     });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time

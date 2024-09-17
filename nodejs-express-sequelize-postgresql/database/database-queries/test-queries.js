@@ -1,6 +1,6 @@
 const db = require('../database-connection');
 
-const { deleteQuestion, getQuestionMaxPoints } = require('./question-queries');
+const { deleteQuestion, getQuestionMaxPoints, getAnswersToQuestion } = require('./question-queries');
 
 const getTests = () => {
     try {
@@ -104,6 +104,42 @@ const addQuestionToTest = async (question, id) => {
     }
 }
 
+const getTestByIdWithAnswers = async (id) => {
+    try {
+        const res = await db.query(`
+        SELECT q.question_id as id, q.question, q.image_link
+        FROM questions q
+        JOIN sets s ON q.question_id = s.question_id
+        WHERE s.test_id = $1
+    `, [id]);
+        for (const row of res.rows) {
+            row.answers = (await getAnswersToQuestion(row.id)).rows;
+            row.max_points = (await getQuestionMaxPoints(row.id));
+        }
+        return res.rows;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+// const getTestWithAnswers = async (id) => {
+//     try {
+//         const test = (await getTest(id)).rows[0];
+//         const max_points = (await getTestMaxPoints(id));
+//         const questions = (await getTestQuestionsWithAnswers(id)).rows;
+
+//         const result = {
+//             ...test,
+//             max_points: max_points,
+//             questions: questions
+//         };
+
+//         return result;
+//     } catch (err) {
+//         console.error('db query get test with answers error: ', err);
+//     }
+// }
+
 module.exports = {
     getTests,
     createTest,
@@ -112,5 +148,8 @@ module.exports = {
     deleteTest,
     getTestQuestions,
     getTestDetails,
-    addQuestionToTest
+    addQuestionToTest,
+    getTestByIdWithAnswers,
+    getTestMaxPoints
+    // getTestWithAnswers
 }

@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../database/database-connection');
 const e = require('express');
 
-const { getQuestion, getAnswersToQuestion, deleteQuestion, updateQuestion, createQuestion } = require("../database/database-queries/question-queries");
+const { getQuestion, getAnswersToQuestion, deleteQuestion, updateQuestion, createQuestion, getQuestionMaxPoints } = require("../database/database-queries/question-queries");
 
 
 router.get("/:id", async (req, res) => {
@@ -15,9 +15,11 @@ router.get("/:id", async (req, res) => {
         }
 
         const answers = (await getAnswersToQuestion(id)).rows;
+        const max_points = await getQuestionMaxPoints(id);
         
         const result = {
             ...question[0],
+            max_points: max_points,
             answers: answers
         }
 

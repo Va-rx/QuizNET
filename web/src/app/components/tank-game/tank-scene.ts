@@ -68,10 +68,6 @@ class EnemyTurret {
         }
       }
     }
-
-    // Create circular reload timer
-
-
   }
 
 
@@ -182,7 +178,7 @@ class Checkpoint {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject) {
           if (bodyA.gameObject.label == 'tankPlayer') {
-            console.log('LEVEL ' + id + ' COMPLETED, QUESSTION HERE');
+            console.log('LEVEL ' + id + ' COMPLETED, QUESSTION HERE!');
 
             //emit level complete event
             if (!this.finsihsed) {
@@ -479,7 +475,6 @@ export default class Tanks extends Phaser.Scene {
     const max_audio_rate = 1;
 
     if (this.input.activePointer.isDown) {
-      console.log(this.calculateBonus())
       this.playerFire();
     }
 
@@ -607,7 +602,10 @@ export default class Tanks extends Phaser.Scene {
     if (this.time.now > this.nextFire) {
       this.tankShot.play()
       this.reloadTimer = 0;
+      this.updateReloadTimer(0);
+      this.playerAmmo--;
       this.events.emit('updateAmmo', this.playerAmmo);
+      this.nextFire = this.time.now + this.fireRate;
       var bullet = this.matter.add.image(128, 128, 'bullet');
       bullet.setPosition(this.tankBody.x, this.tankBody.y);
       bullet.setSensor(true);
@@ -910,7 +908,7 @@ export class UIScene extends Phaser.Scene {
 
     // Listen for pointer movement
     ourGame.input.on('pointermove', function (pointer) {
-      //text.setText('Pointer Position: (' + pointer.x + ', ' + pointer.y + ')');
+      // text.setText('Pointer Position: (' + pointer.x + ', ' + pointer.y + ')');
     });
 
     ourGame.events.on('updateAmmo', this.updateAmmoCount, this);

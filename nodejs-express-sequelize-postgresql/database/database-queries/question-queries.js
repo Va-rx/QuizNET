@@ -76,13 +76,21 @@ const getQuestionMaxPoints = async (id) => {
         let result = 0;
         const answers = (await getAnswersToQuestion(id)).rows;
         for (const answer of answers) {
-            if (answer.is_correct) {
+            if (answer.isCorrect) {
                 result += answer.points;
             }
         }
         return result;
     } catch (err) {
         console.error('db query get question max points error: ', err);
+    }
+}
+
+const getTestQuestionsWithAnswers = async (id) => {
+    try {
+
+    } catch (err) {
+        console.error('db query get test questions with answers error')
     }
 }
 
@@ -93,5 +101,6 @@ module.exports = {
     deleteQuestion,
     createQuestion,
     getQuestionMaxPoints,
-    updateQuestion
+    updateQuestion,
+    // getTestQuestionsWithAnswers
 }

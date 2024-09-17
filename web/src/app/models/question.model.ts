@@ -5,6 +5,7 @@ export class Question {
   image_link?: string | null | File;
   type!: string;
   answers!: Answer[];
+  max_points: number = 0;
 }
 
 export class Answer {
