@@ -1,12 +1,4 @@
-const db = require('../database-connection');
-<<<<<<< HEAD
-=======
-const {getAnswerById, createAnswer, updateAnswer} = require("./answer-queries");
-const {deleteSetBySetId} = require("./set-queries");
-const allColumns = "question_id as id, question, image_link";
->>>>>>> 61b8cae07eb46c46b0721745695aee7e9ad4f4aa
-
-const { deleteAnswer, updateAnswer, createAnswer } = require('./answer-queries');
+const db = require('../database-connection');const { deleteAnswer, updateAnswer, createAnswer } = require('./answer-queries');
 
 
 const getQuestion = (id) => {
@@ -27,7 +19,6 @@ const getAnswersToQuestion = (id) => {
 
 const deleteQuestion = async (id) => {
     try {
-<<<<<<< HEAD
         let rows_affected = 0;
         const answers_ids = (await getAnswersToQuestion(id)).rows.map(row => row.id);
         rows_affected += (await deleteQuestionFromTest(id)).rowCount;
@@ -40,17 +31,6 @@ const deleteQuestion = async (id) => {
         rows_affected += (await db.query(`DELETE FROM questions WHERE question_id = $1`, [id])).rowCount;
 
         return rows_affected;
-=======
-        const res1 = await db.query(`SELECT set_id FROM sets WHERE question_id = $1`, [id]);
-        console.log(res1);
-        if (res1.rowCount > 0) {
-            console.log("hm");
-            await deleteSetBySetId(res1.rows[0].set_id);
-        }
-
-        const res = await db.query(`DELETE FROM questions WHERE question_id = $1`, [id]);
-        return res.rows[0];
->>>>>>> 61b8cae07eb46c46b0721745695aee7e9ad4f4aa
     } catch (err) {
         console.error("db query delete question error: ", err)
     }

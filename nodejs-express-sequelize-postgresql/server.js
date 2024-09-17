@@ -26,7 +26,6 @@ const gameRouter = require("./routes/game-routes");
 const userRouter = require("./routes/user-routes");
 const questionRouter = require("./routes/question-routes");
 const answerRouter = require("./routes/answer-routes");
-const userRouter = require("./routes/user-routes")
 const testHistoryRouter = require("./routes/test-history-routes");
 const userResultsRouter = require("./routes/user-results-routes");
 const {createTestHistory} = require("./database/database-queries/test-history-queries");
