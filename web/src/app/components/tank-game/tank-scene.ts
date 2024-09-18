@@ -178,7 +178,7 @@ class Checkpoint {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject) {
           if (bodyA.gameObject.label == 'tankPlayer') {
-            console.log('LEVEL ' + id + ' COMPLETED, QUESSTION HERE');
+            console.log('LEVEL ' + id + ' COMPLETED, QUESSTION HERE!');
 
             //emit level complete event
             if (!this.finsihsed) {
@@ -908,7 +908,7 @@ export class UIScene extends Phaser.Scene {
 
     // Listen for pointer movement
     ourGame.input.on('pointermove', function (pointer) {
-      //text.setText('Pointer Position: (' + pointer.x + ', ' + pointer.y + ')');
+      // text.setText('Pointer Position: (' + pointer.x + ', ' + pointer.y + ')');
     });
 
     ourGame.events.on('updateAmmo', this.updateAmmoCount, this);
@@ -992,5 +992,4 @@ export class UIScene extends Phaser.Scene {
     this.playerHealthBar.fillRect(barX, barY, remainingWidth, barHeight);
   }
 }
-
 

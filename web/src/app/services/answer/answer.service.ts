@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { Answer } from 'src/app/models/question.model';
 
 const baseUrl = 'http://localhost:8080/api/answers';
 @Injectable({
@@ -10,16 +11,25 @@ export class AnswerService {
 
   constructor(private http: HttpClient) { }
 
-  create(data: any): Observable<any> {
-    return this.http.post(baseUrl, data);
-  }
 
-  getAll(): Observable<any> {
+  getAllAnswers(): Observable<any> {
     return this.http.get(baseUrl);
   }
 
-  get(id: number): Observable<any> {
+  getAnswer(id: number): Observable<any> {
     return this.http.get(`${baseUrl}/${id}`);
+  }
+
+  updateAnswer(id: number, answer: Answer): Observable<any> {
+    return this.http.put(`${baseUrl}/${id}`, answer);
+  }
+
+  createAnswer(answer: Answer): Observable<any> {
+    return this.http.post(`${baseUrl}`, answer);
+  }
+
+  deleteAnswer(id: number): Observable<any> {
+    return this.http.delete(`${baseUrl}/${id}`);
   }
 
 }

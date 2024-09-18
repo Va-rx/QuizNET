@@ -92,6 +92,9 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .details .question {
@@ -99,12 +102,13 @@
     color: #d9dcde;
     font-size:xx-large;
 
-    width: 100%;
+    width: 90%;
 
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
     justify-items: flex-start;
+    flex-direction: row;
     border-bottom: 3px solid #626c76;
 }
 
@@ -315,4 +319,39 @@ input {
     background-color: rgba(24, 208, 24, 0.3);
 }
 
+.points-input {
+    margin-left: 20px;
+    width: 20%;
+}
+
+.questionBox {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.maxPointsBox {
+    background-color: #333f4a;
+    width: 10%;
+    height: auto;
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-left: 4px;
+    border-radius: 5px;
+}
+
+.maxPointsBox p{
+    margin: 0;
+    color: #626c76;
+}
+
+.addAnswer {
+    background-color: #333f4a;
+    color: #626c76;
+    border: 0;
+}
   

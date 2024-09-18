@@ -1,46 +1,42 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {BehaviorSubject, Observable} from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 import { Test } from '../../models/test.model';
+import { Question } from 'src/app/models/question.model';
 
 const baseUrl = 'http://localhost:8080/api/tests';
 @Injectable({
   providedIn: 'root'
 })
 export class TestService {
-  private selectedTest = new BehaviorSubject<Test | null>(null);
 
   constructor(private http: HttpClient) { }
 
-  get(id: number): Observable<any> {
-    return this.http.get(`${baseUrl}/${id}`);
-  }
-
-  getAll(): Observable<any> {
+  getAllTests(): Observable<any> {
     return this.http.get<Test[]>(baseUrl);
   }
 
-  create(data: any): Observable<any> {
-    return this.http.post<Test>(baseUrl, data);
+  getTest(id: number): Observable<any> {
+    return this.http.get(`${baseUrl}/${id}`);
   }
 
-  delete(id: number): Observable<any> {
+  getTestDetails(id: number): Observable<any> {
+    return this.http.get(`${baseUrl}/${id}/details`);
+  }
+
+  createTest(test: Test): Observable<any> {
+    return this.http.post<Test>(baseUrl, test);
+  }
+
+  deleteTest(id: number): Observable<any> {
     return this.http.delete(`${baseUrl}/${id}`);
   }
 
-  selectTest(test: Test) {
-    this.selectedTest.next(test);
+  updateTest(id: number, test: any): Observable<any> {
+    return this.http.put(`${baseUrl}/${id}`, test);
   }
 
-  getSelectedTest() {
-    return this.selectedTest.asObservable();
-  }
-
-  setSelectedTest(data: any) {
-    this.selectedTest.next(data);
-  }
-
-  updateTest(id: number, data: any): Observable<any> {
-    return this.http.put(`${baseUrl}/${id}`, data);
+  addQuestion(id: number, question: Question): Observable<any> {
+    return this.http.post(`${baseUrl}/${id}/questions`, question);
   }
 }

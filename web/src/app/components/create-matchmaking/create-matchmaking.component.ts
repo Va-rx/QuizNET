@@ -25,7 +25,7 @@ export class CreateMatchmakingComponent implements OnInit {
   }
 
   loadTestSets(): void {
-    this.testsService.getAll().subscribe((data: any[]) => {
+    this.testsService.getAllTests().subscribe((data: any[]) => {
       this.testSets = data;
     });
   }

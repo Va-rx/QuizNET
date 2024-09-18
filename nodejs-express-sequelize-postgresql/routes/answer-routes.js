@@ -1,47 +1,51 @@
 const express = require('express');
 const router = express.Router();
-const { getAnswers, getAnswerById, createAnswer, updateAnswer, deleteAnswer} = require("../database/database-queries/answer-queries");
 
+const { deleteAnswer, updateAnswer, createAnswer } = require('../database/database-queries/answer-queries');
 
+router.put("/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const answer = req.body;
+        
+        const updatedAnswer = (await updateAnswer(id, answer));
 
-router.post("/", (req, res) => {
-    const newAnswer = req.body;
-    console.log(newAnswer);
-    createAnswer(newAnswer)
-        .then(answer => {
-            res.send(answer);
-        })
-        .catch (err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the answer."
-            });
-        });
+        if (updatedAnswer.rows.length === 0) {
+            res.status(404).send('There is not answer with specified id');
+        }
+
+        res.status(200).send(updatedAnswer.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal server error');
+    };
 });
 
-router.get("/", (req, res) => {
-    getAnswers()
-        .then(answers => {
-            res.send(answers);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving answers."
-            });
-        });
-});
+router.post("/", async (req, res) => {
+    try {
+        const answer = req.body;
+    
+        const createdAnswer = (await createAnswer(answer));
 
-router.get("/:id", (req, res) => {
-    const id = req.params.id;
-    getAnswerById(id)
-        .then(answer => {
-            res.send(answer);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving answer."
-            });
-        });
-}
-);
+
+        res.status(201).send(createdAnswer.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal server error');
+    };
+})
+
+router.delete("/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const deletedAnswerResponse = (await deleteAnswer(id));
+
+        res.status(204);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal server error');
+    }
+})
 
 module.exports = router;

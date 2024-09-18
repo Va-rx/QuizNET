@@ -3,9 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AddQuestionComponent } from './components/add-question/add-question.component';
-import { QuestionDetailsComponent } from './components/question-details/question-details.component';
-import { QuestionsListComponent } from './components/question-list/question-list.component';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -40,9 +37,6 @@ import {MatListModule} from "@angular/material/list";
 @NgModule({
   declarations: [
     AppComponent,
-    AddQuestionComponent,
-    QuestionDetailsComponent,
-    QuestionsListComponent,
     CreateLobbyComponent,
     JoinLobbyComponent,
     GameComponent,

@@ -17,7 +17,7 @@ export class QuestionViewComponent implements OnInit{
   chosenAnswers: Answer[] = [];
   isSubmitted: boolean = false;
   result: number = 0;
-  max_points_sum= 1;
+  max_points_sum = 0;
   question: Question = new Question();
   constructor(private questionService: QuestionService,
               @Inject(MAT_DIALOG_DATA) public data: any,
@@ -25,22 +25,12 @@ export class QuestionViewComponent implements OnInit{
               private userAnswersService: UserAnswersService) {}
 
     ngOnInit(): void {
-    this.questionService.getQuestionWithAnswers(this.data.id).subscribe(question => {
+        this.questionService.getQuestion(this.data.id).subscribe(question => {
         this.question = question;
-        this.isMultipleChoice = this.determineIfMultipleChoice(question.answers);
+        this.isMultipleChoice = (this.question.type === 'multi');
+        this.max_points_sum = question.maxPoints;
       });
    }
-
-   determineIfMultipleChoice(answers: Answer[]|undefined): boolean {
-    if (answers) {
-      this.max_points_sum=answers.filter(answer => answer.isCorrect).length;
-      return answers.filter(answer => answer.isCorrect).length > 1;
-    }
-    else {
-      return false;
-    }
-  }
-
 
   chooseAnswer(answer: Answer): void {
     if (this.checkAnswer(answer) && this.isMultipleChoice) {
@@ -63,16 +53,17 @@ export class QuestionViewComponent implements OnInit{
     }
     for (const answer of this.chosenAnswers) {
       if (answer.isCorrect) {
-        this.result++;
+        this.result += answer.points;
       }
       else {
-        this.result=Math.max(0,this.result-1);
+        if ( (this.result + answer.points) < 0) {
+          this.result = 0;
+        }
+        else {
+          this.result += answer.points;
+        }
       }
     }
-
-    this.result=this.result/this.max_points_sum;
-    //round to 2 decimal places
-    this.result = Math.round(this.result * 100) / 100;
     this.isSubmitted = true;
     setTimeout(() => {
       this.closeDialog();
@@ -88,5 +79,4 @@ export class QuestionViewComponent implements OnInit{
     this.dialogRef.close(result);
   }
 }
-
 

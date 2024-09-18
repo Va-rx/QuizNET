@@ -22,7 +22,7 @@ export class TankGameComponent implements OnInit {
   questions: Question[] = [];
   testID: number = 1;
   historyTestId: number = -1;
-  maxLevel: number = 9;
+  maxLevel: number = -1;
   currentLevel: number = 0;
   scoreBoard:any[]=[];
   playerScore: number = 0;
@@ -34,6 +34,7 @@ export class TankGameComponent implements OnInit {
   medkitsShared:number=0;
   turretsDestroyed:number=0;
   totalTurrets:number=0;
+  testMaxPoints:number=0;
 
   constructor( private dialog: MatDialog,
                private TestsService: TestService,
@@ -74,12 +75,15 @@ export class TankGameComponent implements OnInit {
     this.testID=history.state.data.testId;
     this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
-    this.TestsService.get(this.testID).subscribe((data) => {
-      this.questions = data;
+    this.TestsService.getTestDetails(this.testID).subscribe((data) => {
+      this.questions = data.questions;
+      this.maxLevel = data.questions.length;
+      this.testMaxPoints = data.max_points;
     });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
       this.phaserGame.pause();
+
       const dialogRef = this.dialog.open(QuestionViewComponent, {
         data: { id: this.questions[this.currentLevel].id },
         disableClose: true

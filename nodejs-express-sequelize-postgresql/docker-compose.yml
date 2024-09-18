@@ -5,6 +5,7 @@ services:
         image: postgres:latest
         restart: always
         environment:
+            TZ: Europe/Warsaw
             POSTGRES_USER: root
             POSTGRES_PASSWORD: zaq1@WSX
             POSTGRES_DB: postgres # quiznet -> ive changed it

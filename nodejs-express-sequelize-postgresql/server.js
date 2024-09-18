@@ -21,23 +21,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.text({ type: 'application/xml' }));
 
-const questionRouter = require("./routes/question-routes");
-const answerRouter = require("./routes/answer-routes");
-const setRouter = require("./routes/set-routes");
 const testRouter = require("./routes/test-routes");
 const gameRouter = require("./routes/game-routes");
-const userRouter = require("./routes/user-routes")
+const userRouter = require("./routes/user-routes");
+const questionRouter = require("./routes/question-routes");
+const answerRouter = require("./routes/answer-routes");
 const testHistoryRouter = require("./routes/test-history-routes");
 const userResultsRouter = require("./routes/user-results-routes");
 const {createTestHistory} = require("./database/database-queries/test-history-queries");
 const {generateQuizXML} = require("./XMLhandler");
 
-app.use("/api/questions", questionRouter);
-app.use("/api/answers", answerRouter);
-app.use("/api/sets", setRouter);
 app.use("/api/tests", testRouter);
 app.use("/api/games", gameRouter);
 app.use("/api/users", userRouter);
+app.use("/api/questions", questionRouter);
+app.use("/api/answers", answerRouter);
 app.use("/api/test-history", testHistoryRouter);
 app.use("/api/user-results", userResultsRouter);
 
@@ -115,10 +113,8 @@ io.on("connection", (socket) => {
     const [hour, minute] = time.split(':');
   
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
-
       const xml = await generateQuizXML(test_id);
       const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
-
       if (session) {
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
