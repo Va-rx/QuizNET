@@ -212,7 +212,7 @@ export class TestDetailsComponent implements OnInit {
 
         this.selectedQuestion.question = updatedQuestion.question;
         this.selectedQuestion.type = updatedQuestion.type;
-        this.selectedQuestion.image_link = updatedQuestion.image_link;
+        this.selectedQuestion.imageLink = updatedQuestion.image_link;
 
         this.test.questions[index] = JSON.parse(JSON.stringify(this.selectedQuestion));
         this.test.questions = [...this.test.questions];

@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { QuestionsListComponent } from './components/question-list/question-list.component';
-import { QuestionDetailsComponent } from './components/question-details/question-details.component';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
 import { GameComponent } from './components/game/game.component';
@@ -21,8 +19,6 @@ import {
 } from "./components/test-history/test-history-details/test-history-details.component";
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [authGuard] },
-  { path: 'Questions', component: QuestionsListComponent, canActivate: [authGuard, RoleGuard]},
-  { path: 'Questions/:id', component: QuestionDetailsComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'create-lobby', component: CreateLobbyComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'join-lobby', component: JoinLobbyComponent, canActivate: [authGuard]},
   { path: 'game', component: GameComponent, canActivate: [authGuard]},

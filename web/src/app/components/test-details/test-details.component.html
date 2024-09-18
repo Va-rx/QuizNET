@@ -26,7 +26,7 @@
         </ng-template>
       </div>
       <div class="maxPointsBox">
-        <p>Max: {{editedTest.max_points}}pt. </p>
+        <p>Max: {{editedTest.maxPoints}}pt. </p>
       </div>
       </div>
       <div class="description" [ngClass]="{'editing': isEditingTestDescription}">
@@ -72,14 +72,6 @@
               <input type="radio" id="multipleChoice" name="option" class="option-input" [(ngModel)]="selectedQuestion.type" value="multi">
               <label for="multipleChoice" class="option-label">Multiple choice</label>
             </div>
-            <!-- <div class="option">
-              <input type="radio" id="trueFalse" name="option" class="option-input">
-              <label for="trueFalse" class="option-label">True / False</label>
-            </div>
-            <div class="option">
-              <input type="radio" id="chooseFromList" name="option" class="option-input">
-              <label for="chooseFromList" class="option-label">Choose from list</label>
-            </div> -->
           </div>
           <div class="answers">
             <div class="answer" *ngFor="let answer of selectedQuestion.answers; let i = index">

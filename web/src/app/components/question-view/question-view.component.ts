@@ -25,11 +25,10 @@ export class QuestionViewComponent implements OnInit{
               private userAnswersService: UserAnswersService) {}
 
     ngOnInit(): void {
-      console.log('hm');
-    this.questionService.getQuestion(this.data.id).subscribe(question => {
+        this.questionService.getQuestion(this.data.id).subscribe(question => {
         this.question = question;
         this.isMultipleChoice = (this.question.type === 'multi');
-        this.max_points_sum = question.max_points;
+        this.max_points_sum = question.maxPoints;
       });
    }
 
@@ -65,10 +64,6 @@ export class QuestionViewComponent implements OnInit{
         }
       }
     }
-
-    // this.result=this.result/this.max_points_sum;
-    // //round to 2 decimal places
-    // this.result = Math.round(this.result * 100) / 100;
     this.isSubmitted = true;
     setTimeout(() => {
       this.closeDialog();

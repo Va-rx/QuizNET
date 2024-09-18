@@ -22,7 +22,7 @@ export class TankGameComponent implements OnInit {
   questions: Question[] = [];
   testID: number = 1;
   historyTestId: number = -1;
-  maxLevel: number = 1;
+  maxLevel: number = -1;
   currentLevel: number = 0;
   scoreBoard:any[]=[];
   playerScore: number = 0;
@@ -70,14 +70,12 @@ export class TankGameComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('start!');
     this.socket=this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
     this.testID=history.state.data.testId;
     this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.getTestDetails(this.testID).subscribe((data) => {
-      console.log(data);
       this.questions = data.questions;
       this.maxLevel = data.questions.length;
       this.testMaxPoints = data.max_points;

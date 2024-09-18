@@ -54,8 +54,6 @@ const updateQuestion = async (id, question) => {
 }
 
 const createQuestion = (question) => {
-    if (question.question === undefined) question.question = "New question";
-    if (question.type === undefined) question.type = "single";
     try {
         return db.query(`INSERT INTO questions (question, image_link, type) VALUES ($1, $2, $3) RETURNING question_id as id, question, image_link, type`, [question.question, question.image_link, question.type]);
     } catch (err) {

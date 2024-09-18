@@ -104,7 +104,7 @@ const addQuestionToTest = async (question, id) => {
     }
 }
 
-const getTestByIdWithAnswers = async (id) => {
+const getTestWithAnswers = async (id) => {
     try {
         const res = await db.query(`
         SELECT q.question_id as id, q.question, q.image_link
@@ -122,24 +122,6 @@ const getTestByIdWithAnswers = async (id) => {
     }
 }
 
-// const getTestWithAnswers = async (id) => {
-//     try {
-//         const test = (await getTest(id)).rows[0];
-//         const max_points = (await getTestMaxPoints(id));
-//         const questions = (await getTestQuestionsWithAnswers(id)).rows;
-
-//         const result = {
-//             ...test,
-//             max_points: max_points,
-//             questions: questions
-//         };
-
-//         return result;
-//     } catch (err) {
-//         console.error('db query get test with answers error: ', err);
-//     }
-// }
-
 module.exports = {
     getTests,
     createTest,
@@ -149,7 +131,6 @@ module.exports = {
     getTestQuestions,
     getTestDetails,
     addQuestionToTest,
-    getTestByIdWithAnswers,
+    getTestWithAnswers,
     getTestMaxPoints
-    // getTestWithAnswers
 }

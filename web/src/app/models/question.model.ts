@@ -1,11 +1,11 @@
 export class Question {
   id!: number;
   position?: number;
-  question!: string;
-  image_link?: string | null | File;
-  type!: string;
+  question: string = 'New question'
+  imageLink?: string | null | File;
+  type: string = 'single';
   answers!: Answer[];
-  max_points: number = 0;
+  maxPoints: number = 0;
 }
 
 export class Answer {

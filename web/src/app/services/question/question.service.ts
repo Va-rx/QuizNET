@@ -30,7 +30,6 @@ export class QuestionService {
   }
 
   updateQuestion(id: number, question: Question): Observable<any> {
-    console.log('update!');
     return this.http.patch(`${baseUrl}/${id}`, question);
   }
 }

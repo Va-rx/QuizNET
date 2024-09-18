@@ -1,10 +1,10 @@
-const {getTestByIdWithAnswers} = require("./database/database-queries/test-queries");
+const {getTestWithAnswers} = require("./database/database-queries/test-queries");
 const {getTestMaxPoints} = require("./database/database-queries/test-queries");
 const xmlbuilder = require("xmlbuilder");
 const xml2js = require("xml2js");
 
 async function generateQuizXML(test) {
-    const testWithAnswers = await getTestByIdWithAnswers(test.id);
+    const testWithAnswers = await getTestWithAnswers(test.id);
     const testMaxPoints = await getTestMaxPoints(test.id);
     const quiz = xmlbuilder.create('test').att('name', test.name).att('description', test.description).att('max_points', testMaxPoints);
     testWithAnswers.forEach(q => {

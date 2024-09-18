@@ -113,15 +113,10 @@ io.on("connection", (socket) => {
     const [hour, minute] = time.split(':');
   
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
-      console.log('1');
       const xml = await generateQuizXML(test_id);
-      console.log('2');
       const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
-      console.log('xd');
       if (session) {
-        console.log('xd1');
         session.users.forEach((participantSocket) => {
-          console.log('xd2');
           if (participantSocket !== socket) {
             participantSocket.emit("gameStarted", game_route, test_id, testHistory.id);
           }
