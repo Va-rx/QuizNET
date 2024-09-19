@@ -19,7 +19,7 @@ router.get("/:id", async (req, res) => {
         
         const result = {
             ...question[0],
-            max_points: max_points,
+            maxPoints: max_points,
             answers: answers
         }
 

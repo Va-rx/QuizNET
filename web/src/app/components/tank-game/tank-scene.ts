@@ -216,7 +216,7 @@ export default class Tanks extends Phaser.Scene {
   testEnemyTurret;
   cursors;
   playerAmmo = 100;
-  //playerHealth = 1000000;
+  // playerHealth = 1000000;
   playerHealth=100;
   playerHealthBar;
   ammoText;

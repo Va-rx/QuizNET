@@ -10,6 +10,7 @@ export class AnswerViewComponent {
   @Input() answer!: Answer;
   @Output() answers = new EventEmitter<Answer>();
   @Input() isChosen: boolean = false;
+  @Input() questionType!: string;
 
   onClick(): void {
     this.addNewItem(this.answer);

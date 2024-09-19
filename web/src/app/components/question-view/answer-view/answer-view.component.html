@@ -1,1 +1,8 @@
-<button mat-flat-button (click)="onClick()" class="answer" [ngClass]="{'green-border': isChosen}">{{answer.answer}}</button>
+<button (click)="onClick()" 
+        class="answer" 
+        [ngClass]="{
+          'answer-selected': isChosen,
+          'multi-answers': questionType === 'multi'
+        }">
+  {{ answer.answer }}
+</button>

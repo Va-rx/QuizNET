@@ -25,6 +25,7 @@ export class QuestionViewComponent implements OnInit{
               private userAnswersService: UserAnswersService) {}
 
     ngOnInit(): void {
+      this.dialogRef.updateSize('40%');
         this.questionService.getQuestion(this.data.id).subscribe(question => {
         this.question = question;
         this.isMultipleChoice = (this.question.type === 'multi');
