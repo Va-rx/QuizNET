@@ -3,3 +3,10 @@
 
 html, body { height: 100%; background-color: #3e4b58;}
 body { margin: 0; padding: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
+
+.mat-mdc-dialog-container {
+    --mdc-dialog-container-color: transparent;
+    --mdc-dialog-with-divider-divider-color: rgba(0, 0, 0, 0.0);
+    --mdc-dialog-subhead-color: rgba(0, 0, 0, 0.0);
+    --mdc-dialog-supporting-text-color: rgba(0, 0, 0, 0.0);
+}

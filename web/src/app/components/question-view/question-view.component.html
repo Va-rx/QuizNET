@@ -1,15 +1,25 @@
 <div class="container">
     <ng-template [ngIf]="!isSubmitted" [ngIfElse]="submitted">
-        <div class="question">
-            <h2>{{question.question}}</h2>
-            <div class="answers" *ngFor="let answer of question.answers">
-                <app-answer-view (answers)="chooseAnswer($event)" [answer]="answer" [isChosen]="checkAnswer(answer)"></app-answer-view>
+        <div class="question-container">
+            <div class="question">
+                <h2>{{question.question}}</h2>
+                <div class="answers">
+                    <div class="answer" *ngFor="let answer of question.answers">
+                        <app-answer-view (answers)="chooseAnswer($event)" [answer]="answer" [isChosen]="checkAnswer(answer)" [questionType]="question.type"></app-answer-view>
+                    </div>
+                </div>
             </div>
+            <button (click)="submitAnswer()" class="submit-btn">Zatwierdź</button>
         </div>
-        <button (click)="submitAnswer()" class="submit-btn" mat-flat-button color="primary">Zatwierdź Odpwiedzi</button>
     </ng-template>
 
     <ng-template #submitted>
-        <h1>Twój wynik: {{result}}!</h1>
+        <div class="icon-container">
+            <i *ngIf="(result / max_points_sum) === 1" class="bi bi-check-circle green-icon"></i>
+          
+            <i *ngIf="(result / max_points_sum) > 0 && (result / max_points_sum) < 1" class="yellow-icon">50/50</i>
+          
+            <i *ngIf="(result / max_points_sum) === 0" class="bi bi-x-circle red-icon"></i>
+          </div>
     </ng-template>
 </div>

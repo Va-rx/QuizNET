@@ -1,9 +1,33 @@
-.green-border{
-    border-style: solid;
-    border-color: green;
-}
-
-.answer{
-    width: 300px;
+.answer {
+    width: 100%;
+    flex: 1;
     margin: 10px 15px;
-}
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    background-color: rgba(36, 36, 44, 0.8);
+    transform: scale(1.05);
+    border: solid #695497 3px;
+    border-radius: 10px;
+    color: #d4d6d9;
+  }
+  
+  .answer:hover {
+    border: solid #9662d2 3px;
+    transition: 0.3s;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+  }
+  
+  .answer-selected {
+    border: solid 3px #74c674 !important;
+    box-shadow: 0 0 10px 2px rgba(0, 255, 0, 0.5) !important;
+    color: rgba(116, 198, 116, 1) !important;
+  }
+  
+  .multi-answers {
+    border-radius: 0px !important;
+  }
+
+  .answer.multi-answers {
+    border-radius: 0px !important;
+  }
+  

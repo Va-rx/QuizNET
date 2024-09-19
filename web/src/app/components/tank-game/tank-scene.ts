@@ -216,8 +216,8 @@ export default class Tanks extends Phaser.Scene {
   testEnemyTurret;
   cursors;
   playerAmmo = 100;
-  //playerHealth = 1000000;
-  playerHealth=100;
+  playerHealth = 1000000;
+  // playerHealth=100;
   playerHealthBar;
   ammoText;
   deaths = 0;
@@ -942,7 +942,7 @@ export class UIScene extends Phaser.Scene {
     ourGame.events.on('levelComplete', (id) => {
       this.levelsCompleted++;
       const levelText = this.children.list[4] as Phaser.GameObjects.Text;
-      levelText.setText('Levels:' + this.levelsCompleted);
+      // levelText.setText('Levels:' + this.levelsCompleted);
     });
     // Define medkit box dimensions
     const boxSize = 50;

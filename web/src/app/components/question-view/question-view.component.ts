@@ -25,6 +25,7 @@ export class QuestionViewComponent implements OnInit{
               private userAnswersService: UserAnswersService) {}
 
     ngOnInit(): void {
+      this.dialogRef.updateSize('40%');
         this.questionService.getQuestion(this.data.id).subscribe(question => {
         this.question = question;
         this.isMultipleChoice = (this.question.type === 'multi');
@@ -64,6 +65,9 @@ export class QuestionViewComponent implements OnInit{
         }
       }
     }
+    console.log(this.result);
+    console.log(this.max_points_sum);
+    console.log((this.result / this.max_points_sum));
     this.isSubmitted = true;
     setTimeout(() => {
       this.closeDialog();
