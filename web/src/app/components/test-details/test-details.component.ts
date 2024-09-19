@@ -52,7 +52,7 @@ export class TestDetailsComponent implements OnInit {
                 }
               });
             }
-            console.log(this.test);
+            console.log(this.editedTest);
          }});
   }
 
