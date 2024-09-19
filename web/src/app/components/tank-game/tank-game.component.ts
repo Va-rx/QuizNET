@@ -78,7 +78,7 @@ export class TankGameComponent implements OnInit {
     this.TestsService.getTestDetails(this.testID).subscribe((data) => {
       this.questions = data.questions;
       this.maxLevel = data.questions.length;
-      this.testMaxPoints = data.max_points;
+      this.testMaxPoints = data.maxPoints;
     });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
