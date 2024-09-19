@@ -65,9 +65,6 @@ export class QuestionViewComponent implements OnInit{
         }
       }
     }
-    console.log(this.result);
-    console.log(this.max_points_sum);
-    console.log((this.result / this.max_points_sum));
     this.isSubmitted = true;
     setTimeout(() => {
       this.closeDialog();
