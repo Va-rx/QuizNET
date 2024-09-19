@@ -4,7 +4,7 @@ const { deleteQuestion, getQuestionMaxPoints, getAnswersToQuestion } = require('
 
 const getTests = () => {
     try {
-        return db.query(`SELECT test_id as id, name, description, created_date, modified_date FROM tests`);
+        return db.query(`SELECT test_id as id, name, description, created_date as "createdDate", modified_date as "modifiedDate" FROM tests`);
     } catch (err) {
         console.error('db query get tests error: ', err);
     }
@@ -23,7 +23,7 @@ const createTest = (test) => {
 
 const getTest = (id) => {
     try {
-        return db.query(`SELECT test_id as id, name, description, created_date, modified_date FROM tests WHERE test_id = $1`, [id]);
+        return db.query(`SELECT test_id as id, name, description, created_date as createdDate, modified_date as modifiedDate FROM tests WHERE test_id = $1`, [id]);
     } catch (err) {
         console.error('db query get test error: ', err);
     }

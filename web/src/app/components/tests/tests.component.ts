@@ -16,7 +16,10 @@ export class TestsComponent implements OnInit{
   ngOnInit() {
     this.testService.getAllTests().subscribe({
       next: tests => {
-        this.tests = tests;
+        this.tests = tests.map(test => ({
+          ...test,
+          createdDate: new Date(test.createdDate)
+        }));
       },
       error: err => {
         console.error('Error getting tests: ', err)
@@ -36,5 +39,18 @@ export class TestsComponent implements OnInit{
         console.log('Error creating test: ', err);
       }
     });
+  }
+
+  sortBy(criteria: string) {
+    console.log(this.tests);
+    if (criteria === 'nameAsc') {
+      this.tests.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (criteria === 'nameDesc') {
+      this.tests.sort((a, b) => b.name.localeCompare(a.name));
+    } else if (criteria === 'dateNewest') {
+      this.tests.sort((a, b) => b.createdDate.getTime() - a.createdDate.getTime());
+    } else if (criteria === 'dateOldest') {
+      this.tests.sort((a, b) => a.createdDate.getTime() - b.createdDate.getTime());
+    }
   }
 }

@@ -13,6 +13,8 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
+
+  position: relative;
 }
 
 /* uncomment to hide scrollbar */
@@ -69,4 +71,35 @@
   border: solid 3px #74c674;
   box-shadow: 0 0 10px 2px rgba(0, 255, 0, 0.5);
   color: rgba(116, 198, 116, 1);
+}
+
+.dropdownButton {
+  background-color: #292931;
+  color: #695497;
+
+  border-radius: 0;
+}
+
+.dropdownButton:hover {
+  color: #9662d2;
+  transition: 0.3s;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.dropdownButton:focus {
+  color: #9662d2;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.custom-dropdown {
+  background-color: #292931;
+}
+
+.dropdown-item {
+  color: #d4d6d9;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(150, 98, 210, 0.2);
+  cursor: pointer;
 }
