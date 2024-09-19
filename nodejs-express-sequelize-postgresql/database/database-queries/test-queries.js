@@ -72,7 +72,7 @@ const getTestDetails = async (id) => {
 
         const result = {
             ...test,
-            max_points: max_points,
+            maxPoints: max_points,
             questions: questions
         };
 
