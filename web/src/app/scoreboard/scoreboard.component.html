@@ -11,38 +11,48 @@
       <ul>
         <li *ngFor="let entry of scoreboard | keyvalue" [ngClass]="{'current-player': entry.key === currentPlayer}">
           <span class="username">{{ entry.key }}</span>
-          <span class="time">11.32 s.</span>
+          <span class="time">{{everyUserTime}} s.</span>
           <span class="score">{{ entry.value }} pt.</span>
         </li>
       </ul>
     </div>
   </div>
 
-  <div class="progress-container">
-    <h3>{{ currentPlayer }} Total Score:</h3>
-    <div class="pie-chart" [ngStyle]="{'background': 'conic-gradient(#4caf50 ' + currentPlayerPercentage + '%, #ddd ' + currentPlayerPercentage + '%)'}">
-      <div class="center">
-        54%
+  <div class="results-container">
+    <div class="results">
+      <p class="test-name-label">{{testName}}</p>
+      <div class="all-info-container">
+      <div class="number-scores">
+        <p>({{ currentPlayerScore }} + <span [ngStyle]="{'color': '#9662d2'}">{{bonusPoints}}</span>) pt. / {{this.totalScore}} pt.</p>
+        <div class="pie-chart" [ngStyle]="{'background': 'conic-gradient(#9662d2 ' + currentPlayerPercentage + '%, #ddd ' + currentPlayerPercentage + '%)'}">
+          <div class="center">
+            {{this.currentPlayerPercentage}}%
+          </div>
+        </div>
+      </div>
+      <div class="time-container">
+        <p>Pozostały czas: {{ timeLeft }}</p>
+      </div>
+      <div class="bartle-metrics">
+        <p class="bartle-label">Bartle player taxonomy</p>
+        <div class="metric">
+          <span>Explorer:</span>
+          <div class="progress-bar" [ngStyle]="{'width': explorerScore + '%'}"></div>
+          <span>{{explorerScore.toFixed(1)}}%</span>
+        </div>
+        <div class="metric">
+          <span>Socializer:</span>
+          <div class="progress-bar" [ngStyle]="{'width': socializerScore + '%'}"></div>
+          <span>{{socializerScore.toFixed(1)}}%</span>
+        </div>
+        <div class="metric">
+          <span>Achiever:</span>
+          <div class="progress-bar" [ngStyle]="{'width': achieverScore + '%'}"></div>
+          <span>{{achieverScore.toFixed(1)}}%</span>
+        </div>
       </div>
     </div>
-    <div class="bartle-metrics">
-      <h3>Bartle Taxonomy Personality</h3>
-      <div class="metric">
-        <span>Explorer:</span>
-        <div class="progress-bar" [ngStyle]="{'width': 21 + '%'}"></div>
-        <span>21%</span>
-      </div>
-      <div class="metric">
-        <span>Socializer:</span>
-        <div class="progress-bar" [ngStyle]="{'width': 76 + '%'}"></div>
-        <span>76%</span>
-      </div>
-      <div class="metric">
-        <span>Achiever:</span>
-        <div class="progress-bar" [ngStyle]="{'width': 98 + '%'}"></div>
-        <span>98%</span>
-      </div>
-    </div>
+  </div>
   </div>
 </div>
 

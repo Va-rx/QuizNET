@@ -1,11 +1,11 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-scoreboard',
   templateUrl: './scoreboard.component.html',
   styleUrls: ['./scoreboard.component.css']
 })
-export class ScoreboardComponent implements OnChanges, OnInit {
+export class ScoreboardComponent implements OnChanges {
   @Input() scoreboard: Map<string, number> = new Map<string, number>();
   @Input() currentPlayer: string = '';
   @Input() totalScore: number = 0;//max amount of points
@@ -19,50 +19,16 @@ export class ScoreboardComponent implements OnChanges, OnInit {
   socializerScore: number = 0;
   achieverScore: number = 0;
 
-  ngOnInit() {
-    this.scoreboard.set('adam', 20);
-    this.scoreboard.set('kacper', 3);
-    this.scoreboard.set('ola', 7);
-    this.scoreboard.set('agnieszka', 11);
-    this.scoreboard.set('gosia', 12);
-    this.scoreboard.set('izabela', 21);
-    this.scoreboard.set('kuba', 55);
-    this.scoreboard.set('grzesiek', 2);
-    this.scoreboard.set('borsuk', 3);
-    this.scoreboard.set('rolnik', 11);
-    this.scoreboard.set('wiktor', 6);
-    this.scoreboard.set('sfsdfsdf', 6);
-    this.scoreboard.set('wikreqweqwetor', 32312);
-    this.scoreboard.set('wikfsdsdftor', 22);
-    this.scoreboard.set('wiksdfsdfdtor', 1);
-    this.scoreboard.set('wifsdfssdfdktor', 6);
-    this.scoreboard.set('wifsdffsdfsdfsdfsktor', 6);
-    this.scoreboard.set('wikdfsdfdfsdftor', 6);
-    this.scoreboard.set('wisdfsdfsdfsdfsdktor', 6);
-    this.scoreboard.set('dasdasdas', 6);
-    this.scoreboard.set('dasdasdasfdsfsd', 6);
-    this.scoreboard.set('dasssdas', 6);
-    this.scoreboard.set('wisadasddfsdfsdfsdktor', 6);
-
-    this.currentPlayer = 'kuba';
-  }
-
+  //newOnes, need to calculate them!
+  timeLeft: number = 12.37;
+  testName: string = 'Podstawy EIGRP'
+  bonusPoints: number = 1.07;
+  everyUserTime: number = 21.3;
 
   constructor() {
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.calculateScores();
-    this.scoreboard.set('adam', 20);
-    this.scoreboard.set('kacper', 3);
-    this.scoreboard.set('ola', 7);
-    this.scoreboard.set('agnieszka', 11);
-    this.scoreboard.set('gosia', 12);
-    this.scoreboard.set('izabela', 21);
-    this.scoreboard.set('kuba', 55);
-    this.scoreboard.set('grzesiek', 2);
-    this.scoreboard.set('borsuk', 3);
-    this.scoreboard.set('rolnik', 11);
-    this.scoreboard.set('wiktor', 6);
   }
 
   calculateScores() {
