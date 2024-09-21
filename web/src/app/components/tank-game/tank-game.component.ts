@@ -36,6 +36,7 @@ export class TankGameComponent implements OnInit {
   totalTurrets: number = 0;
   testMaxPoints: number = 0;
   timer: number = 10; //IN SECONDS
+  timerStarted:boolean=false;
 
   constructor(private dialog: MatDialog,
     private TestsService: TestService,
@@ -70,18 +71,27 @@ export class TankGameComponent implements OnInit {
     this.nickname = this.auth.getNickname();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.socket = this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
     //this.testID=history.state.data.testId;
     this.testID = 1;
     //this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
-    this.TestsService.getTestDetails(this.testID).subscribe((data) => {
-      this.questions = data.questions;
-      this.maxLevel = data.questions.length;
-      this.testMaxPoints = data.maxPoints;
-    });
+
+    //Sometime there is problem with loading it at scene start, this fixes it
+    this.phaserGame.scene.game.events.on('sceneReady', () => {
+      if(this.maxLevel!=-1){
+        this.phaserGame.events.emit("getTimer", this.timer,this.maxLevel);
+        this.timerStarted=true;
+      }
+    })
+
+    await this.loadTestDetails();
+    if(!this.timerStarted){
+      this.phaserGame.events.emit("getTimer", this.timer,this.maxLevel);
+    }
+
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
       this.phaserGame.pause();
@@ -139,10 +149,17 @@ export class TankGameComponent implements OnInit {
       this.phaserGame.events.emit("receiveHealth_inPhaser", userName)
     })
 
+  }
 
-    this.phaserGame.scene.game.events.on('sceneReady', () => {
-      this.phaserGame.events.emit("getTimer", this.timer,this.maxLevel);
-    })
+  async loadTestDetails() {
+    try {
+      const data = await this.TestsService.getTestDetails(this.testID).toPromise();
+      this.questions = data.questions;
+      this.maxLevel = data.questions.length;
+      this.testMaxPoints = data.maxPoints;
+    } catch (error) {
+      console.error("Error loading test details:", error);
+    }
   }
 
   ngOnDestroy() {

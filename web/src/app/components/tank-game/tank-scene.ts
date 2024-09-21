@@ -964,11 +964,7 @@ export class UIScene extends Phaser.Scene {
 
     const ourGame = this.scene.get('default');
     console.log(ourGame.events)
-    ourGame.events.on('startTimer_',(seconds,maxLevel)=>{
-      this.startTimer(seconds);
-      this.totalQuestions=maxLevel;
-      this.updateQuestionsLeftText();
-    });
+
     //console.log(this.scene);
     this.playerHealthBar = this.add.graphics();
     ourGame.events.on('updateHealth', this.updatePlayerHealthBar, this);
@@ -1035,9 +1031,17 @@ export class UIScene extends Phaser.Scene {
     }).setOrigin(0.5);
     // Listen for medkit update events
     ourGame.events.on('updateMedkits', this.updateMedkitCount, this);
-    ourGame.events.emit("UIScene_ready");
+    setTimeout(()=>ourGame.events.emit("UIScene_ready"),500);
+    ourGame.events.on('startTimer_',(seconds,maxLevel)=>{
+      this.startTimer(seconds);
+      this.totalQuestions=maxLevel;
+      this.updateQuestionsLeftText();
+    });
   }
 
+  loadComplete(){
+    console.log("Works");
+  }
   updateMedkitCount(medkits) {
     // Update the medkit count number displayed on top of the medkit image
     this.medkitCountText.setText(medkits);
@@ -1067,6 +1071,7 @@ export class UIScene extends Phaser.Scene {
     this.totalTime = seconds;
 
     // Create a timed event that triggers every second
+    this.updateTimer();
     this.timerEvent = this.time.addEvent({
       delay: 1000,  // 1 second
       callback: this.updateTimer,
