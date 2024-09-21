@@ -886,6 +886,8 @@ export class UIScene extends Phaser.Scene {
   medkitImage;
   medkitCountText;
   medkitFrame;
+  deathsText;
+  levelText;
 
   constructor() {
     super({ key: 'UIScene', active: true });
@@ -925,7 +927,7 @@ export class UIScene extends Phaser.Scene {
     this.updateAmmoCount(100);
 
     //dispaly death count
-    this.add.text(Number(this.sys.game.config.width) - 200, 80, 'Deaths: 0', {
+    this.deathsText = this.add.text(Number(this.sys.game.config.width) - 200, 80, 'Deaths: 0', {
       fontSize: '20px',
       color: '#fff'
     });
@@ -934,15 +936,14 @@ export class UIScene extends Phaser.Scene {
 
 
     //dispaly level complete
-    this.add.text(Number(this.sys.game.config.width) - 200, 110, 'Levels:', {
+    this.levelText = this.add.text(Number(this.sys.game.config.width) - 200, 110, 'Levels:', {
       fontSize: '20px',
       color: '#fff'
     });
 
     ourGame.events.on('levelComplete', (id) => {
       this.levelsCompleted++;
-      const levelText = this.children.list[4] as Phaser.GameObjects.Text;
-      levelText.setText('Levels:' + this.levelsCompleted);
+      this.levelText.setText('Levels:' + this.levelsCompleted);
     });
     // Define medkit box dimensions
     const boxSize = 50;
@@ -974,8 +975,7 @@ export class UIScene extends Phaser.Scene {
   }
 
   updateDeaths(deaths) {
-    const deathsText = this.children.list[3] as Phaser.GameObjects.Text;
-    deathsText.setText('Deaths: ' + deaths);
+    this.deathsText.setText('Deaths: ' + deaths);
   }
   updateAmmoCount(playerAmmo) {
     this.ammoText.setText('Ammo: ' + playerAmmo);

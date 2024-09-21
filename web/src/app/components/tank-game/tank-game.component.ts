@@ -73,6 +73,7 @@ export class TankGameComponent implements OnInit {
     this.socket=this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
     this.testID=history.state.data.testId;
+    //this.testID=1;for testing
     this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
     this.TestsService.getTestDetails(this.testID).subscribe((data) => {
