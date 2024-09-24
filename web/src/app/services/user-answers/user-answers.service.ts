@@ -36,7 +36,8 @@ export class UserAnswersService {
       const result = {
         testId: testId,
         userId: this.authService.getUserId(),
-        answers: Array.from(answersMap.entries())
+        answers: Array.from(answersMap.entries()),
+        score: 0
       }
       this.remove();
 
