@@ -23,15 +23,15 @@
       <p class="test-name-label">{{testName}}</p>
       <div class="all-info-container">
       <div class="number-scores">
-        <p>({{ currentPlayerScore }} + <span [ngStyle]="{'color': '#9662d2'}">{{bonusPoints}}</span>) pt. / {{this.totalScore}} pt.</p>
+        <p>({{ currentPlayerScoreOnlyQuestions.toFixed(2) }} + <span [ngStyle]="{'color': '#9662d2'}">{{bonusScore.toFixed(2)}}</span>) pt. / {{this.totalScore}} pt.</p>
         <div class="pie-chart" [ngStyle]="{'background': 'conic-gradient(#9662d2 ' + currentPlayerPercentage + '%, #ddd ' + currentPlayerPercentage + '%)'}">
           <div class="center">
-            {{this.currentPlayerPercentage}}%
+            {{this.currentPlayerPercentage.toFixed(0)}}%
           </div>
         </div>
       </div>
       <div class="time-container">
-        <p>Pozostały czas: {{ timeLeft }} s.</p>
+        <p>Pozostały czas: {{ timeLeft.toFixed(2) }} s.</p>
       </div>
       <div class="bartle-metrics">
         <p class="bartle-label">Bartle player taxonomy</p>

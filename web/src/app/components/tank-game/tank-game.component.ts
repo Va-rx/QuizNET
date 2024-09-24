@@ -21,11 +21,13 @@ export class TankGameComponent implements OnInit {
   config: Phaser.Types.Core.GameConfig;
   questions: Question[] = [];
   testID: number = 1;
+  testName: string = '';
   historyTestId: number = -1;
   maxLevel: number = -1;
   currentLevel: number = 0;
   scoreBoard:any[]=[];
   playerScore: number = 0;
+  playerScoreBonus: number = 0;
   gameFinished: boolean = false;
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   nickname: string = "";
@@ -79,6 +81,7 @@ export class TankGameComponent implements OnInit {
       this.questions = data.questions;
       this.maxLevel = data.questions.length;
       this.testMaxPoints = data.maxPoints;
+      this.testName = data.name;
     });
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
@@ -91,11 +94,12 @@ export class TankGameComponent implements OnInit {
       this.currentLevel++;
       dialogRef.afterClosed().subscribe(result => {
         console.log(`Dialog result: ${result}`);
+        console.log(result);
         this.playerScore += result;
         this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
         //resume game
         this.phaserGame.resume();
-        if(this.currentLevel==this.maxLevel){//REVERT THIS TO ==this.maxLevel for user experience
+        if(this.currentLevel === this.maxLevel){//REVERT THIS TO ==this.maxLevel for user experience
           console.log("Game Over");
           let results = this.userAnswersService.getWrappedResult(this.historyTestId);
           this.userResultsService.create(results).subscribe(data=>{
@@ -103,6 +107,7 @@ export class TankGameComponent implements OnInit {
           });
 
           this.playerScore+=this.phaserGame.scene.getScene("default")["bonus"];
+          this.playerScoreBonus += this.phaserGame.scene.getScene("default")["bonus"];
           ////////SET PARAMETERS FOR BARTLE//////
           this.starsPicked=this.phaserGame.scene.getScene("default")["BARTLE_stars_picked"];
           this.medkitsShared=this.phaserGame.scene.getScene("default")["BARTLE_medkits_shared"];
