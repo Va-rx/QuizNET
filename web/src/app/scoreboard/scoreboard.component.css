@@ -187,8 +187,6 @@
 .bartle-metrics {
   padding-top: 30px;
   width: 80%;
-  /* margin-top: 20%; */
-  /* margin: auto; */
 }
 
 .bartle-label {
@@ -208,4 +206,27 @@
 
 .time-container {
   font-size: 2em;
+}
+
+@media (max-width: 1200px) {
+  .time-container {
+    font-size: 1.5em;
+  }
+  .bartle-label {
+    font-size: 1.5em;
+  }
+  .number-scores {
+    font-size: 1.5em;
+  }
+  .test-name-label {
+    font-size: 2.5em;
+  }
+  .pie-chart {
+    width: 100px;
+    height: 100px;
+  }
+  .center {
+    width: 70px;
+    height: 70px;
+  }
 }
