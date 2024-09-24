@@ -17,7 +17,7 @@
   </table>
 </div>
 </div>
-<app-scoreboard *ngIf="gameFinished" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [totalScore]="testMaxPoints"
+<app-scoreboard *ngIf="gameFinished" [testName]="testName" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [bonusScore]="playerScoreBonus" [totalScore]="testMaxPoints"
 [BARTLE_stars_picked]="starsPicked"
 [BARTLE_medkits_shared]="medkitsShared"
 [BARTLE_turrets_destroyed]="turretsDestroyed"
