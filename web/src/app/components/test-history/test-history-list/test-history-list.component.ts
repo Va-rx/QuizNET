@@ -4,6 +4,8 @@ import {UserResultsService} from "../../../services/user-results/user-results.se
 import {Results} from "../../../models/user-results.model";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
+import {TestHistoryService} from "../../../services/test-history/test-history.service";
+import {TestHistory} from "../../../models/test-history.model";
 
 @Component({
   selector: 'app-test-history-list',
@@ -17,10 +19,10 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
 
   displayedColumns = ['name', 'score']
   testId: number = -1;
-
+  test!: TestHistory;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private route: ActivatedRoute, private userResultsService: UserResultsService, private router: Router) { }
+  constructor(private route: ActivatedRoute, private userResultsService: UserResultsService, private router: Router, private testHistoryService: TestHistoryService) { }
 
   ngOnInit(): void {
     this.testId =  this.route.snapshot.params['id'];
@@ -28,6 +30,11 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
       this.userResults = new MatTableDataSource(data);
       this.userResults.sort = this.sort;
     });
+
+    this.testHistoryService.get(this.testId).subscribe(data => {
+      this.test = data;
+    })
+
   }
 
   ngAfterViewInit(): void {
@@ -38,5 +45,9 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
 
   goToDetails(row: Results) {
     this.router.navigate(['/test-history/', this.testId, row.userId]);
+  }
+
+  getMaxPoints(question): number {
+    return question.answers.reduce((acc, curr) => curr.points > 0 ? acc + curr.points : acc, 0);
   }
 }

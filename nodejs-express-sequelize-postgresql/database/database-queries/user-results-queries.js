@@ -23,7 +23,7 @@ const getUserResultsByTestId = async (userId, testId) => {
 
 const getAllTestResults = async (testId) => {
     try {
-        const res = await db.query(`SELECT name, ur.user_id as \"userId\", ur.score FROM user_results ur inner join users u on ur.user_id = u.user_id WHERE test_history_id = $1`, [testId]);
+        const res = await db.query(`SELECT name, surname, ur.user_id as \"userId\", ur.score FROM user_results ur inner join users u on ur.user_id = u.user_id WHERE test_history_id = $1`, [testId]);
         return res.rows;
     } catch (err) {
         console.log(err.message);

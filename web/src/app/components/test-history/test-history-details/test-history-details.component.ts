@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {UserResultsService} from "../../../services/user-results/user-results.service";
 
 import {ActivatedRoute} from "@angular/router";
-import {TestHistory} from "../../../models/test-history.model";
+import {AnswerHistory, TestHistory} from "../../../models/test-history.model";
 import {AuthService} from "../../../services/auth/auth.service";
 
 @Component({
@@ -26,7 +26,7 @@ export class TestHistoryDetailsComponent implements OnInit {
    });
   }
 
-  calculateQuestionScore(answers): string{
+  calculateQuestionScore(answers: AnswerHistory[]): string{
     let score = 0;
     let maxScore = 0;
     answers.forEach(answer => {
