@@ -33,6 +33,7 @@ import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 import { TestHistoryComponent } from './components/test-history/test-history.component';
 import { TestHistoryDetailsComponent } from './components/test-history/test-history-details/test-history-details.component';
 import {MatListModule} from "@angular/material/list";
+import { TimerComponent } from './components/timer/timer.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import {MatListModule} from "@angular/material/list";
     ScoreboardComponent,
     TestHistoryComponent,
     TestHistoryDetailsComponent,
+    TimerComponent,
   ],
   imports: [
     BrowserModule,

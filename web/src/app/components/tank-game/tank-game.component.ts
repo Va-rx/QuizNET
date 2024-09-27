@@ -81,6 +81,7 @@ export class TankGameComponent implements OnInit {
 
     //Sometime there is problem with loading it at scene start, this fixes it
     this.phaserGame.scene.game.events.on('sceneReady', () => {
+      this.maxLevel=1;//temporary for TESTING DELETE IT BEFOR PUSH
       if(this.maxLevel!=-1){
         this.phaserGame.events.emit("getTimer", this.timer,this.maxLevel);
         this.timerStarted=true;
@@ -88,9 +89,6 @@ export class TankGameComponent implements OnInit {
     })
 
     await this.loadTestDetails();
-    if(!this.timerStarted){
-      this.phaserGame.events.emit("getTimer", this.timer,this.maxLevel);
-    }
 
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time

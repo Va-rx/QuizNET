@@ -228,7 +228,7 @@ export default class Tanks extends Phaser.Scene {
   reloadTimer = 0;
   playerBulletDmg = 20;
   pickedUpHealth = 0;
-  max_level;
+  max_level=-1;
   timer;
 
   ///////BARTLE STATS///////
@@ -254,15 +254,7 @@ export default class Tanks extends Phaser.Scene {
 
   create() {
     this.createTutorialDialog();
-    this.game.events.on("getTimer", (timer,max_level) => {
-      console.log("gottime");
-      this.timer = timer;
-      console.log(this.timer)
-      this.max_level=max_level;
-      console.log(this.max_level);
-      this.events.on("UIScene_ready",()=> this.startTimer());
-    })
-    this.game.events.emit('sceneReady');
+   
 
     this.game.events.on("receiveHealth_inPhaser", (userName) => {
       console.log("IN GAME RECEIVE MEDKIT WORKS" + userName)
@@ -433,7 +425,14 @@ export default class Tanks extends Phaser.Scene {
 
     this.allTurrets = this.enemyTurrets.length;
 
-
+    this.game.events.on("getTimer", (timer,max_level) => {
+      console.log("gottime");
+      this.timer = timer;
+      console.log(this.timer)
+      this.max_level=max_level;
+      console.log(this.max_level);
+    })
+    this.game.events.emit('sceneReady');
   }
 
 
@@ -885,12 +884,6 @@ export default class Tanks extends Phaser.Scene {
       });
     });
   }
-
-  startTimer() {
-    this.events.emit("startTimer_",this.timer,this.max_level);
-  }
-
-
 }
 
 export class UIScene extends Phaser.Scene {
@@ -963,6 +956,13 @@ export class UIScene extends Phaser.Scene {
 
 
     const ourGame = this.scene.get('default');
+    
+    ////INITIALIZE LEVEL COUNTING/////////////
+    while(ourGame['max_level'] == -1){}//wait for max_level init
+    this.totalQuestions= ourGame['max_level'];
+    this.updateQuestionsLeftText();  
+    //////////////////////////////////////////
+ 
     console.log(ourGame.events)
 
     //console.log(this.scene);
@@ -1031,12 +1031,6 @@ export class UIScene extends Phaser.Scene {
     }).setOrigin(0.5);
     // Listen for medkit update events
     ourGame.events.on('updateMedkits', this.updateMedkitCount, this);
-    setTimeout(()=>ourGame.events.emit("UIScene_ready"),500);
-    ourGame.events.on('startTimer_',(seconds,maxLevel)=>{
-      this.startTimer(seconds);
-      this.totalQuestions=maxLevel;
-      this.updateQuestionsLeftText();
-    });
   }
 
   loadComplete(){
