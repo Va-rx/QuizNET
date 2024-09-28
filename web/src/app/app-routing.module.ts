@@ -14,7 +14,6 @@ import {HomeComponent} from "./components/home/home.component";
 import {RoleGuard} from "./guards/role.guard";
 import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 import {TestHistoryComponent} from "./components/test-history/test-history.component";
-import {TimerComponent} from "./components/timer/timer.component";
 import {
   TestHistoryDetailsComponent
 } from "./components/test-history/test-history-details/test-history-details.component";
@@ -23,7 +22,7 @@ const routes: Routes = [
   { path: 'create-lobby', component: CreateLobbyComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'join-lobby', component: JoinLobbyComponent, canActivate: [authGuard]},
   { path: 'game', component: GameComponent, canActivate: [authGuard]},
-  { path: 'tank-game', component: TankGameComponent},
+  { path: 'tank-game', component: TankGameComponent, canActivate: [authGuard]},
   { path :'create-matchmaking', component: CreateMatchmakingComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'tank-game/:id', component: TankGameComponent, canActivate: [authGuard]},
   { path: 'tests', component: TestsComponent, canActivate: [authGuard, RoleGuard]},
@@ -32,9 +31,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent},
   { path: 'tests/:id', component: TestDetailsComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'test-history', component: TestHistoryComponent, canActivate: [authGuard]},
-  { path: 'test-history/:id', component: TestHistoryDetailsComponent, canActivate: [authGuard]},
-  { path: 'chuj', component: TimerComponent}
-];
+  { path: 'test-history/:id', component: TestHistoryDetailsComponent, canActivate: [authGuard]}];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

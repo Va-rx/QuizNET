@@ -1,3 +1,5 @@
+import { max } from "rxjs";
+
 class EnemyTurret {
   index;
   game;
@@ -254,7 +256,7 @@ export default class Tanks extends Phaser.Scene {
 
   create() {
     this.createTutorialDialog();
-   
+
 
     this.game.events.on("receiveHealth_inPhaser", (userName) => {
       console.log("IN GAME RECEIVE MEDKIT WORKS" + userName)
@@ -431,6 +433,7 @@ export default class Tanks extends Phaser.Scene {
       console.log(this.timer)
       this.max_level=max_level;
       console.log(this.max_level);
+      this.events.emit("set_ui_max_level",max_level)
     })
     this.game.events.emit('sceneReady');
   }
@@ -956,13 +959,15 @@ export class UIScene extends Phaser.Scene {
 
 
     const ourGame = this.scene.get('default');
-    
+
     ////INITIALIZE LEVEL COUNTING/////////////
-    while(ourGame['max_level'] == -1){}//wait for max_level init
-    this.totalQuestions= ourGame['max_level'];
-    this.updateQuestionsLeftText();  
+    ourGame.events.on("set_ui_max_level",(max_level)=> {
+      this.totalQuestions=max_level;
+      this.updateQuestionsLeftText();
+
+    })
     //////////////////////////////////////////
- 
+
     console.log(ourGame.events)
 
     //console.log(this.scene);
