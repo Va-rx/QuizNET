@@ -21,11 +21,13 @@ export class TankGameComponent implements OnInit {
   config: Phaser.Types.Core.GameConfig;
   questions: Question[] = [];
   testID: number = 1;
+  testName: string = '';
   historyTestId: number = -1;
   maxLevel: number = -1;
   currentLevel: number = 0;
   scoreBoard: any[] = [];
   playerScore: number = 0;
+  playerScoreBonus: number = 0;
   gameFinished: boolean = false;
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   nickname: string = "";
@@ -75,9 +77,9 @@ export class TankGameComponent implements OnInit {
   async ngOnInit() {
     this.socket = this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
-    //this.testID=history.state.data.testId;
-    this.testID = 1;
-    //this.historyTestId = history.state.data.testHistoryId;
+    this.testID=history.state.data.testId;
+    //this.testID=1;for testing
+    this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
 
     //Sometime there is problem with loading it at scene start, this fixes it
@@ -99,6 +101,7 @@ export class TankGameComponent implements OnInit {
       this.currentLevel++;
       dialogRef.afterClosed().subscribe(result => {
         console.log(`Dialog result: ${result}`);
+        console.log(result);
         this.playerScore += result;
         this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
         //resume game
@@ -137,6 +140,7 @@ export class TankGameComponent implements OnInit {
       this.questions = data.questions;
       this.maxLevel = data.questions.length;
       this.testMaxPoints = data.maxPoints;
+      this.testName = data.name;
     } catch (error) {
       console.error("Error loading test details:", error);
     }
@@ -176,3 +180,4 @@ export class TankGameComponent implements OnInit {
     this.phaserGame.destroy(true);
   }
 }
+
