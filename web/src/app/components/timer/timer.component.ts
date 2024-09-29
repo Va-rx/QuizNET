@@ -8,18 +8,18 @@ import { take } from 'rxjs/operators';
     <div class="timer">{{ displayTime }}</div>
   `,
   styles: [`
-    .timer {
-      text-align: center;
-      font-size: 2em;
-      position: fixed;
-      top: 10px;
-      width: 100%;
-      font-size: 32px;
-      font-weight: bold; /* Makes the font bold */
-      color: #ffffff;
-      text-shadow: 2px 2px 2px #000000; /* Adds shadow with offset and blur */
-      
-    }
+.timer {
+  text-align: center;
+  font-size: 2em;
+  position: fixed;
+  top: 10%;
+  left: 50%; /* Position at the center horizontally */
+  transform: translateX(-50%); /* Adjust by half of the element's width */
+  font-size: 32px;
+  font-weight: bold; /* Makes the font bold */
+  color: #ffffff;
+  text-shadow: 2px 2px 2px #000000; /* Adds shadow with offset and blur */
+}
   `]
 })
 export class TimerComponent implements OnInit, OnDestroy {

@@ -35,7 +35,8 @@ export class TankGameComponent implements OnInit {
   turretsDestroyed: number = 0;
   totalTurrets: number = 0;
   testMaxPoints: number = 0;
-  timer: number = 10; //IN SECONDS
+  timer: number = 900; //IN SECONDS
+  timerEnded:boolean=false;
   timerStarted:boolean=false;
 
   constructor(private dialog: MatDialog,
@@ -87,7 +88,6 @@ export class TankGameComponent implements OnInit {
       this.phaserGame.events.emit("getTimer", this.timer,this.maxLevel);
       this.timerStarted=true;
     }
-    console.log("Lodaded")
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
       this.phaserGame.pause();
@@ -104,23 +104,7 @@ export class TankGameComponent implements OnInit {
         //resume game
         this.phaserGame.resume();
         if (this.currentLevel == this.maxLevel) {//REVERT THIS TO ==this.maxLevel for user experience
-          console.log("Game Over");
-          let results = this.userAnswersService.getWrappedResult(this.historyTestId);
-          this.userResultsService.create(results).subscribe(data => {
-            console.log(data);
-          });
-
-          this.playerScore += this.phaserGame.scene.getScene("default")["bonus"];
-          ////////SET PARAMETERS FOR BARTLE//////
-          this.starsPicked = this.phaserGame.scene.getScene("default")["BARTLE_stars_picked"];
-          this.medkitsShared = this.phaserGame.scene.getScene("default")["BARTLE_medkits_shared"];
-          this.turretsDestroyed = this.phaserGame.scene.getScene("default")["BARTLE_turrets_destroyed"];
-          this.totalTurrets = this.phaserGame.scene.getScene("default")["allTurrets"];
-          ///////////////////////////////////////
-          this.playerScore = Math.round(this.playerScore * 100) / 100;
-          this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
-          this.phaserGame.destroy(true);
-          this.gameFinished = true;
+            this.finishGame();
         }
       });
     });
@@ -162,6 +146,31 @@ export class TankGameComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  onTimerEnded(){
+    console.log("TIMER ENDED IN TANK_GAME");
+    this.timerEnded=true;
+    this.finishGame();
+  }
+
+  finishGame(){
+    console.log("Game Over");
+    let results = this.userAnswersService.getWrappedResult(this.historyTestId);
+    this.userResultsService.create(results).subscribe(data => {
+      console.log(data);
+    });
+
+    this.playerScore += this.phaserGame.scene.getScene("default")["bonus"];
+    ////////SET PARAMETERS FOR BARTLE//////
+    this.starsPicked = this.phaserGame.scene.getScene("default")["BARTLE_stars_picked"];
+    this.medkitsShared = this.phaserGame.scene.getScene("default")["BARTLE_medkits_shared"];
+    this.turretsDestroyed = this.phaserGame.scene.getScene("default")["BARTLE_turrets_destroyed"];
+    this.totalTurrets = this.phaserGame.scene.getScene("default")["allTurrets"];
+    ///////////////////////////////////////
+    this.playerScore = Math.round(this.playerScore * 100) / 100;
+    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
+    this.phaserGame.destroy(true);
+    this.gameFinished = true;
+  }
 
   ngOnDestroy() {
     this.phaserGame.destroy(true);
