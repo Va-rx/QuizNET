@@ -103,9 +103,6 @@ export class TankGameComponent implements OnInit {
         if(this.currentLevel === this.maxLevel){//REVERT THIS TO ==this.maxLevel for user experience
           console.log("Game Over");
           let results = this.userAnswersService.getWrappedResult(this.historyTestId);
-          this.userResultsService.create(results).subscribe(data=>{
-            console.log(data);
-          });
 
           this.playerScore+=this.phaserGame.scene.getScene("default")["bonus"];
           this.playerScoreBonus += this.phaserGame.scene.getScene("default")["bonus"];
@@ -117,6 +114,10 @@ export class TankGameComponent implements OnInit {
           ///////////////////////////////////////
           this.playerScore=Math.round(this.playerScore * 100) / 100;
           this.socket.emit('userScoreUpdate',this.socketService.getUserId(),this.playerScore,this.socketService.getJoinCode())
+          results.score = Math.round(this.playerScore);
+          this.userResultsService.create(results).subscribe(data=>{
+            console.log(`Results for user ${results.userId} created!`);
+          });
           this.phaserGame.destroy(true);
           this.gameFinished=true;
         }

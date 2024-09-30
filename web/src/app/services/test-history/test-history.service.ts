@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Test} from "../../models/test.model";
 import {AuthService} from "../auth/auth.service";
 import {TestHistory} from "../../models/test-history.model";
 const baseUrl = 'http://localhost:8080/api/test-history';
@@ -14,8 +13,8 @@ export class TestHistoryService {
 
   userId = this.authService.getUserId()
 
-  get(id: number): Observable<Test> {
-    return this.http.get<Test>(`${baseUrl}/${id}`);
+  get(id: number): Observable<TestHistory> {
+    return this.http.get<TestHistory>(`${baseUrl}/${id}`);
   }
 
   getAll(): Observable<TestHistory[]> {

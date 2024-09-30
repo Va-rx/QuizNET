@@ -12,7 +12,9 @@ router.get("/:id", async (req, res) => {
         return res.status(500).send({ hasError: "Error parsing XML" });
     }
     const test1 = {
-        name: parsedResult.test.$.name,
+        testName: parsedResult.test.$.name,
+        createdAt: test.createdAt,
+        maxPoints: parseInt(parsedResult.test.$.max_points),
         description: parsedResult.test.$.description,
         questions: parsedResult.test.questions.map((q) => ({
             question: q.$.question,
@@ -20,7 +22,8 @@ router.get("/:id", async (req, res) => {
             answers: q.answers.map((a) => ({
                 id: parseInt(a.$.id),
                 answer: a.$.answer,
-                isCorrect: a.$.isCorrect === 'true'
+                isCorrect: a.$.isCorrect === 'true',
+                points: parseInt(a.$.points)
             }))
         }))
     };
