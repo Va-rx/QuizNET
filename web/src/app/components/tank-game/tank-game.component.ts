@@ -158,6 +158,7 @@ export class TankGameComponent implements OnInit {
 
   finishGame(){
     console.log("Game Over");
+    this.timerEnded=true;
     let results = this.userAnswersService.getWrappedResult(this.historyTestId);
     this.userResultsService.create(results).subscribe(data => {
       console.log(data);
