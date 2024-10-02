@@ -12,7 +12,7 @@ const getTestHistoryById = async (id) => {
 
 const getAllTestHistory = async () => {
     try {
-        const res = await db.query(`SELECT id, test_name as testName FROM test_history`);
+        const res = await db.query(`SELECT id, test_name as \"testName\" , created_at as \"createdAt\" FROM test_history`);
         return res.rows;
     } catch (err) {
         console.log(err.message);

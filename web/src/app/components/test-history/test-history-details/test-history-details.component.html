@@ -7,13 +7,15 @@
 
           <mat-card-subtitle>
             <h6>{{test.description}}</h6>
-            <p class="mt-2">Created at: {{test.createdAt | date: 'yyyy-MM-dd'}}</p>
+            <p>Ocena: {{test.score }} pkt. na {{test.maxPoints}} pkt. możliwych do uzyskania ({{(test.score / test.maxPoints * 100).toFixed(2)}}%)</p>
+            <p>Created at: {{test.createdAt | date: 'yyyy-MM-dd'}}</p>
           </mat-card-subtitle>
         </mat-card-title-group>
       </mat-card-header>
       <mat-card-content>
         <mat-card *ngFor="let question of test.questions" class="mt-3 question-card">
           <mat-card-header>
+            <p class="score">{{calculateQuestionScore(question.answers)}} pkt.</p>
             <mat-card-title>{{question.question}}</mat-card-title>
           </mat-card-header>
           <mat-card-content>

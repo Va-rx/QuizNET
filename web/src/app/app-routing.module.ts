@@ -17,6 +17,8 @@ import {TestHistoryComponent} from "./components/test-history/test-history.compo
 import {
   TestHistoryDetailsComponent
 } from "./components/test-history/test-history-details/test-history-details.component";
+import {TestHistoryListComponent} from "./components/test-history/test-history-list/test-history-list.component";
+import {TestHistoryGuard} from "./guards/test-history.guard";
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [authGuard] },
   { path: 'create-lobby', component: CreateLobbyComponent, canActivate: [authGuard, RoleGuard]},
@@ -31,7 +33,10 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent},
   { path: 'tests/:id', component: TestDetailsComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'test-history', component: TestHistoryComponent, canActivate: [authGuard]},
-  { path: 'test-history/:id', component: TestHistoryDetailsComponent, canActivate: [authGuard]}];
+  { path: 'test-history/:id/:userId', component: TestHistoryDetailsComponent, canActivate: [authGuard, TestHistoryGuard]},
+  { path: 'test-history/:id', component: TestHistoryListComponent, canActivate: [authGuard, RoleGuard] }
+
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

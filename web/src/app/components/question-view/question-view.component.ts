@@ -53,18 +53,11 @@ export class QuestionViewComponent implements OnInit{
       this.userAnswersService.save(this.question.id, this.chosenAnswers.map(answer => answer.id ? answer.id : -1));
     }
     for (const answer of this.chosenAnswers) {
-      if (answer.isCorrect) {
         this.result += answer.points;
-      }
-      else {
-        if ( (this.result + answer.points) < 0) {
-          this.result = 0;
-        }
-        else {
-          this.result += answer.points;
-        }
-      }
     }
+
+    this.result = Math.max(this.result, 0);
+
     this.isSubmitted = true;
     setTimeout(() => {
       this.closeDialog();

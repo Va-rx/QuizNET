@@ -4,6 +4,8 @@ export class TestHistory {
     description!: string;
     createdAt!: Date;
     questions?: QuestionHistory[];
+    maxPoints!: number;
+    score!: number;
 }
 
 export class QuestionHistory {
@@ -17,4 +19,5 @@ export class AnswerHistory {
   answer!: string;
   isCorrect!: boolean;
   selected!: boolean;
+  points!: number;
 }

@@ -33,6 +33,9 @@ import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 import { TestHistoryComponent } from './components/test-history/test-history.component';
 import { TestHistoryDetailsComponent } from './components/test-history/test-history-details/test-history-details.component';
 import {MatListModule} from "@angular/material/list";
+import { TestHistoryListComponent } from './components/test-history/test-history-list/test-history-list.component';
+import {MatTableModule} from "@angular/material/table";
+import {MatSortModule} from "@angular/material/sort";
 import { TimerComponent } from './components/timer/timer.component';
 
 @NgModule({
@@ -55,24 +58,27 @@ import { TimerComponent } from './components/timer/timer.component';
     TestHistoryComponent,
     TestHistoryDetailsComponent,
     TimerComponent,
+    TestHistoryListComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatCardModule,
-    MatInputModule,
-    MatIconModule,
-    MatCheckboxModule,
-    BrowserAnimationsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSnackBarModule,
-    MatListModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        HttpClientModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatCardModule,
+        MatInputModule,
+        MatIconModule,
+        MatCheckboxModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSnackBarModule,
+        MatListModule,
+        MatTableModule,
+        MatSortModule
+    ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]
 })

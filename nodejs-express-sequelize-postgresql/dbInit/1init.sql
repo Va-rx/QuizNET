@@ -65,6 +65,7 @@ CREATE TABLE user_results (
     user_id int  NOT NULL,
     test_history_id int  NOT NULL,
     answers varchar(10000)  NOT NULL,
+    score int  NOT NULL,
     CONSTRAINT user_results_pk  PRIMARY KEY (id)
 );
 

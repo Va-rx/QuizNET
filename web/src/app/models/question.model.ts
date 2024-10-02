@@ -9,7 +9,7 @@ export class Question {
 }
 
 export class Answer {
-  id?: number;
+  id!: number;
   questionId!: number;
   answer: string = '';
   isCorrect: boolean = false;
