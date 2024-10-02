@@ -1,3 +1,5 @@
+import { max } from "rxjs";
+
 class EnemyTurret {
   index;
   game;
@@ -79,7 +81,7 @@ class EnemyTurret {
   updateHealthBar() {
     if (this.health <= 0) {
       this.game.turretsKilled += 1;
-      this.game.BARTLE_turrets_destroyed+=1;
+      this.game.BARTLE_turrets_destroyed += 1;
       this.turret.destroy();
       this.healthBar.clear();
       //destroy whole object
@@ -217,7 +219,7 @@ export default class Tanks extends Phaser.Scene {
   cursors;
   playerAmmo = 100;
   // playerHealth = 1000000;
-  playerHealth=100;
+  playerHealth = 100;
   playerHealthBar;
   ammoText;
   deaths = 0;
@@ -228,11 +230,13 @@ export default class Tanks extends Phaser.Scene {
   reloadTimer = 0;
   playerBulletDmg = 20;
   pickedUpHealth = 0;
+  max_level=-1;
+  timer;
 
   ///////BARTLE STATS///////
-  BARTLE_stars_picked=0;
-  BARTLE_medkits_shared=0;
-  BARTLE_turrets_destroyed=0;
+  BARTLE_stars_picked = 0;
+  BARTLE_medkits_shared = 0;
+  BARTLE_turrets_destroyed = 0;
 
   preload() {
     this.load.audio('tankRiding', 'assets/games/tankgame/sounds/engine_heavy_loop.ogg');
@@ -252,10 +256,12 @@ export default class Tanks extends Phaser.Scene {
 
   create() {
     this.createTutorialDialog();
-    this.game.events.on("receiveHealth_inPhaser",(userName)=>{
-      console.log("IN GAME RECEIVE MEDKIT WORKS"+userName)
-      this.pickedUpHealth+=1;
-      this.events.emit("updateMedkits",this.pickedUpHealth)
+
+
+    this.game.events.on("receiveHealth_inPhaser", (userName) => {
+      console.log("IN GAME RECEIVE MEDKIT WORKS" + userName)
+      this.pickedUpHealth += 1;
+      this.events.emit("updateMedkits", this.pickedUpHealth)
       this.drawDialogMsg(userName);
 
     })
@@ -420,6 +426,16 @@ export default class Tanks extends Phaser.Scene {
     this.updateReloadTimer(1);
 
     this.allTurrets = this.enemyTurrets.length;
+
+    this.game.events.on("getTimer", (timer,max_level) => {
+      console.log("gottime");
+      this.timer = timer;
+      console.log(this.timer)
+      this.max_level=max_level;
+      console.log(this.max_level);
+      this.events.emit("set_ui_max_level",max_level)
+    })
+    this.game.events.emit('sceneReady');
   }
 
 
@@ -449,19 +465,19 @@ export default class Tanks extends Phaser.Scene {
     });
 
     if (Phaser.Input.Keyboard.JustDown(this.keys.F)) {
-      if(this.pickedUpHealth>0){
+      if (this.pickedUpHealth > 0) {
         this.drawDialogMsg_share()
         this.game.events.emit("shareHealth");
-        this.BARTLE_medkits_shared+=1;
-        this.pickedUpHealth-=1;
-        this.events.emit("updateMedkits",this.pickedUpHealth)
+        this.BARTLE_medkits_shared += 1;
+        this.pickedUpHealth -= 1;
+        this.events.emit("updateMedkits", this.pickedUpHealth)
       }
     }
-    if (Phaser.Input.Keyboard.JustDown(this.keys.E)){
-      if(this.pickedUpHealth>0){
+    if (Phaser.Input.Keyboard.JustDown(this.keys.E)) {
+      if (this.pickedUpHealth > 0) {
         this.addHealth();
-        this.pickedUpHealth-=1;
-        this.events.emit("updateMedkits",this.pickedUpHealth)
+        this.pickedUpHealth -= 1;
+        this.events.emit("updateMedkits", this.pickedUpHealth)
       }
     }
 
@@ -569,7 +585,7 @@ export default class Tanks extends Phaser.Scene {
     const radius = 30; // Radius of the circular timer
     const thickness = 6; // Thickness of the circular timer
     const x_cord = 50;
-    const y_cord = 100;
+    const y_cord = 150;
     // Clear previous graphics
     this.reloadTimerGraphics.clear();
 
@@ -678,7 +694,7 @@ export default class Tanks extends Phaser.Scene {
             this.pickupsFound += 1;
             ////
             this.pickedUpHealth += 1;
-            this.events.emit("updateMedkits",this.pickedUpHealth)
+            this.events.emit("updateMedkits", this.pickedUpHealth)
             ////
             if (bodyA.gameObject.label != 'tankPlayer') {
               bodyA.gameObject.destroy();
@@ -705,7 +721,7 @@ export default class Tanks extends Phaser.Scene {
             //console.log('Player collided with star');
             //this.addHealth();
             //this.pickupsFound+=1;
-            this.BARTLE_stars_picked+=1;
+            this.BARTLE_stars_picked += 1;
             this.playerBulletDmg += 2;
             if (bodyA.gameObject.label != 'tankPlayer') {
               bodyA.gameObject.destroy();
@@ -749,7 +765,7 @@ export default class Tanks extends Phaser.Scene {
         camera.worldView.y + camera.height / 2
       );
     });
-}
+  }
 
   drawDialogMsg_share() {
     // Get the center of the camera, not the game world
@@ -779,7 +795,7 @@ export default class Tanks extends Phaser.Scene {
         camera.worldView.y + camera.height / 2
       );
     });
-}
+  }
 
   createTutorialDialog() {
     // Get the screen dimensions
@@ -870,12 +886,7 @@ export default class Tanks extends Phaser.Scene {
         }
       });
     });
-}
-  calculateBartle(){
-
   }
-
-
 }
 
 export class UIScene extends Phaser.Scene {
@@ -889,6 +900,16 @@ export class UIScene extends Phaser.Scene {
   deathsText;
   levelText;
 
+  ///Timer vars
+  timerText!: Phaser.GameObjects.Text;  // Text object to display the timer
+  totalTime!: number;  // Total time in seconds
+  timerEvent!: Phaser.Time.TimerEvent;  // Timer event for countdown
+
+  //Qestions vars
+  questionsLeftText!: Phaser.GameObjects.Text; // Text object for questions left
+  totalQuestions: number = 0; // Total number of questions
+  currentQuestion: number = 0; // Current question index
+
   constructor() {
     super({ key: 'UIScene', active: true });
 
@@ -900,8 +921,55 @@ export class UIScene extends Phaser.Scene {
   }
   create() {
     //  Our Text object to display the Score
+    // Initial configuration of timer text
+    this.timerText = this.add.text(this.cameras.main.width / 2, 20, '', {
+      fontSize: '32px',
+      fontStyle: 'bold',     // Makes the font bold
+      color: '#ffffff',
+      stroke: '#000000',     // Adds a black stroke around the text
+      strokeThickness: 4,    // The thickness of the stroke
+      shadow: {
+        offsetX: 2,          // Adds shadow offset horizontally
+        offsetY: 2,          // Adds shadow offset vertically
+        color: '#000000',     // Shadow color
+        blur: 2,             // Shadow blur radius
+        stroke: true,        // Shadow applies to the stroke
+        fill: true           // Shadow applies to the fill
+      }
+    }).setOrigin(0.5, 0.5);
+
+
+    // Create the text object
+    this.questionsLeftText = this.add.text(20, 20, '', {
+      fontSize: '32px',
+      fontStyle: 'bold',     // Makes the font bold
+      color: '#ffffff',
+      stroke: '#000000',     // Adds a black stroke around the text
+      strokeThickness: 4,    // The thickness of the stroke
+      shadow: {
+        offsetX: 2,          // Adds shadow offset horizontally
+        offsetY: 2,          // Adds shadow offset vertically
+        color: '#000000',     // Shadow color
+        blur: 2,             // Shadow blur radius
+        stroke: true,        // Shadow applies to the stroke
+        fill: true           // Shadow applies to the fill
+      }
+    });
+
+
 
     const ourGame = this.scene.get('default');
+
+    ////INITIALIZE LEVEL COUNTING/////////////
+    ourGame.events.on("set_ui_max_level",(max_level)=> {
+      this.totalQuestions=max_level;
+      this.updateQuestionsLeftText();
+
+    })
+    //////////////////////////////////////////
+
+    console.log(ourGame.events)
+
     //console.log(this.scene);
     this.playerHealthBar = this.add.graphics();
     ourGame.events.on('updateHealth', this.updatePlayerHealthBar, this);
@@ -943,6 +1011,7 @@ export class UIScene extends Phaser.Scene {
 
     ourGame.events.on('levelComplete', (id) => {
       this.levelsCompleted++;
+      this.updateQuestionsLeftText()
       this.levelText.setText('Levels:' + this.levelsCompleted);
     });
     // Define medkit box dimensions
@@ -969,6 +1038,9 @@ export class UIScene extends Phaser.Scene {
     ourGame.events.on('updateMedkits', this.updateMedkitCount, this);
   }
 
+  loadComplete(){
+    console.log("Works");
+  }
   updateMedkitCount(medkits) {
     // Update the medkit count number displayed on top of the medkit image
     this.medkitCountText.setText(medkits);
@@ -990,6 +1062,55 @@ export class UIScene extends Phaser.Scene {
     this.playerHealthBar.clear();
     this.playerHealthBar.fillStyle(0xff0000);
     this.playerHealthBar.fillRect(barX, barY, remainingWidth, barHeight);
+  }
+
+  ///////////////////////////TIMER FUNCTIONS////////////////////////////////
+
+  startTimer(seconds: number) {
+    this.totalTime = seconds;
+
+    // Create a timed event that triggers every second
+    this.updateTimer();
+    this.timerEvent = this.time.addEvent({
+      delay: 1000,  // 1 second
+      callback: this.updateTimer,
+      callbackScope: this,
+      loop: true
+    });
+  }
+
+  updateTimer() {
+    if (this.totalTime > 0) {
+      // Decrease total time by 1 second
+      this.totalTime--;
+
+      // Convert the remaining time to MM:SS format
+      const minutes = Math.floor(this.totalTime / 60);
+      const seconds = this.totalTime % 60;
+
+      // Update the text object to display the time
+      this.timerText.setText(`${this.formatTime(minutes)}:${this.formatTime(seconds)}`);
+    } else {
+      // Timer has finished, stop the timed event
+      this.timerEvent.remove(false);
+
+      // Call the function after the timer ends
+      this.onTimerEnd();
+    }
+  }
+
+  formatTime(time: number): string {
+    // Ensure time is displayed as two digits
+    return time < 10 ? `0${time}` : `${time}`;
+  }
+
+  onTimerEnd() {
+    console.log('Timer ended!');
+  }
+  ///////////////////////////////QUESTIONS/////////////////////////////////////
+  updateQuestionsLeftText() {
+    const questionsLeft = this.levelsCompleted;
+    this.questionsLeftText.setText(`${questionsLeft}/${this.totalQuestions}`);
   }
 }
 

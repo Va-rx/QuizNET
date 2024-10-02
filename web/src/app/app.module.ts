@@ -36,6 +36,7 @@ import {MatListModule} from "@angular/material/list";
 import { TestHistoryListComponent } from './components/test-history/test-history-list/test-history-list.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatSortModule} from "@angular/material/sort";
+import { TimerComponent } from './components/timer/timer.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import {MatSortModule} from "@angular/material/sort";
     ScoreboardComponent,
     TestHistoryComponent,
     TestHistoryDetailsComponent,
+    TimerComponent,
     TestHistoryListComponent,
   ],
     imports: [
