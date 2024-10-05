@@ -219,7 +219,7 @@ export default class Tanks extends Phaser.Scene {
   cursors;
   playerAmmo = 100;
   // playerHealth = 1000000;
-  playerHealth = 100;
+  playerHealth = 100000000000;
   playerHealthBar;
   ammoText;
   deaths = 0;
@@ -252,6 +252,13 @@ export default class Tanks extends Phaser.Scene {
     this.load.image('ammo', 'assets/games/tankgame/ammo.png');
     this.load.image('star', 'assets/games/firstgame/assets/star.png');
     this.load.image('health', 'assets/games/tankgame/health.png');
+
+    ///////// FOR TEXT MAP EDITOR///////////////
+    this.load.text('mapData_txt', 'assets/games/tankgame/txtEditor/map.txt');  // Your .txt file path
+    this.load.image('terrain_txt', 'assets/games/tankgame/txtEditor/terrain.png'); // Grass texture
+    this.load.image('walls_txt', 'assets/games/tankgame/txtEditor/walls.png'); // Wall texture
+    this.load.image('turrets_txt', 'assets/games/tankgame/txtEditor/tower.png'); // Turret texture
+    ////////////////////////////////////////////
   }
 
   create() {
@@ -278,7 +285,8 @@ export default class Tanks extends Phaser.Scene {
       this.keys = this.input.keyboard.addKeys('W,S,A,D,F,E');
     }
 
-    // Generate a tilemap
+    // Generate a tilemap via Tiled EDITOR///////////
+    /*
     let mappy = this.make.tilemap({ key: 'map' });
     let terrain = mappy.addTilesetImage('terrain', 'terrain');
     let towers = mappy.addTilesetImage('towers_walls_blank', 'towers_walls_blank');
@@ -292,7 +300,66 @@ export default class Tanks extends Phaser.Scene {
           body.gameObject.label = 'stationaryObject';
         });
       }
+    }*/
+    //////////////////////////////////////////////////
+
+    ///////////////////////TEXT MAP//////////////////////////
+     let mapData = this.cache.text.get('mapData_txt');  // Get the .txt file content
+     let mapArray = mapData.replace(/\r/g, '').trim().split('\n').map(line => line.split('\t'));
+     console.log(mapArray)
+    let tileSize = 128; // Assuming each tile is 32x32 pixels
+
+    // Loop through the map data to place tiles based on the characters
+    for (let y = 0; y < mapArray.length; y++) {
+      for (let x = 0; x < mapArray[y].length; x++) {
+        let tile = mapArray[y][x];
+
+        // Place grass by default
+        if (tile === 'G') {
+          this.add.image(x * tileSize +tileSize/2, y * tileSize + tileSize/2, 'terrain_txt');
+        }
+
+        // Place walls, and add collision
+        if (tile === '#') {
+          let wall_txt = this.matter.add.image(x * tileSize+tileSize/2, y * tileSize+tileSize/2, 'walls_txt');
+          wall_txt.setStatic(true); // Set wall as static (non-moving)
+          if(wall_txt.body){
+            console.log(wall_txt.body.gameObject.body)
+            wall_txt.body.gameObject.label = 'stationaryObject';
+          }
+        }
+
+        /// Place turrets, and add collision
+        if (tile === 'X') {
+          let turret_txt = this.matter.add.image(x * tileSize + tileSize/2, y * tileSize +tileSize/2, 'turrets_txt');
+          turret_txt.setStatic(true); // Set turret as static (non-moving)
+          if(turret_txt.body){
+            turret_txt.body.gameObject.label = 'stationaryObject';
+          }
+        }
+
+        // Create a sensor for checkpoints (no collision, but it detects objects)
+        if (tile === 'C') {
+          let checkpoint_txt = this.matter.add.rectangle(
+            x * tileSize + tileSize / 2,
+            y * tileSize + tileSize / 2,
+            tileSize,
+            tileSize,
+            { isSensor: true, label: 'checkpoint' }  // Make it a sensor
+          );
+          checkpoint_txt.isSensor = true;
+          checkpoint_txt.label = 'checkpoint';
+
+          // Add an event to handle when something enters the checkpoint
+          this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+            if (bodyA.label === 'checkpoint' || bodyB.label === 'checkpoint') {
+              console.log('Checkpoint txt reached!');
+            }
+          });
+        }
+      }
     }
+    ///////////////////////////////////////////////////////////////////////
 
 
     this.spawnPickups.apply(this);
