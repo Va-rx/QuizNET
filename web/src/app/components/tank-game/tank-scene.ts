@@ -230,7 +230,7 @@ export default class Tanks extends Phaser.Scene {
   reloadTimer = 0;
   playerBulletDmg = 20;
   pickedUpHealth = 0;
-  max_level=-1;
+  max_level = -1;
   timer;
 
   ///////BARTLE STATS///////
@@ -304,11 +304,11 @@ export default class Tanks extends Phaser.Scene {
     //////////////////////////////////////////////////
 
     ///////////////////////TEXT MAP//////////////////////////
-     let mapData = this.cache.text.get('mapData_txt');  // Get the .txt file content
-     let mapArray = mapData.replace(/\r/g, '').trim().split('\n').map(line => line.split('\t'));
-     console.log(mapArray)
+    let mapData = this.cache.text.get('mapData_txt');  // Get the .txt file content
+    let mapArray = mapData.replace(/\r/g, '').trim().split('\n').map(line => line.split('\t'));
+    console.log(mapArray)
     let tileSize = 128; // Assuming each tile is 32x32 pixels
-    let temporaryTurretCords:Array<Number[]>=[];
+    let temporaryTurretCords: Array<Number[]> = [];
     // Loop through the map data to place tiles based on the characters
     for (let y = 0; y < mapArray.length; y++) {
       for (let x = 0; x < mapArray[y].length; x++) {
@@ -316,28 +316,40 @@ export default class Tanks extends Phaser.Scene {
 
         // Place grass by default
         if (tile === 'G') {
-          this.add.image(x * tileSize +tileSize/2, y * tileSize + tileSize/2, 'terrain_txt');
+          this.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'terrain_txt');
         }
 
         // Place walls, and add collision
         if (tile === '#') {
-          let wall_txt = this.matter.add.image(x * tileSize+tileSize/2, y * tileSize+tileSize/2, 'walls_txt');
+          let wall_txt = this.matter.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'walls_txt');
+          wall_txt.setSensor(true)
           wall_txt.setStatic(true); // Set wall as static (non-moving)
-          if(wall_txt.body){
-            console.log(wall_txt.body.gameObject.body)
+
+          let centerX = x * tileSize + tileSize / 2;
+          let centerY = y * tileSize + tileSize / 2;
+          const collisonBoxSize=42;
+          this.matter.add.rectangle(centerX  , centerY, collisonBoxSize, collisonBoxSize, { isStatic: true });//center
+          this.matter.add.rectangle(centerX , centerY+collisonBoxSize, collisonBoxSize, collisonBoxSize, { isStatic: true });//top
+          this.matter.add.rectangle(centerX , centerY-collisonBoxSize, collisonBoxSize, collisonBoxSize, { isStatic: true });//bottom
+          this.matter.add.rectangle(centerX - collisonBoxSize, centerY, collisonBoxSize, collisonBoxSize, { isStatic: true });//left
+          this.matter.add.rectangle(centerX+collisonBoxSize , centerY, collisonBoxSize, collisonBoxSize, { isStatic: true });//right
+
+
+          if (wall_txt.body) {
             wall_txt.body.gameObject.label = 'stationaryObject';
           }
+
         }
 
         /// Place turrets, and add collision
         if (tile === 'X') {
-          let turret_txt = this.matter.add.image(x * tileSize + tileSize/2, y * tileSize +tileSize/2, 'turrets_txt');
+          let turret_txt = this.matter.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'turrets_txt');
           turret_txt.setStatic(true); // Set turret as static (non-moving)
-          if(turret_txt.body){
+          if (turret_txt.body) {
             turret_txt.body.gameObject.label = 'stationaryObject';
           }
 
-          temporaryTurretCords.push([x * tileSize + tileSize/2, y * tileSize +tileSize/2])
+          temporaryTurretCords.push([x * tileSize + tileSize / 2, y * tileSize + tileSize / 2])
 
         }
 
@@ -365,7 +377,7 @@ export default class Tanks extends Phaser.Scene {
     ///////////////////////////////////////////////////////////////////////
 
 
-    if(false){
+    if (false) {
       this.spawnPickups.apply(this);
     }
     this.events.emit('updateHealth', this.playerHealth);
@@ -408,71 +420,71 @@ export default class Tanks extends Phaser.Scene {
     });
 
 
-    if(true){
+    if (true) {
       temporaryTurretCords.forEach(([x, y]) => {
         this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, x, y, 350));
-    });
+      });
     }
 
-    if(false){
-       /////////////////////ENERMY TURRETS////////////////////////
-    ////////////////////LEVEL 1///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, 800, 575, 450));
-    this.enemyTurrets.push(new EnemyTurret(1, this, this.tankBody, 435, 270, 300));
-    this.enemyTurrets.push(new EnemyTurret(2, this, this.tankBody, 640, 270, 300));
-    this.enemyTurrets.push(new EnemyTurret(3, this, this.tankBody, 1120, 115, 700));
-    this.enemyTurrets.push(new EnemyTurret(4, this, this.tankBody, 60, 430, 300));
-    this.enemyTurrets.push(new EnemyTurret(5, this, this.tankBody, 286, 705, 400));
-    new Checkpoint(1270, 270, this, 1, this.tankBody);
-    ////////////////////LEVEL 2///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501, 381, 300));
-    this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502, 590, 300));
-    this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757, 240, 300));
-    this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760, 430, 300));
-    this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015, 493, 300));
-    new Checkpoint(2109, 675, this, 2, this.tankBody);
-    ////////////////////LEVEL 3///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319, 190, 300));
-    this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350, 557, 300));
-    this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509, 559, 300));
-    this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668, 559, 300));
-    new Checkpoint(2894, 506, this, 3, this.tankBody);
-    ////////////////////LEVEL 4///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117, 591, 300));
-    this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375, 237, 300));
-    this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628, 494, 300));
-    this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373, 429, 300));
-    new Checkpoint(3722, 673, this, 4, this.tankBody);
-    ////////////////////LEVEL 5///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046, 416, 450));
-    this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807, 110, 450));
-    new Checkpoint(4123, 163, this, 5, this.tankBody);
+    if (false) {
+      /////////////////////ENERMY TURRETS////////////////////////
+      ////////////////////LEVEL 1///////////////////////////////
+      this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, 800, 575, 450));
+      this.enemyTurrets.push(new EnemyTurret(1, this, this.tankBody, 435, 270, 300));
+      this.enemyTurrets.push(new EnemyTurret(2, this, this.tankBody, 640, 270, 300));
+      this.enemyTurrets.push(new EnemyTurret(3, this, this.tankBody, 1120, 115, 700));
+      this.enemyTurrets.push(new EnemyTurret(4, this, this.tankBody, 60, 430, 300));
+      this.enemyTurrets.push(new EnemyTurret(5, this, this.tankBody, 286, 705, 400));
+      new Checkpoint(1270, 270, this, 1, this.tankBody);
+      ////////////////////LEVEL 2///////////////////////////////
+      this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501, 381, 300));
+      this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502, 590, 300));
+      this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757, 240, 300));
+      this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760, 430, 300));
+      this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015, 493, 300));
+      new Checkpoint(2109, 675, this, 2, this.tankBody);
+      ////////////////////LEVEL 3///////////////////////////////
+      this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319, 190, 300));
+      this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350, 557, 300));
+      this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509, 559, 300));
+      this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668, 559, 300));
+      new Checkpoint(2894, 506, this, 3, this.tankBody);
+      ////////////////////LEVEL 4///////////////////////////////
+      this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117, 591, 300));
+      this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375, 237, 300));
+      this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628, 494, 300));
+      this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373, 429, 300));
+      new Checkpoint(3722, 673, this, 4, this.tankBody);
+      ////////////////////LEVEL 5///////////////////////////////
+      this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046, 416, 450));
+      this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807, 110, 450));
+      new Checkpoint(4123, 163, this, 5, this.tankBody);
 
-    const offset = 2962;
+      const offset = 2962;
 
-    ////////////////////LEVEL 6///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501 + offset, 381, 300));
-    this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502 + offset, 590, 300));
-    this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757 + offset, 240, 300));
-    this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760 + offset, 430, 300));
-    this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015 + offset, 493, 300));
-    new Checkpoint(2109 + offset, 675, this, 6, this.tankBody);
-    ////////////////////LEVEL 7///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319 + offset, 190, 300));
-    this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350 + offset, 557, 300));
-    this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509 + offset, 559, 300));
-    this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668 + offset, 559, 300));
-    new Checkpoint(2894 + offset, 506, this, 7, this.tankBody);
-    ////////////////////LEVEL 8///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117 + offset, 591, 300));
-    this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375 + offset, 237, 300));
-    this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628 + offset, 494, 300));
-    this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373 + offset, 429, 300));
-    new Checkpoint(3722 + offset, 673, this, 8, this.tankBody);
-    ////////////////////LEVEL 9///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046 + offset, 416, 450));
-    this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807 + offset, 110, 450));
-    new Checkpoint(4123 + offset, 163, this, 9, this.tankBody);
+      ////////////////////LEVEL 6///////////////////////////////
+      this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501 + offset, 381, 300));
+      this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502 + offset, 590, 300));
+      this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757 + offset, 240, 300));
+      this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760 + offset, 430, 300));
+      this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015 + offset, 493, 300));
+      new Checkpoint(2109 + offset, 675, this, 6, this.tankBody);
+      ////////////////////LEVEL 7///////////////////////////////
+      this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319 + offset, 190, 300));
+      this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350 + offset, 557, 300));
+      this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509 + offset, 559, 300));
+      this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668 + offset, 559, 300));
+      new Checkpoint(2894 + offset, 506, this, 7, this.tankBody);
+      ////////////////////LEVEL 8///////////////////////////////
+      this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117 + offset, 591, 300));
+      this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375 + offset, 237, 300));
+      this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628 + offset, 494, 300));
+      this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373 + offset, 429, 300));
+      new Checkpoint(3722 + offset, 673, this, 8, this.tankBody);
+      ////////////////////LEVEL 9///////////////////////////////
+      this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046 + offset, 416, 450));
+      this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807 + offset, 110, 450));
+      new Checkpoint(4123 + offset, 163, this, 9, this.tankBody);
     }
     //this.testEnemyTurret = new EnemyTurret(0, this, this.tankBody, 800, 575);
 
@@ -509,13 +521,13 @@ export default class Tanks extends Phaser.Scene {
 
     this.allTurrets = this.enemyTurrets.length;
 
-    this.game.events.on("getTimer", (timer,max_level) => {
+    this.game.events.on("getTimer", (timer, max_level) => {
       console.log("gottime");
       this.timer = timer;
       console.log(this.timer)
-      this.max_level=max_level;
+      this.max_level = max_level;
       console.log(this.max_level);
-      this.events.emit("set_ui_max_level",max_level)
+      this.events.emit("set_ui_max_level", max_level)
     })
     this.game.events.emit('sceneReady');
   }
@@ -1043,8 +1055,8 @@ export class UIScene extends Phaser.Scene {
     const ourGame = this.scene.get('default');
 
     ////INITIALIZE LEVEL COUNTING/////////////
-    ourGame.events.on("set_ui_max_level",(max_level)=> {
-      this.totalQuestions=max_level;
+    ourGame.events.on("set_ui_max_level", (max_level) => {
+      this.totalQuestions = max_level;
       this.updateQuestionsLeftText();
 
     })
@@ -1120,7 +1132,7 @@ export class UIScene extends Phaser.Scene {
     ourGame.events.on('updateMedkits', this.updateMedkitCount, this);
   }
 
-  loadComplete(){
+  loadComplete() {
     console.log("Works");
   }
   updateMedkitCount(medkits) {
