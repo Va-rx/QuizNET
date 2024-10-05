@@ -308,7 +308,7 @@ export default class Tanks extends Phaser.Scene {
      let mapArray = mapData.replace(/\r/g, '').trim().split('\n').map(line => line.split('\t'));
      console.log(mapArray)
     let tileSize = 128; // Assuming each tile is 32x32 pixels
-
+    let temporaryTurretCords:Array<Number[]>=[];
     // Loop through the map data to place tiles based on the characters
     for (let y = 0; y < mapArray.length; y++) {
       for (let x = 0; x < mapArray[y].length; x++) {
@@ -336,6 +336,9 @@ export default class Tanks extends Phaser.Scene {
           if(turret_txt.body){
             turret_txt.body.gameObject.label = 'stationaryObject';
           }
+
+          temporaryTurretCords.push([x * tileSize + tileSize/2, y * tileSize +tileSize/2])
+
         }
 
         // Create a sensor for checkpoints (no collision, but it detects objects)
@@ -362,7 +365,9 @@ export default class Tanks extends Phaser.Scene {
     ///////////////////////////////////////////////////////////////////////
 
 
-    this.spawnPickups.apply(this);
+    if(false){
+      this.spawnPickups.apply(this);
+    }
     this.events.emit('updateHealth', this.playerHealth);
     this.events.emit('updateAmmo', this.playerAmmo);
 
@@ -402,8 +407,15 @@ export default class Tanks extends Phaser.Scene {
       }
     });
 
-    //this.testEnemyTurret = new EnemyTurret(0, this, this.tankBody, 800, 575);
-    /////////////////////ENERMY TURRETS////////////////////////
+
+    if(true){
+      temporaryTurretCords.forEach(([x, y]) => {
+        this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, x, y, 350));
+    });
+    }
+
+    if(false){
+       /////////////////////ENERMY TURRETS////////////////////////
     ////////////////////LEVEL 1///////////////////////////////
     this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, 800, 575, 450));
     this.enemyTurrets.push(new EnemyTurret(1, this, this.tankBody, 435, 270, 300));
@@ -461,6 +473,9 @@ export default class Tanks extends Phaser.Scene {
     this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046 + offset, 416, 450));
     this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807 + offset, 110, 450));
     new Checkpoint(4123 + offset, 163, this, 9, this.tankBody);
+    }
+    //this.testEnemyTurret = new EnemyTurret(0, this, this.tankBody, 800, 575);
+
     ///////////////////////////////////////////////////////////
     this.matter.world.on('collisionstart', (event) => {
       const pairs = event.pairs;
