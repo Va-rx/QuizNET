@@ -17,7 +17,7 @@ class EnemyTurret {
   disabled = false;
 
 
-  constructor(index, game, player, x, y, range) {
+  constructor(index, game, player, x, y, range,scaling=1) {
     this.range = range;
     this.x = x + game.cameras.main.scrollX;
     this.y = y + game.cameras.main.scrollY;
@@ -45,7 +45,7 @@ class EnemyTurret {
     this.drawHealthBar();
 
     //create collision zone in x and y matterjs
-    this.emptyBody = this.game.matter.add.rectangle(this.x, this.y, 105, 105, { isStatic: true, isSensor: true, label: 'emptyBody' });
+    this.emptyBody = this.game.matter.add.rectangle(this.x, this.y, 105*scaling, 105*scaling, { isStatic: true, isSensor: true, label: 'emptyBody' });
     if (this.emptyBody) {
       //check if empty body exists
       this.emptyBody.onCollideCallback = (pair) => {
@@ -422,7 +422,9 @@ export default class Tanks extends Phaser.Scene {
 
     if (true) {
       temporaryTurretCords.forEach(([x, y]) => {
-        this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, x, y, 350));
+        const newEnemyTurret=new EnemyTurret(0, this, this.tankBody, x, y, 350,1.2);
+        console.log(newEnemyTurret)
+        this.enemyTurrets.push(newEnemyTurret);
       });
     }
 
