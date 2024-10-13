@@ -56,7 +56,7 @@ export class TankGameComponent implements OnInit {
       physics: {
         default: 'matter',
         matter: {
-          debug: false,
+          debug: true,
           gravity: {
             x: 0,
             y: 0
@@ -77,9 +77,9 @@ export class TankGameComponent implements OnInit {
   async ngOnInit() {
     this.socket = this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
-    this.testID=history.state.data.testId;
-    //this.testID=1;for testing
-    this.historyTestId = history.state.data.testHistoryId;
+    //this.testID=history.state.data.testId;
+    this.testID=1;
+    //this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
 
     //Sometime there is problem with loading it at scene start, this fixes it
