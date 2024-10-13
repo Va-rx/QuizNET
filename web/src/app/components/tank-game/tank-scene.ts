@@ -218,8 +218,8 @@ export default class Tanks extends Phaser.Scene {
   testEnemyTurret;
   cursors;
   playerAmmo = 100;
-  // playerHealth = 1000000;
-  playerHealth = 100;
+  // playerHealth = 100;
+  playerHealth = 10000000000000000;
   playerHealthBar;
   ammoText;
   deaths = 0;
@@ -319,7 +319,7 @@ export default class Tanks extends Phaser.Scene {
     this.tankBody.setFriction(0.3);
     this.tankBody.label = "tankPlayer";
     //this.cameras.main.startFollow(this.tankBody, true);
-    this.cameras.main.setBounds(0, 0, 10000, 800);
+    this.cameras.main.setBounds(0, 0, 11000, 800);
     this.cameras.main.startFollow(this.tankBody, true);
     if (this.input.keyboard) {
       this.cursors = this.input.keyboard.createCursorKeys();
@@ -459,10 +459,10 @@ export default class Tanks extends Phaser.Scene {
 
   override update() {
     if (this.tankBody.y > 800) {
-      this.cameras.main.setBounds(0, 0, 10000, 1100);
+      this.cameras.main.setBounds(0, 0, 11000, 1100);
     }
     else {
-      this.cameras.main.setBounds(0, 0, 10000, 800);
+      this.cameras.main.setBounds(0, 0, 11000, 800);
     }
     this.bonus = this.calculateBonus();
     if (this.reloadTimer + 0.04 <= 1) {
