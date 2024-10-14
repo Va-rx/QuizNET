@@ -326,7 +326,6 @@ export default class Tanks extends Phaser.Scene {
     }
 
     checkpointCoordinatesArray.sort((a, b) => a.x - b.x);
-    this.spawnPickups.apply(this);
     this.events.emit('updateHealth', this.playerHealth);
     this.events.emit('updateAmmo', this.playerAmmo);
 
@@ -472,6 +471,7 @@ export default class Tanks extends Phaser.Scene {
       const count = this.enemyTurrets.filter(turret => turret.x < this.checkpointsArray[this.max_level-1].x).length;
       this.allTurrets=count;
       this.events.emit("set_ui_max_level",max_level)
+      this.spawnPickups.apply(this);
     })
     this.game.events.emit('sceneReady');
   }
