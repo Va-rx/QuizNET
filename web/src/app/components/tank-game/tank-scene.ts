@@ -232,6 +232,10 @@ export default class Tanks extends Phaser.Scene {
   pickedUpHealth = 0;
   max_level=-1;
   timer;
+  starCoordinatesArray: { x: number; y: number }[] = [];
+  ammoCoordinatesArray: { x: number; y: number }[] = [];
+  healthCoordinatesArray: { x: number; y: number }[] = [];
+
 
   ///////BARTLE STATS///////
   BARTLE_stars_picked = 0;
@@ -300,6 +304,15 @@ export default class Tanks extends Phaser.Scene {
           }
           if (tile.properties && tile.properties.checkpoint !== undefined) {
             checkpointCoordinatesArray.push({ x: tile.pixelX, y: tile.pixelY });
+          }
+          if (tile.properties && tile.properties.star !== undefined) {
+            this.starCoordinatesArray.push({x: tile.pixelX, y:tile.pixelY});
+          }
+          if (tile.properties && tile.properties.ammo !== undefined) {
+            this.ammoCoordinatesArray.push({x: tile.pixelX, y:tile.pixelY});
+          }
+          if (tile.properties && tile.properties.health !== undefined) {
+            this.healthCoordinatesArray.push({x: tile.pixelX, y:tile.pixelY});
           }
       });
 
@@ -457,8 +470,6 @@ export default class Tanks extends Phaser.Scene {
       this.max_level=max_level;
       console.log(this.max_level);
       const count = this.enemyTurrets.filter(turret => turret.x < checkpointsArray[this.max_level-1].x).length;
-      console.log( checkpointsArray[this.max_level-1])
-      console.log(`Number of enemy turrets with x < checkpoint x: ${count}`);
       this.allTurrets=count;
       this.events.emit("set_ui_max_level",max_level)
     })
@@ -680,87 +691,83 @@ export default class Tanks extends Phaser.Scene {
   }
 
   spawnPickups() {
-    //ammo pickups
-    const offset = 2962;
-
-    let cords = [[450, 450], [550, 420], [1427, 103], [2679, 729], [3099, 368], [3769, 540], [1427 + offset, 103], [2679 + offset, 729], [3099 + offset, 368], [3769 + offset, 540]];
-    cords.forEach(cord => {
-      let ammo = this.matter.add.image(cord[0], cord[1], 'ammo');
+    // Ammo pickups
+    this.ammoCoordinatesArray.forEach(cord => {
+      let ammo = this.matter.add.image(cord.x, cord.y, 'ammo');
       ammo.setName('ammo');
       ammo.setSensor(true);
       ammo.setOnCollide((pair) => {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject && bodyB.gameObject) {
-          if (bodyA.gameObject.name == 'ammo' && bodyB.gameObject.label == 'tankPlayer' || bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.name == 'ammo') {
-            //console.log('Player collided with ammo');
+          if (
+            (bodyA.gameObject.name === 'ammo' && bodyB.gameObject.label === 'tankPlayer') ||
+            (bodyA.gameObject.label === 'tankPlayer' && bodyB.gameObject.name === 'ammo')
+          ) {
             this.addAmmo();
             this.pickupsFound += 1;
-            if (bodyA.gameObject.label != 'tankPlayer') {
+            if (bodyA.gameObject.label !== 'tankPlayer') {
               bodyA.gameObject.destroy();
-            }
-            else {
+            } else {
               bodyB.gameObject.destroy();
             }
           }
         }
       });
     });
-    this.allPickups += cords.length;
-    //Health pickups
-    cords = [[400, 430], [500, 450], [1477, 153], [2582, 739], [2964, 276], [3832, 585], [1477 + offset, 153], [2582 + offset + 20, 739], [2964 + offset, 276], [3832 + offset, 585]];
-    cords.forEach(cord => {
-      let health = this.matter.add.image(cord[0], cord[1], 'health');
+    this.allPickups += this.ammoCoordinatesArray.length;
+
+    // Health pickups
+    this.healthCoordinatesArray.forEach(cord => {
+      let health = this.matter.add.image(cord.x, cord.y, 'health');
       health.setName('health');
       health.setSensor(true);
       health.setOnCollide((pair) => {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject && bodyB.gameObject) {
-          if (bodyA.gameObject.name == 'health' && bodyB.gameObject.label == 'tankPlayer' || bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.name == 'health') {
-            //console.log('Player collided with health');
-            //this.addHealth();
+          if (
+            (bodyA.gameObject.name === 'health' && bodyB.gameObject.label === 'tankPlayer') ||
+            (bodyA.gameObject.label === 'tankPlayer' && bodyB.gameObject.name === 'health')
+          ) {
             this.pickupsFound += 1;
-            ////
             this.pickedUpHealth += 1;
-            this.events.emit("updateMedkits", this.pickedUpHealth)
-            ////
-            if (bodyA.gameObject.label != 'tankPlayer') {
+            this.events.emit("updateMedkits", this.pickedUpHealth);
+            if (bodyA.gameObject.label !== 'tankPlayer') {
               bodyA.gameObject.destroy();
-            }
-            else {
+            } else {
               bodyB.gameObject.destroy();
             }
           }
         }
       });
     });
-    this.allPickups += cords.length;
+    this.allPickups += this.healthCoordinatesArray.length;
 
-    //Star pickups
-    cords = [[1760, 896], [3861, 1044], [3141, 890], [5318, 895]];
-    cords.forEach(cord => {
-      let star = this.matter.add.image(cord[0], cord[1], 'star');
+    // Star pickups
+    this.starCoordinatesArray.forEach(cord => {
+      let star = this.matter.add.image(cord.x, cord.y, 'star');
       star.setName('star');
       star.setSensor(true);
       star.setOnCollide((pair) => {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject && bodyB.gameObject) {
-          if (bodyA.gameObject.name == 'star' && bodyB.gameObject.label == 'tankPlayer' || bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.name == 'star') {
-            //console.log('Player collided with star');
-            //this.addHealth();
-            //this.pickupsFound+=1;
+          if (
+            (bodyA.gameObject.name === 'star' && bodyB.gameObject.label === 'tankPlayer') ||
+            (bodyA.gameObject.label === 'tankPlayer' && bodyB.gameObject.name === 'star')
+          ) {
             this.BARTLE_stars_picked += 1;
             this.playerBulletDmg += 2;
-            if (bodyA.gameObject.label != 'tankPlayer') {
+            if (bodyA.gameObject.label !== 'tankPlayer') {
               bodyA.gameObject.destroy();
-            }
-            else {
+            } else {
               bodyB.gameObject.destroy();
             }
           }
         }
       });
     });
+    this.allPickups += this.starCoordinatesArray.length;
   }
+
 
   drawDialogMsg(userName) {
     // Get the main camera
