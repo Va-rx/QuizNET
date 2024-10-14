@@ -218,8 +218,8 @@ export default class Tanks extends Phaser.Scene {
   testEnemyTurret;
   cursors;
   playerAmmo = 100;
-  // playerHealth = 100;
-  playerHealth = 10000000000000000;
+  playerHealth = 100;
+  //playerHealth = 10000000000000000;
   playerHealthBar;
   ammoText;
   deaths = 0;
@@ -236,7 +236,8 @@ export default class Tanks extends Phaser.Scene {
   ammoCoordinatesArray: { x: number; y: number }[] = [];
   healthCoordinatesArray: { x: number; y: number }[] = [];
   checkpointsArray: Checkpoint[]=[];
-
+  totalStars:number=0;
+  totalApteczkas:number=0;
 
   ///////BARTLE STATS///////
   BARTLE_stars_picked = 0;
@@ -530,7 +531,6 @@ export default class Tanks extends Phaser.Scene {
 
     if (this.input.activePointer.isDown) {
       this.playerFire();
-      console.log(this.bonus)
     }
 
     if (this.keys.W.isDown) {
@@ -745,6 +745,7 @@ export default class Tanks extends Phaser.Scene {
     });
     const filteredHealthCoordinates:number = this.healthCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
     this.allPickups += filteredHealthCoordinates;
+    this.totalApteczkas=filteredHealthCoordinates;
 
     // Star pickups
     this.starCoordinatesArray.forEach(cord => {
@@ -771,6 +772,7 @@ export default class Tanks extends Phaser.Scene {
     });
     const filteredStarCoordinates:number = this.starCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
     this.allPickups += filteredStarCoordinates;
+    this.totalStars=filteredStarCoordinates;
     console.log("star:" + filteredStarCoordinates);
 
   }

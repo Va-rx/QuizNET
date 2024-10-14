@@ -21,6 +21,8 @@
 [BARTLE_stars_picked]="starsPicked"
 [BARTLE_medkits_shared]="medkitsShared"
 [BARTLE_turrets_destroyed]="turretsDestroyed"
-[allTurrets]="totalTurrets">
+[totalStars]="totalStars"
+[allTurrets]="totalTurrets"
+[totalHealth]="totalHealth">
 ></app-scoreboard>
 <app-timer *ngIf="!timerEnded" [seconds]="timer" (timerEnded)="onTimerEnded()"></app-timer>
