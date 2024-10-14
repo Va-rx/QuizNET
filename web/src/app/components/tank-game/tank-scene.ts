@@ -279,6 +279,7 @@ export default class Tanks extends Phaser.Scene {
     }
 
     const coordinatesArray: { x: number; y: number }[] = [];
+    const checkpointCoordinatesArray: { x: number; y: number }[] = [];
 
     // Generate a tilemap
     let mappy = this.make.tilemap({ key: 'map' });
@@ -296,6 +297,9 @@ export default class Tanks extends Phaser.Scene {
               const new_cord_y=tile.pixelY+48;
               coordinatesArray.push({ x: new_cord_x, y: new_cord_y });
 
+          }
+          if (tile.properties && tile.properties.checkpoint !== undefined) {
+            checkpointCoordinatesArray.push({ x: tile.pixelX, y: tile.pixelY });
           }
       });
 
@@ -354,36 +358,39 @@ export default class Tanks extends Phaser.Scene {
     coordinatesArray.forEach((coord, index) => {
       this.enemyTurrets.push(new EnemyTurret(index, this, this.tankBody, coord.x, coord.y, 350));
   });
-    //this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, 800, 575, 450));
+  const checkpointsArray: Checkpoint[]=[];
+  checkpointCoordinatesArray.forEach((coord, index) => {
+   checkpointsArray.push(new Checkpoint(coord.x,coord.y,this,index+1,this.tankBody));
+});    //this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, 800, 575, 450));
     //this.enemyTurrets.push(new EnemyTurret(1, this, this.tankBody, 435, 270, 300));
     //this.enemyTurrets.push(new EnemyTurret(2, this, this.tankBody, 640, 270, 300));
     //this.enemyTurrets.push(new EnemyTurret(3, this, this.tankBody, 1120, 115, 700));
     //this.enemyTurrets.push(new EnemyTurret(4, this, this.tankBody, 60, 430, 300));
     //this.enemyTurrets.push(new EnemyTurret(5, this, this.tankBody, 286, 705, 400));
-    new Checkpoint(1270, 270, this, 1, this.tankBody);
+    //checkpointsArray.push(new Checkpoint(1270, 270, this, 1, this.tankBody));
     ////////////////////LEVEL 2///////////////////////////////
     //this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501, 381, 300));
     ////this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502, 590, 300));
     //this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757, 240, 300));
     //this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760, 430, 300));
     //this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015, 493, 300));
-    new Checkpoint(2109, 675, this, 2, this.tankBody);
+    //checkpointsArray.push(new Checkpoint(2109, 675, this, 2, this.tankBody));
     ////////////////////LEVEL 3///////////////////////////////
     //this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319, 190, 300));
     //this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350, 557, 300));
     //this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509, 559, 300));
     //this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668, 559, 300));
-    new Checkpoint(2894, 506, this, 3, this.tankBody);
+    //checkpointsArray.push(new Checkpoint(2894, 506, this, 3, this.tankBody));
     ////////////////////LEVEL 4///////////////////////////////
     //this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117, 591, 300));
     //this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375, 237, 300));
     //this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628, 494, 300));
     //this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373, 429, 300));
-    new Checkpoint(3722, 673, this, 4, this.tankBody);
+    //checkpointsArray.push(new Checkpoint(3722, 673, this, 4, this.tankBody));
     ////////////////////LEVEL 5///////////////////////////////
     //this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046, 416, 450));
     //this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807, 110, 450));
-    new Checkpoint(4123, 163, this, 5, this.tankBody);
+    //checkpointsArray.push(new Checkpoint(4123, 163, this, 5, this.tankBody));
 
     const offset = 2962;
 
@@ -393,23 +400,23 @@ export default class Tanks extends Phaser.Scene {
     ////this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757 + offset, 240, 300));
     ////this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760 + offset, 430, 300));
     //this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015 + offset, 493, 300));
-    new Checkpoint(2109 + offset, 675, this, 6, this.tankBody);
+    //checkpointsArray.push(new Checkpoint(2109 + offset, 675, this, 6, this.tankBody));
     ////////////////////LEVEL 7///////////////////////////////
     //this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319 + offset, 190, 300));
     //this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350 + offset, 557, 300));
     //this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509 + offset, 559, 300));
     //this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668 + offset, 559, 300));
-    new Checkpoint(2894 + offset, 506, this, 7, this.tankBody);
+    //checkpointsArray.push(new Checkpoint(2894 + offset, 506, this, 7, this.tankBody));
     ////////////////////LEVEL 8///////////////////////////////
     //this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117 + offset, 591, 300));
     //this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375 + offset, 237, 300));
     //this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628 + offset, 494, 300));
     //this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373 + offset, 429, 300));
-    new Checkpoint(3722 + offset, 673, this, 8, this.tankBody);
+    //checkpointsArray.push(new Checkpoint(3722 + offset, 673, this, 8, this.tankBody));
     ////////////////////LEVEL 9///////////////////////////////
     //this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046 + offset, 416, 450));
     //this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807 + offset, 110, 450));
-    new Checkpoint(4123 + offset, 163, this, 9, this.tankBody);
+    //checkpointsArray.push(new Checkpoint(4123 + offset, 163, this, 9, this.tankBody));
     ///////////////////////////////////////////////////////////
     this.matter.world.on('collisionstart', (event) => {
       const pairs = event.pairs;
@@ -441,7 +448,7 @@ export default class Tanks extends Phaser.Scene {
     this.reloadTimerGraphics = this.scene.get("UIScene").add.graphics();
     this.updateReloadTimer(1);
 
-    this.allTurrets = this.enemyTurrets.length;
+    this.allTurrets = this.enemyTurrets.length;//TODO
 
     this.game.events.on("getTimer", (timer,max_level) => {
       console.log("gottime");
@@ -452,7 +459,6 @@ export default class Tanks extends Phaser.Scene {
       this.events.emit("set_ui_max_level",max_level)
     })
     this.game.events.emit('sceneReady');
-    this.tankBody.x=8000;
   }
 
 
