@@ -311,7 +311,7 @@ export default class Tanks extends Phaser.Scene {
       }
     }
 
-
+    checkpointCoordinatesArray.sort((a, b) => a.x - b.x);
     this.spawnPickups.apply(this);
     this.events.emit('updateHealth', this.playerHealth);
     this.events.emit('updateAmmo', this.playerAmmo);
@@ -448,7 +448,7 @@ export default class Tanks extends Phaser.Scene {
     this.reloadTimerGraphics = this.scene.get("UIScene").add.graphics();
     this.updateReloadTimer(1);
 
-    this.allTurrets = this.enemyTurrets.length;//TODO
+    this.allTurrets = this.enemyTurrets.length;
 
     this.game.events.on("getTimer", (timer,max_level) => {
       console.log("gottime");
@@ -456,6 +456,10 @@ export default class Tanks extends Phaser.Scene {
       console.log(this.timer)
       this.max_level=max_level;
       console.log(this.max_level);
+      const count = this.enemyTurrets.filter(turret => turret.x < checkpointsArray[this.max_level-1].x).length;
+      console.log( checkpointsArray[this.max_level-1])
+      console.log(`Number of enemy turrets with x < checkpoint x: ${count}`);
+      this.allTurrets=count;
       this.events.emit("set_ui_max_level",max_level)
     })
     this.game.events.emit('sceneReady');
