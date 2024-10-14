@@ -235,6 +235,7 @@ export default class Tanks extends Phaser.Scene {
   starCoordinatesArray: { x: number; y: number }[] = [];
   ammoCoordinatesArray: { x: number; y: number }[] = [];
   healthCoordinatesArray: { x: number; y: number }[] = [];
+  checkpointsArray: Checkpoint[]=[];
 
 
   ///////BARTLE STATS///////
@@ -371,9 +372,8 @@ export default class Tanks extends Phaser.Scene {
     coordinatesArray.forEach((coord, index) => {
       this.enemyTurrets.push(new EnemyTurret(index, this, this.tankBody, coord.x, coord.y, 350));
   });
-  const checkpointsArray: Checkpoint[]=[];
   checkpointCoordinatesArray.forEach((coord, index) => {
-   checkpointsArray.push(new Checkpoint(coord.x,coord.y,this,index+1,this.tankBody));
+   this.checkpointsArray.push(new Checkpoint(coord.x,coord.y,this,index+1,this.tankBody));
 });    //this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, 800, 575, 450));
     //this.enemyTurrets.push(new EnemyTurret(1, this, this.tankBody, 435, 270, 300));
     //this.enemyTurrets.push(new EnemyTurret(2, this, this.tankBody, 640, 270, 300));
@@ -469,7 +469,7 @@ export default class Tanks extends Phaser.Scene {
       console.log(this.timer)
       this.max_level=max_level;
       console.log(this.max_level);
-      const count = this.enemyTurrets.filter(turret => turret.x < checkpointsArray[this.max_level-1].x).length;
+      const count = this.enemyTurrets.filter(turret => turret.x < this.checkpointsArray[this.max_level-1].x).length;
       this.allTurrets=count;
       this.events.emit("set_ui_max_level",max_level)
     })
@@ -714,7 +714,8 @@ export default class Tanks extends Phaser.Scene {
         }
       });
     });
-    this.allPickups += this.ammoCoordinatesArray.length;
+    const filteredAmmoCoordinates:number = this.ammoCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
+    this.allPickups += filteredAmmoCoordinates;
 
     // Health pickups
     this.healthCoordinatesArray.forEach(cord => {
@@ -740,7 +741,8 @@ export default class Tanks extends Phaser.Scene {
         }
       });
     });
-    this.allPickups += this.healthCoordinatesArray.length;
+    const filteredHealthCoordinates:number = this.healthCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
+    this.allPickups += filteredHealthCoordinates;
 
     // Star pickups
     this.starCoordinatesArray.forEach(cord => {
@@ -765,7 +767,8 @@ export default class Tanks extends Phaser.Scene {
         }
       });
     });
-    this.allPickups += this.starCoordinatesArray.length;
+    const filteredStarCoordinates:number = this.starCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
+    this.allPickups += filteredAmmoCoordinates;
   }
 
 
