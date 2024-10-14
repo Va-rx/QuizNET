@@ -15,6 +15,8 @@ export class ScoreboardComponent implements OnChanges {
   @Input() BARTLE_turrets_destroyed: number = 0; // Points for Achiever (normalized by allTurrets)
   @Input() allTurrets: number = 0; // Total number of turrets for normalization
   @Input() testName: string = '';
+  @Input() totalStars:number=0;
+  @Input() totalHealth:number=0;
   currentPlayerScore: number = 0;
   currentPlayerScoreOnlyQuestions: number = 0;
   currentPlayerPercentage: number = 0;
@@ -43,8 +45,18 @@ export class ScoreboardComponent implements OnChanges {
 
     // Cap and normalize Bartle scores
     const cappedMedkitsShared = Math.min(this.BARTLE_medkits_shared, 10); // Max 10 for Socializer
-    this.explorerScore = (this.BARTLE_stars_picked / 4) * 100; // Max 4 points
-    this.socializerScore = (cappedMedkitsShared / 10) * 100; // Max 10 points
+    if(this.totalStars==0){
+      this.explorerScore=0;
+    }else{
+      this.explorerScore = (this.BARTLE_stars_picked / this.totalStars) * 100; // Max 4 points
+    }
+
+    if(this.totalHealth>10){
+      this.socializerScore = (cappedMedkitsShared / 10) * 100;
+    }
+    else{
+      this.socializerScore = (this.BARTLE_medkits_shared / this.totalHealth) * 100;
+    }
     this.achieverScore = (this.BARTLE_turrets_destroyed / this.allTurrets) * 100; // Normalized by total turrets
   }
 }

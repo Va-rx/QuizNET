@@ -218,8 +218,8 @@ export default class Tanks extends Phaser.Scene {
   testEnemyTurret;
   cursors;
   playerAmmo = 100;
-  // playerHealth = 1000000;
   playerHealth = 100;
+  //playerHealth = 10000000000000000;
   playerHealthBar;
   ammoText;
   deaths = 0;
@@ -232,6 +232,12 @@ export default class Tanks extends Phaser.Scene {
   pickedUpHealth = 0;
   max_level=-1;
   timer;
+  starCoordinatesArray: { x: number; y: number }[] = [];
+  ammoCoordinatesArray: { x: number; y: number }[] = [];
+  healthCoordinatesArray: { x: number; y: number }[] = [];
+  checkpointsArray: Checkpoint[]=[];
+  totalStars:number=0;
+  totalApteczkas:number=0;
 
   ///////BARTLE STATS///////
   BARTLE_stars_picked = 0;
@@ -278,6 +284,9 @@ export default class Tanks extends Phaser.Scene {
       this.keys = this.input.keyboard.addKeys('W,S,A,D,F,E');
     }
 
+    const coordinatesArray: { x: number; y: number }[] = [];
+    const checkpointCoordinatesArray: { x: number; y: number }[] = [];
+
     // Generate a tilemap
     let mappy = this.make.tilemap({ key: 'map' });
     let terrain = mappy.addTilesetImage('terrain', 'terrain');
@@ -287,6 +296,29 @@ export default class Tanks extends Phaser.Scene {
       let bottomLayer = mappy.createLayer('BOTTOM', terrain, 0, 0)?.setDepth(-1);
       if (topLayer) {
         topLayer.setCollisionByProperty({ collides: true });
+
+        topLayer.forEachTile((tile) => {
+          if (tile.properties && tile.properties.top_left !== undefined) {
+              const new_cord_x=tile.pixelX+48;
+              const new_cord_y=tile.pixelY+48;
+              coordinatesArray.push({ x: new_cord_x, y: new_cord_y });
+
+          }
+          if (tile.properties && tile.properties.checkpoint !== undefined) {
+            checkpointCoordinatesArray.push({ x: tile.pixelX, y: tile.pixelY });
+          }
+          if (tile.properties && tile.properties.star !== undefined) {
+            this.starCoordinatesArray.push({x: tile.pixelX, y:tile.pixelY});
+          }
+          if (tile.properties && tile.properties.ammo !== undefined) {
+            this.ammoCoordinatesArray.push({x: tile.pixelX, y:tile.pixelY});
+          }
+          if (tile.properties && tile.properties.health !== undefined) {
+            this.healthCoordinatesArray.push({x: tile.pixelX, y:tile.pixelY});
+          }
+      });
+
+
         this.matter.world.convertTilemapLayer(topLayer);
         this.matter.world.getAllBodies().forEach(body => {
           body.gameObject.label = 'stationaryObject';
@@ -294,8 +326,7 @@ export default class Tanks extends Phaser.Scene {
       }
     }
 
-
-    this.spawnPickups.apply(this);
+    checkpointCoordinatesArray.sort((a, b) => a.x - b.x);
     this.events.emit('updateHealth', this.playerHealth);
     this.events.emit('updateAmmo', this.playerAmmo);
 
@@ -306,7 +337,7 @@ export default class Tanks extends Phaser.Scene {
     this.tankBody.setFriction(0.3);
     this.tankBody.label = "tankPlayer";
     //this.cameras.main.startFollow(this.tankBody, true);
-    this.cameras.main.setBounds(0, 0, 10000, 800);
+    this.cameras.main.setBounds(0, 0, 11000, 800);
     this.cameras.main.startFollow(this.tankBody, true);
     if (this.input.keyboard) {
       this.cursors = this.input.keyboard.createCursorKeys();
@@ -338,62 +369,67 @@ export default class Tanks extends Phaser.Scene {
     //this.testEnemyTurret = new EnemyTurret(0, this, this.tankBody, 800, 575);
     /////////////////////ENERMY TURRETS////////////////////////
     ////////////////////LEVEL 1///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, 800, 575, 450));
-    this.enemyTurrets.push(new EnemyTurret(1, this, this.tankBody, 435, 270, 300));
-    this.enemyTurrets.push(new EnemyTurret(2, this, this.tankBody, 640, 270, 300));
-    this.enemyTurrets.push(new EnemyTurret(3, this, this.tankBody, 1120, 115, 700));
-    this.enemyTurrets.push(new EnemyTurret(4, this, this.tankBody, 60, 430, 300));
-    this.enemyTurrets.push(new EnemyTurret(5, this, this.tankBody, 286, 705, 400));
-    new Checkpoint(1270, 270, this, 1, this.tankBody);
+    coordinatesArray.forEach((coord, index) => {
+      this.enemyTurrets.push(new EnemyTurret(index, this, this.tankBody, coord.x, coord.y, 350));
+  });
+  checkpointCoordinatesArray.forEach((coord, index) => {
+   this.checkpointsArray.push(new Checkpoint(coord.x,coord.y,this,index+1,this.tankBody));
+});    //this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, 800, 575, 450));
+    //this.enemyTurrets.push(new EnemyTurret(1, this, this.tankBody, 435, 270, 300));
+    //this.enemyTurrets.push(new EnemyTurret(2, this, this.tankBody, 640, 270, 300));
+    //this.enemyTurrets.push(new EnemyTurret(3, this, this.tankBody, 1120, 115, 700));
+    //this.enemyTurrets.push(new EnemyTurret(4, this, this.tankBody, 60, 430, 300));
+    //this.enemyTurrets.push(new EnemyTurret(5, this, this.tankBody, 286, 705, 400));
+    //checkpointsArray.push(new Checkpoint(1270, 270, this, 1, this.tankBody));
     ////////////////////LEVEL 2///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501, 381, 300));
-    this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502, 590, 300));
-    this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757, 240, 300));
-    this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760, 430, 300));
-    this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015, 493, 300));
-    new Checkpoint(2109, 675, this, 2, this.tankBody);
+    //this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501, 381, 300));
+    ////this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502, 590, 300));
+    //this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757, 240, 300));
+    //this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760, 430, 300));
+    //this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015, 493, 300));
+    //checkpointsArray.push(new Checkpoint(2109, 675, this, 2, this.tankBody));
     ////////////////////LEVEL 3///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319, 190, 300));
-    this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350, 557, 300));
-    this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509, 559, 300));
-    this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668, 559, 300));
-    new Checkpoint(2894, 506, this, 3, this.tankBody);
+    //this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319, 190, 300));
+    //this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350, 557, 300));
+    //this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509, 559, 300));
+    //this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668, 559, 300));
+    //checkpointsArray.push(new Checkpoint(2894, 506, this, 3, this.tankBody));
     ////////////////////LEVEL 4///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117, 591, 300));
-    this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375, 237, 300));
-    this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628, 494, 300));
-    this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373, 429, 300));
-    new Checkpoint(3722, 673, this, 4, this.tankBody);
+    //this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117, 591, 300));
+    //this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375, 237, 300));
+    //this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628, 494, 300));
+    //this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373, 429, 300));
+    //checkpointsArray.push(new Checkpoint(3722, 673, this, 4, this.tankBody));
     ////////////////////LEVEL 5///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046, 416, 450));
-    this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807, 110, 450));
-    new Checkpoint(4123, 163, this, 5, this.tankBody);
+    //this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046, 416, 450));
+    //this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807, 110, 450));
+    //checkpointsArray.push(new Checkpoint(4123, 163, this, 5, this.tankBody));
 
     const offset = 2962;
 
     ////////////////////LEVEL 6///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501 + offset, 381, 300));
-    this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502 + offset, 590, 300));
-    this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757 + offset, 240, 300));
-    this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760 + offset, 430, 300));
-    this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015 + offset, 493, 300));
-    new Checkpoint(2109 + offset, 675, this, 6, this.tankBody);
+    //this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501 + offset, 381, 300));
+    ////this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502 + offset, 590, 300));
+    ////this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757 + offset, 240, 300));
+    ////this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760 + offset, 430, 300));
+    //this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015 + offset, 493, 300));
+    //checkpointsArray.push(new Checkpoint(2109 + offset, 675, this, 6, this.tankBody));
     ////////////////////LEVEL 7///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319 + offset, 190, 300));
-    this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350 + offset, 557, 300));
-    this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509 + offset, 559, 300));
-    this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668 + offset, 559, 300));
-    new Checkpoint(2894 + offset, 506, this, 7, this.tankBody);
+    //this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319 + offset, 190, 300));
+    //this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350 + offset, 557, 300));
+    //this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509 + offset, 559, 300));
+    //this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668 + offset, 559, 300));
+    //checkpointsArray.push(new Checkpoint(2894 + offset, 506, this, 7, this.tankBody));
     ////////////////////LEVEL 8///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117 + offset, 591, 300));
-    this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375 + offset, 237, 300));
-    this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628 + offset, 494, 300));
-    this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373 + offset, 429, 300));
-    new Checkpoint(3722 + offset, 673, this, 8, this.tankBody);
+    //this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117 + offset, 591, 300));
+    //this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375 + offset, 237, 300));
+    //this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628 + offset, 494, 300));
+    //this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373 + offset, 429, 300));
+    //checkpointsArray.push(new Checkpoint(3722 + offset, 673, this, 8, this.tankBody));
     ////////////////////LEVEL 9///////////////////////////////
-    this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046 + offset, 416, 450));
-    this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807 + offset, 110, 450));
-    new Checkpoint(4123 + offset, 163, this, 9, this.tankBody);
+    //this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046 + offset, 416, 450));
+    //this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807 + offset, 110, 450));
+    //checkpointsArray.push(new Checkpoint(4123 + offset, 163, this, 9, this.tankBody));
     ///////////////////////////////////////////////////////////
     this.matter.world.on('collisionstart', (event) => {
       const pairs = event.pairs;
@@ -433,7 +469,10 @@ export default class Tanks extends Phaser.Scene {
       console.log(this.timer)
       this.max_level=max_level;
       console.log(this.max_level);
+      const count = this.enemyTurrets.filter(turret => turret.x < this.checkpointsArray[this.max_level-1].x).length;
+      this.allTurrets=count;
       this.events.emit("set_ui_max_level",max_level)
+      this.spawnPickups.apply(this);
     })
     this.game.events.emit('sceneReady');
   }
@@ -442,10 +481,10 @@ export default class Tanks extends Phaser.Scene {
 
   override update() {
     if (this.tankBody.y > 800) {
-      this.cameras.main.setBounds(0, 0, 10000, 1100);
+      this.cameras.main.setBounds(0, 0, 11000, 1100);
     }
     else {
-      this.cameras.main.setBounds(0, 0, 10000, 800);
+      this.cameras.main.setBounds(0, 0, 11000, 800);
     }
     this.bonus = this.calculateBonus();
     if (this.reloadTimer + 0.04 <= 1) {
@@ -653,87 +692,91 @@ export default class Tanks extends Phaser.Scene {
   }
 
   spawnPickups() {
-    //ammo pickups
-    const offset = 2962;
-
-    let cords = [[450, 450], [550, 420], [1427, 103], [2679, 729], [3099, 368], [3769, 540], [1427 + offset, 103], [2679 + offset, 729], [3099 + offset, 368], [3769 + offset, 540]];
-    cords.forEach(cord => {
-      let ammo = this.matter.add.image(cord[0], cord[1], 'ammo');
+    // Ammo pickups
+    this.ammoCoordinatesArray.forEach(cord => {
+      let ammo = this.matter.add.image(cord.x, cord.y, 'ammo');
       ammo.setName('ammo');
       ammo.setSensor(true);
       ammo.setOnCollide((pair) => {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject && bodyB.gameObject) {
-          if (bodyA.gameObject.name == 'ammo' && bodyB.gameObject.label == 'tankPlayer' || bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.name == 'ammo') {
-            //console.log('Player collided with ammo');
+          if (
+            (bodyA.gameObject.name === 'ammo' && bodyB.gameObject.label === 'tankPlayer') ||
+            (bodyA.gameObject.label === 'tankPlayer' && bodyB.gameObject.name === 'ammo')
+          ) {
             this.addAmmo();
             this.pickupsFound += 1;
-            if (bodyA.gameObject.label != 'tankPlayer') {
+            if (bodyA.gameObject.label !== 'tankPlayer') {
               bodyA.gameObject.destroy();
-            }
-            else {
+            } else {
               bodyB.gameObject.destroy();
             }
           }
         }
       });
     });
-    this.allPickups += cords.length;
-    //Health pickups
-    cords = [[400, 430], [500, 450], [1477, 153], [2582, 739], [2964, 276], [3832, 585], [1477 + offset, 153], [2582 + offset + 20, 739], [2964 + offset, 276], [3832 + offset, 585]];
-    cords.forEach(cord => {
-      let health = this.matter.add.image(cord[0], cord[1], 'health');
+    const filteredAmmoCoordinates:number = this.ammoCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
+    this.allPickups += filteredAmmoCoordinates;
+    console.log("ammo:" + filteredAmmoCoordinates);
+
+    // Health pickups
+    this.healthCoordinatesArray.forEach(cord => {
+      let health = this.matter.add.image(cord.x, cord.y, 'health');
       health.setName('health');
       health.setSensor(true);
       health.setOnCollide((pair) => {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject && bodyB.gameObject) {
-          if (bodyA.gameObject.name == 'health' && bodyB.gameObject.label == 'tankPlayer' || bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.name == 'health') {
-            //console.log('Player collided with health');
-            //this.addHealth();
+          if (
+            (bodyA.gameObject.name === 'health' && bodyB.gameObject.label === 'tankPlayer') ||
+            (bodyA.gameObject.label === 'tankPlayer' && bodyB.gameObject.name === 'health')
+          ) {
             this.pickupsFound += 1;
-            ////
             this.pickedUpHealth += 1;
-            this.events.emit("updateMedkits", this.pickedUpHealth)
-            ////
-            if (bodyA.gameObject.label != 'tankPlayer') {
+            this.events.emit("updateMedkits", this.pickedUpHealth);
+            if (bodyA.gameObject.label !== 'tankPlayer') {
               bodyA.gameObject.destroy();
-            }
-            else {
+            } else {
               bodyB.gameObject.destroy();
             }
           }
         }
       });
     });
-    this.allPickups += cords.length;
+    const filteredHealthCoordinates:number = this.healthCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
+    this.allPickups += filteredHealthCoordinates;
+    this.totalApteczkas=filteredHealthCoordinates;
 
-    //Star pickups
-    cords = [[1760, 896], [3861, 1044], [3141, 890], [5318, 895]];
-    cords.forEach(cord => {
-      let star = this.matter.add.image(cord[0], cord[1], 'star');
+    // Star pickups
+    this.starCoordinatesArray.forEach(cord => {
+      let star = this.matter.add.image(cord.x, cord.y, 'star');
       star.setName('star');
       star.setSensor(true);
       star.setOnCollide((pair) => {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject && bodyB.gameObject) {
-          if (bodyA.gameObject.name == 'star' && bodyB.gameObject.label == 'tankPlayer' || bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.name == 'star') {
-            //console.log('Player collided with star');
-            //this.addHealth();
-            //this.pickupsFound+=1;
+          if (
+            (bodyA.gameObject.name === 'star' && bodyB.gameObject.label === 'tankPlayer') ||
+            (bodyA.gameObject.label === 'tankPlayer' && bodyB.gameObject.name === 'star')
+          ) {
             this.BARTLE_stars_picked += 1;
             this.playerBulletDmg += 2;
-            if (bodyA.gameObject.label != 'tankPlayer') {
+            if (bodyA.gameObject.label !== 'tankPlayer') {
               bodyA.gameObject.destroy();
-            }
-            else {
+            } else {
               bodyB.gameObject.destroy();
             }
           }
         }
       });
     });
+    const filteredStarCoordinates:number = this.starCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
+    this.allPickups += filteredStarCoordinates;
+    this.totalStars=filteredStarCoordinates;
+    console.log("star:" + filteredStarCoordinates);
+
   }
+
 
   drawDialogMsg(userName) {
     // Get the main camera

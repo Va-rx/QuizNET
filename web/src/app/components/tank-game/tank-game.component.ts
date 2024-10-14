@@ -40,7 +40,8 @@ export class TankGameComponent implements OnInit {
   timer: number = 900; //IN SECONDS
   timerEnded:boolean=false;
   timerStarted:boolean=false;
-
+  totalStars:number=0;
+  totalHealth:number=0;
   constructor(private dialog: MatDialog,
     private TestsService: TestService,
     private socketService: SocketServiceService,
@@ -78,7 +79,7 @@ export class TankGameComponent implements OnInit {
     this.socket = this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
     this.testID=history.state.data.testId;
-    //this.testID=1;for testing
+    //this.testID=1;
     this.historyTestId = history.state.data.testHistoryId;
     this.phaserGame = new Phaser.Game(this.config);
 
@@ -165,7 +166,10 @@ export class TankGameComponent implements OnInit {
     });
 
     this.playerScore += this.phaserGame.scene.getScene("default")["bonus"];
+    this.playerScoreBonus=this.phaserGame.scene.getScene("default")["bonus"];
     ////////SET PARAMETERS FOR BARTLE//////
+    this.totalHealth= this.phaserGame.scene.getScene("default")["totalApteczkas"];
+    this.totalStars= this.phaserGame.scene.getScene("default")["totalStars"];
     this.starsPicked = this.phaserGame.scene.getScene("default")["BARTLE_stars_picked"];
     this.medkitsShared = this.phaserGame.scene.getScene("default")["BARTLE_medkits_shared"];
     this.turretsDestroyed = this.phaserGame.scene.getScene("default")["BARTLE_turrets_destroyed"];
