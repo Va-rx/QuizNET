@@ -22,8 +22,7 @@
           #username="ngModel"
         />
         <div
-          class="alert alert-danger"
-          role="alert"
+          class="alert-danger"
           *ngIf="username.errors && f.submitted"
         >
           Username is required!
@@ -41,8 +40,7 @@
           #password="ngModel"
         />
         <div
-          class="alert alert-danger"
-          role="alert"
+          class="alert-danger"
           *ngIf="password.errors && f.submitted"
         >
           <div *ngIf="password.errors['required']">Password is required</div>

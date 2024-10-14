@@ -59,6 +59,7 @@ label {
 input {
   background-color: #3e4b58;
   border: solid rgb(150, 98, 210, 1) 1px;
+  color: #d9dcde;
 }
 
 input:focus {
@@ -66,4 +67,12 @@ input:focus {
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgb(150, 98, 210, 0.6);
   outline: 0 none;
   background-color: #505d69;
+  color: #d9dcde;
+}
+
+.alert-danger {
+  background-color: transparent;
+  color: rgb(225, 111, 111);
+  padding: 0;
+  margin: 0 !important;
 }
