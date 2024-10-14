@@ -530,6 +530,7 @@ export default class Tanks extends Phaser.Scene {
 
     if (this.input.activePointer.isDown) {
       this.playerFire();
+      console.log(this.bonus)
     }
 
     if (this.keys.W.isDown) {
@@ -716,6 +717,7 @@ export default class Tanks extends Phaser.Scene {
     });
     const filteredAmmoCoordinates:number = this.ammoCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
     this.allPickups += filteredAmmoCoordinates;
+    console.log("ammo:" + filteredAmmoCoordinates);
 
     // Health pickups
     this.healthCoordinatesArray.forEach(cord => {
@@ -768,7 +770,9 @@ export default class Tanks extends Phaser.Scene {
       });
     });
     const filteredStarCoordinates:number = this.starCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
-    this.allPickups += filteredAmmoCoordinates;
+    this.allPickups += filteredStarCoordinates;
+    console.log("star:" + filteredStarCoordinates);
+
   }
 
 
