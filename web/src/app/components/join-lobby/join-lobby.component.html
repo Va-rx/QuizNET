@@ -8,10 +8,9 @@
         <div class="card-body">
           <form>
             <div class="form-group">
-              <label for="joinCode">Join Code</label>
               <input type="text" class="form-control" id="joinCode" placeholder="Enter join code" [(ngModel)]="joinCode" [ngModelOptions]="{standalone: true}">
             </div>
-            <button type="submit" *ngIf="!joined" (click)="onSubmit()" class="btn btn-primary">Join Lobby</button>
+            <button type="submit" *ngIf="!joined" (click)="onSubmit()" class="btn btn-block join-lobby">Join Lobby</button>
           </form>
         </div>
       </div>
