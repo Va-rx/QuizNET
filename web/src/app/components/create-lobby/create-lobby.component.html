@@ -9,20 +9,19 @@
         <div class="card-body">
           <form>
             <div class="form-group">
-              <label for="lobbyName">Lobby Name</label>
               <input type="text" class="form-control" id="lobbyName" placeholder="Enter lobby name" [(ngModel)]="lobbyName" [ngModelOptions]="{standalone: true}">
               <!-- <label for="userName">User Name</label>
               <input type="text" class="form-control" id="userName" placeholder="Enter user name" [(ngModel)]="userName" [ngModelOptions]="{standalone: true}"> -->
             </div>
-            <button type="submit" *ngIf="!created" (click)="onSubmit()" class="btn btn-primary">Create Lobby</button>
-            <button type="submit" *ngIf="created &&!scheduled" (click)="onStartGame()" class="btn btn-primary">Schedule game start</button>
-            <div *ngIf="scheduled">
+            <button type="submit" *ngIf="!created" (click)="onSubmit()" class="btn btn-block button">Create Lobby</button>
+            <button type="submit" *ngIf="created &&!scheduled" (click)="onStartGame()" class="btn btn-block button">Schedule game start</button>
+            <div *ngIf="scheduled" class="scheduled-game">
               <h4>Game Scheduled</h4>
               <p>Game will start at {{date}} {{time}}</p>
             </div>
           </form>
         </div>
-        <div class="card-body">
+        <div class="card-body code-section">
           <div *ngIf="joinCode != ''">
             <h4>Join Code</h4>
             <p>{{joinCode}}</p>
