@@ -36,6 +36,7 @@
   background-color: #695497;
   border: 0;
   transition: 0.3s;
+  color: #d9dcde;
 }
 
 .login-button:hover {
@@ -58,8 +59,9 @@ label {
 
 input {
   background-color: #3e4b58;
-  border: solid rgb(150, 98, 210, 1) 1px;
+  border: solid #695497 1px;
   color: #d9dcde;
+  transition: 0.3s;
 }
 
 input:focus {
@@ -75,4 +77,9 @@ input:focus {
   color: rgb(225, 111, 111);
   padding: 0;
   margin: 0 !important;
+}
+
+.btn:focus, .btn:active {
+  outline: none !important;
+  box-shadow: none !important;
 }
