@@ -16,6 +16,16 @@ var corsOptions = {
   // Origin: "http://localhost:8081" bez tego działa
 };
 
+// Multiplayeer Game
+var players = [];
+var stars = [];
+var maxNumberOfStars = 5;
+var starsCounter = 0;
+var maxHealth = 100;
+let playersReady = 0;
+let countdown;
+let countdownInterval;
+//
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -45,7 +55,73 @@ const sessions = new Map();
 const userToSocket = new Map();
 const socketToUser = new Map();
 io.on("connection", (socket) => {
-  console.log("A user connected" + socket.id);
+  players.push({posx: 100, posy: 450, id: socket.id, hp: maxHealth, visible: true, role: null});
+
+  // update PLayers
+  //Multiplayer Game
+  socket.on("updatePlayers", (data) => {
+    for (player of players){
+      if (player.id == socket.id){
+        player.posx = data.posx;
+        player.posy = data.posy;
+      }
+    }
+    socket.emit("updatePlayers", players);
+  })
+
+  socket.on('start_multiplayer', () => {
+    if (!countdown) { // minimalna liczba graczy do rozpoczęcia
+      startCountdown();
+    }
+  });
+  socket.on("roleChosen", (role) => {
+    for (player of players){
+      if (player.id == socket.id){
+        player.role = role;
+      }
+    }
+    socket.emit("updatePlayers", players);
+  })
+  socket.on("attack", (id) => {
+    for (player of players){
+      if (player.id == id){
+          player.hp -= 10;
+          if (player.hp <= 0) {
+            player.posx = Math.floor(Math.random() * 800);
+            player.posy = Math.floor(Math.random() * 600);
+            player.hp = maxHealth;
+            io.emit('playerDied', player.id, player.posx, player.posy);
+          }
+      }
+    }
+    io.emit("updatePlayers", players);
+  })
+
+  socket.on("questionAnswered", (id) => {
+    for (player of players){
+      if (player.id == id){
+        player.visible = true;
+      }
+    }
+    io.emit("updatePlayers", players);
+  })
+
+  socket.on("collectStar", (star, id) => {
+    stars = stars.filter(s => s.x !== star.x && s.y !== star.y);
+    for (player of players){
+        if (player.id == id){
+          player.visible = false;
+        }
+    }
+    io.emit("updatePlayer", players)
+    socket.emit("spawnQuestion")
+    io.emit("removeStar", star);
+  });
+  console.log("currentStars", stars);
+  io.emit("currentStars", stars);
+
+  //Multiplayer Game END
+
   //Handle Health sharing
   socket.on("shareHealth",(userName)=>{
     const session = getSessionBySocket(socket);
@@ -96,6 +172,7 @@ io.on("connection", (socket) => {
       userToSocket.set(userName, { user: [socket] }); // TODO: dodac usuwanie z tego mappingu po disconnect
       socketToUser.set(socket, userName); // TODO: dodac usuwanie z tego mappingu po disconnect
       session.users.push(socket);
+      console.log('użytkownicy ajsdhjkashjdk',session.users);
       console.log("Event participant joined the event");
       socket.emit("joinedConfirmation");
       broadcastUserList(session);
@@ -138,6 +215,13 @@ io.on("connection", (socket) => {
   // Handle disconnection
   socket.on("disconnect", () => {
     console.log("User disconnected");
+    let count = 0;
+    for (player of players){
+        if (player.id == socket.id){
+            players.splice(count,1);
+        }
+        count++;
+    }
     sessions.forEach((session, _) => {
       const index = session.users.indexOf(socket);
       if (index !== -1) {
@@ -194,3 +278,37 @@ function generateJoinCode() {
   }
   return joinCode;
 }
+
+
+// Multiplayer Game
+
+function spawnStar() {
+  if (starsCounter >= maxNumberOfStars) {
+    return;
+  }
+
+  const x = Math.floor(Math.random() * 800); // Assuming map width is 800
+  const y = Math.floor(Math.random() * 600); // Assuming map height is 600
+  const star = { x, y };
+  stars.push(star);
+  io.emit("spawnStar", star);
+  starsCounter++;
+}
+
+setInterval(spawnStar, 5000);
+
+function startCountdown() {
+  countdown = 5;
+  io.emit('countdownUpdate', countdown);
+
+  countdownInterval = setInterval(() => {
+    countdown--;
+    io.emit('countdownUpdate', countdown);
+
+    if (countdown <= 0) {
+      clearInterval(countdownInterval);
+      io.emit('countdownEnd');
+    }
+  }, 1000);
+}
+// Multiplayer Game END
