@@ -160,10 +160,7 @@ export class TankGameComponent implements OnInit {
   finishGame(){
     console.log("Game Over");
     this.timerEnded=true;
-    let results = this.userAnswersService.getWrappedResult(this.historyTestId);
-    this.userResultsService.create(JSON.parse(results)).subscribe(data => {
-      console.log(data);
-    });
+    let results = JSON.parse(this.userAnswersService.getWrappedResult(this.historyTestId));
 
     this.playerScore += this.phaserGame.scene.getScene("default")["bonus"];
     this.playerScoreBonus=this.phaserGame.scene.getScene("default")["bonus"];
@@ -176,6 +173,11 @@ export class TankGameComponent implements OnInit {
     this.totalTurrets = this.phaserGame.scene.getScene("default")["allTurrets"];
     ///////////////////////////////////////
     this.playerScore = Math.round(this.playerScore * 100) / 100;
+    results.score=this.playerScore;
+    this.userResultsService.create(results).subscribe(data => {
+      console.log("Tu powinien być zwrócony wynik:",data);
+    });
+
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
     this.phaserGame.destroy(true);
     this.gameFinished = true;
