@@ -8,7 +8,7 @@ router.post("/", async (req, res) => {
     const { testId, userId, answers, score} = req.body;
     const answerMap = new Map(answers);
     let answerXML = await generateAnswerXML(answerMap);
-    createUserResults({ userId, testHistoryId: testId, answers: answerXML, score: score}).then(result => {
+    createUserResults({ userId: userId, testHistoryId: testId, answers: answerXML, score: score}).then(result => {
         res.send(result);
     }).catch(
         err => {
