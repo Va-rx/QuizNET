@@ -21,7 +21,7 @@ export class QuestionService {
     return this.http.get<Question>(`${baseUrl}/${id}`);
   }
 
-  createQuestion(question: Question): Observable<any> {    
+  createQuestion(question: Question): Observable<any> {
     return this.http.post<Question>(baseUrl, question);
   }
 
@@ -30,6 +30,17 @@ export class QuestionService {
   }
 
   updateQuestion(id: number, question: Question): Observable<any> {
-    return this.http.patch(`${baseUrl}/${id}`, question);
+    const formData = new FormData();
+    formData.append('question', question.question);
+    formData.append('type', question.type);
+
+    if (question.position){
+      formData.append('position', question.position.toString());
+    }
+
+    if (question.image_link) {
+      formData.append('image_link', question.image_link);
+    }
+    return this.http.patch(`${baseUrl}/${id}`, formData);
   }
 }

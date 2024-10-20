@@ -2,7 +2,7 @@ export class Question {
   id!: number;
   position?: number;
   question: string = 'New question'
-  imageLink?: string | null | File;
+  image_link?: Blob;
   type: string = 'single';
   answers!: Answer[];
   maxPoints: number = 0;

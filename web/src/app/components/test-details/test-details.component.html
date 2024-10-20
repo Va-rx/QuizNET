@@ -73,18 +73,22 @@
               <label for="multipleChoice" class="option-label">Multiple choice</label>
             </div>
           </div>
+      <div *ngIf="selectedQuestion.image_link">
+        <img style="width: 100%" [src]="getImageUrl(selectedQuestion.image_link)" alt="Selected Image"/>
+      </div>
           <div class="answers">
             <div class="answer" *ngFor="let answer of selectedQuestion.answers; let i = index">
               <input type="text" [(ngModel)]="answer.answer" placeholder="Enter your answer here">
               <i [ngClass]="{
                     'bi bi-check-square-fill': answer.isCorrect,
                     'bi bi-x-square-fill': !answer.isCorrect
-                  }" 
+                  }"
                  (click)="changeGoodFalseAnswer(i)">
               </i>
               <input type="number" [(ngModel)]="answer.points" class="points-input" />
               <i class="bi bi-trash-fill" (click)="deleteAnswer(answer)"></i>
             </div>
+            <input type="file" (change)="onFileChange($event)">
             <button class="addAnswer" (click)="createAddAnswer()">Add answer</button>
           </div>
           <div class="buttons">
