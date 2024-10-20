@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TestService } from 'src/app/services/test/test.service';
 import { Test} from 'src/app/models/test.model';
 import { Question } from 'src/app/models/question.model';
@@ -30,7 +30,7 @@ export class TestDetailsComponent implements OnInit {
 
   @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
 
-  constructor (private testService: TestService, private questionService: QuestionService, private answerService: AnswerService, private route: ActivatedRoute, private cdr: ChangeDetectorRef) { }
+  constructor (private testService: TestService, private questionService: QuestionService, private answerService: AnswerService, private route: ActivatedRoute) { }
 
 
   ngOnInit() {
