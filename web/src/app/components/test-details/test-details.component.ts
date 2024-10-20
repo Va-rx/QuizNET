@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { TestService } from 'src/app/services/test/test.service';
 import { Test} from 'src/app/models/test.model';
 import { Question } from 'src/app/models/question.model';
@@ -26,9 +26,11 @@ export class TestDetailsComponent implements OnInit {
   isEditingTestDescription = false;
   isEditingTestQuestion = false;
   file!: File;
+  imageUrl: string | null = null;
+
   @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
 
-  constructor (private testService: TestService, private questionService: QuestionService, private answerService: AnswerService, private route: ActivatedRoute) { }
+  constructor (private testService: TestService, private questionService: QuestionService, private answerService: AnswerService, private route: ActivatedRoute, private cdr: ChangeDetectorRef) { }
 
 
   ngOnInit() {
@@ -125,6 +127,7 @@ export class TestDetailsComponent implements OnInit {
 
   selectQuestion(question_index_arr: number) {
     this.selectedQuestion = this.editedTest.questions[question_index_arr];
+    this.imageUrl = this.getImageUrl(this.selectedQuestion.image_link);
     this.showQuestion();
   }
 
@@ -296,6 +299,7 @@ export class TestDetailsComponent implements OnInit {
 
   onFileChange(event: any) {
     this.selectedQuestion.image_link = event.target.files[0]
+    this.imageUrl = this.getImageUrl(this.selectedQuestion.image_link);
   }
 
   getImageUrl(imageData: any): string {

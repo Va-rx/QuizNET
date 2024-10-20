@@ -74,7 +74,7 @@
             </div>
           </div>
       <div *ngIf="selectedQuestion.image_link">
-        <img style="width: 100%" [src]="getImageUrl(selectedQuestion.image_link)" alt="Selected Image"/>
+        <img style="width: 100%" [src]="imageUrl" alt="Selected Image"/>
       </div>
           <div class="answers">
             <div class="answer" *ngFor="let answer of selectedQuestion.answers; let i = index">
