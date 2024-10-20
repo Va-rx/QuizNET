@@ -54,7 +54,9 @@ router.patch("/:id", upload.single('image_link'), async (req, res) => {
     try {
         const id = req.params.id;
         const question = req.body;
-        question.image_link = req.file.buffer;
+        if (req.file && req.file.buffer) {
+            question.image_link = req.file.buffer;
+        }
 
         const result = (await updateQuestion(id, question));
         res.status(200).send(result);
