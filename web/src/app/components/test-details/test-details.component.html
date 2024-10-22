@@ -41,8 +41,10 @@
         </ng-template>
       </div>
         <div class="buttons">
-          <button class="deleteQuestion" (click)="deleteTest()" [routerLink]="['/tests']">Delete test</button>
-          <button class="saveChanges" (click)="saveTestDetailsChanges()" [disabled]="!areNewTestDetailsChanges()">Save</button>
+          <div class="questionOperations">
+            <button class="deleteQuestion" (click)="deleteTest()" [routerLink]="['/tests']">Delete test</button>
+            <button class="saveChanges" (click)="saveTestDetailsChanges()" [disabled]="!areNewTestDetailsChanges()">Save</button>
+          </div>
         </div>
     </div>
 
@@ -73,13 +75,16 @@
               <label for="multipleChoice" class="option-label">Multiple choice</label>
             </div>
           </div>
+      <div class="photo-container" *ngIf="selectedQuestion.image_link">
+        <img style="width: 100%" [src]="imageUrl" alt="Selected Image"/>
+      </div>
           <div class="answers">
             <div class="answer" *ngFor="let answer of selectedQuestion.answers; let i = index">
               <input type="text" [(ngModel)]="answer.answer" placeholder="Enter your answer here">
               <i [ngClass]="{
                     'bi bi-check-square-fill': answer.isCorrect,
                     'bi bi-x-square-fill': !answer.isCorrect
-                  }" 
+                  }"
                  (click)="changeGoodFalseAnswer(i)">
               </i>
               <input type="number" [(ngModel)]="answer.points" class="points-input" />
@@ -87,9 +92,15 @@
             </div>
             <button class="addAnswer" (click)="createAddAnswer()">Add answer</button>
           </div>
+          <div class="file-input">
+          </div>
           <div class="buttons">
-            <button class="deleteQuestion" (click)="deleteQuestion()">Delete question</button>
-            <button class="saveChanges" (click)="saveQuestionChanges()" [disabled]="!areNewQuestionChanges()">Save</button>
+            <input type="file" id="fileInput" (change)="onFileChange($event)" style="display: none;">
+            <button type="button" class="imgButton" (click)="triggerFileInput()">Choose File</button>
+            <div class="questionOperations">
+              <button class="deleteQuestion" (click)="deleteQuestion()">Delete question</button>
+              <button class="saveChanges" (click)="saveQuestionChanges()" [disabled]="!areNewQuestionChanges()">Save</button>
+            </div>
           </div>
     </div>
 </div>
