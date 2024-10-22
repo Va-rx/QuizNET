@@ -14,6 +14,7 @@ import {HomeComponent} from "./components/home/home.component";
 import {RoleGuard} from "./guards/role.guard";
 import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 import {TestHistoryComponent} from "./components/test-history/test-history.component";
+import { PlatformGameComponent } from './components/platform-game/platform-game.component';
 import {
   TestHistoryDetailsComponent
 } from "./components/test-history/test-history-details/test-history-details.component";
@@ -34,8 +35,8 @@ const routes: Routes = [
   { path: 'tests/:id', component: TestDetailsComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'test-history', component: TestHistoryComponent, canActivate: [authGuard]},
   { path: 'test-history/:id/:userId', component: TestHistoryDetailsComponent, canActivate: [authGuard, TestHistoryGuard]},
-  { path: 'test-history/:id', component: TestHistoryListComponent, canActivate: [authGuard, RoleGuard] }
-
+  { path: 'test-history/:id', component: TestHistoryListComponent, canActivate: [authGuard, RoleGuard] },
+  { path: 'platformer', component: PlatformGameComponent}
 ];
 
 @NgModule({

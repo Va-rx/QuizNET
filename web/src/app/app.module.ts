@@ -37,6 +37,7 @@ import { TestHistoryListComponent } from './components/test-history/test-history
 import {MatTableModule} from "@angular/material/table";
 import {MatSortModule} from "@angular/material/sort";
 import { TimerComponent } from './components/timer/timer.component';
+import { PlatformGameComponent } from './components/platform-game/platform-game.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { TimerComponent } from './components/timer/timer.component';
     TestHistoryDetailsComponent,
     TimerComponent,
     TestHistoryListComponent,
+    PlatformGameComponent
   ],
     imports: [
         BrowserModule,
