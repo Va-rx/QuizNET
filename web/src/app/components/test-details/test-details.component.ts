@@ -27,6 +27,7 @@ export class TestDetailsComponent implements OnInit {
   isEditingTestQuestion = false;
   file!: File;
   imageUrl: string | null = null;
+  imageChanged: boolean = false;
 
   @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
 
@@ -178,6 +179,7 @@ export class TestDetailsComponent implements OnInit {
       if (question.id === this.selectedQuestion.id) {
         return this.selectedQuestion.question !== question.question ||
                 this.selectedQuestion.type !== question.type ||
+                this.imageChanged ||
                 !areArraysEqual(this.selectedQuestion.answers, question.answers);
       }
     }
@@ -197,6 +199,8 @@ export class TestDetailsComponent implements OnInit {
     this.answerIdsToDelete.forEach(answer_id => {
       this.answerService.deleteAnswer(answer_id).subscribe();
     });
+
+    this.imageChanged = false;
 
     this.selectedQuestion.answers.forEach(answer => {
       if (answer.id) {
@@ -300,6 +304,7 @@ export class TestDetailsComponent implements OnInit {
   onFileChange(event: any) {
     this.selectedQuestion.image_link = event.target.files[0]
     this.imageUrl = this.getImageUrl(this.selectedQuestion.image_link);
+    this.imageChanged = true;
   }
 
   getImageUrl(imageData: any): string {
@@ -327,3 +332,4 @@ function areArraysEqual(arr1: any[], arr2: any[]): boolean {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   });
 }
+  
