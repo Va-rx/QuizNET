@@ -12,7 +12,7 @@ import {LoginComponent} from "./components/login/login.component";
 import {authGuard} from "./guards/auth.guard";
 import {HomeComponent} from "./components/home/home.component";
 import {RoleGuard} from "./guards/role.guard";
-import { ScoreboardComponent } from './scoreboard/scoreboard.component';
+import { ScoreboardComponent } from './components/scoreboard/scoreboard.component';
 import {TestHistoryComponent} from "./components/test-history/test-history.component";
 import {
   TestHistoryDetailsComponent

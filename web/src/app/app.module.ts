@@ -29,7 +29,7 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { TestDetailsComponent } from './components/test-details/test-details.component';
-import { ScoreboardComponent } from './scoreboard/scoreboard.component';
+import { ScoreboardComponent } from './components/scoreboard/scoreboard.component';
 import { TestHistoryComponent } from './components/test-history/test-history.component';
 import { TestHistoryDetailsComponent } from './components/test-history/test-history-details/test-history-details.component';
 import {MatListModule} from "@angular/material/list";
