@@ -236,6 +236,11 @@ export class TestDetailsComponent implements OnInit {
     })
   }
 
+  triggerFileInput() {
+    const fileInput = document.getElementById('fileInput') as HTMLElement;
+    fileInput.click();  // Symulujemy kliknięcie na ukrytym input
+  }
+
   addQuestion() {
     this.questionService.createQuestion(new Question()).subscribe({
       next: (newQuestion) => {

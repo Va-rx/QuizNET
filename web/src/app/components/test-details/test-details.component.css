@@ -217,14 +217,19 @@ input {
     outline: none;
     color: inherit;
     font: inherit;
-  }
+}
 
 .buttons {
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
+    flex-direction: column;
 
     width: 100%;
+}
+
+.questionOperations {
+    flex-direction: row;
 }
 
 .buttons button {
@@ -238,6 +243,14 @@ input {
     margin: 4px 2px;
     cursor: pointer;
     transition-duration: 0.4s;
+}
+
+.buttons .imgButton {
+    background-color: #695497;
+}
+
+.buttons .imgButton:hover {
+    background-color: #9662d2;
 }
 
 
@@ -353,5 +366,19 @@ input {
     background-color: #333f4a;
     color: #626c76;
     border: 0;
+}
+
+.file-input {
+    width: 100%;
+}
+
+.imgButton {
+    margin-bottom: 0 !important;
+}
+
+.photo-container {
+    max-width: 100%;
+    max-height: 100%;
+    margin-bottom: 10px;
 }
   

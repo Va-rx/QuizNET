@@ -41,8 +41,10 @@
         </ng-template>
       </div>
         <div class="buttons">
-          <button class="deleteQuestion" (click)="deleteTest()" [routerLink]="['/tests']">Delete test</button>
-          <button class="saveChanges" (click)="saveTestDetailsChanges()" [disabled]="!areNewTestDetailsChanges()">Save</button>
+          <div class="questionOperations">
+            <button class="deleteQuestion" (click)="deleteTest()" [routerLink]="['/tests']">Delete test</button>
+            <button class="saveChanges" (click)="saveTestDetailsChanges()" [disabled]="!areNewTestDetailsChanges()">Save</button>
+          </div>
         </div>
     </div>
 
@@ -73,7 +75,7 @@
               <label for="multipleChoice" class="option-label">Multiple choice</label>
             </div>
           </div>
-      <div *ngIf="selectedQuestion.image_link">
+      <div class="photo-container" *ngIf="selectedQuestion.image_link">
         <img style="width: 100%" [src]="imageUrl" alt="Selected Image"/>
       </div>
           <div class="answers">
@@ -88,12 +90,17 @@
               <input type="number" [(ngModel)]="answer.points" class="points-input" />
               <i class="bi bi-trash-fill" (click)="deleteAnswer(answer)"></i>
             </div>
-            <input type="file" (change)="onFileChange($event)">
             <button class="addAnswer" (click)="createAddAnswer()">Add answer</button>
           </div>
+          <div class="file-input">
+          </div>
           <div class="buttons">
-            <button class="deleteQuestion" (click)="deleteQuestion()">Delete question</button>
-            <button class="saveChanges" (click)="saveQuestionChanges()" [disabled]="!areNewQuestionChanges()">Save</button>
+            <input type="file" id="fileInput" (change)="onFileChange($event)" style="display: none;">
+            <button type="button" class="imgButton" (click)="triggerFileInput()">Choose File</button>
+            <div class="questionOperations">
+              <button class="deleteQuestion" (click)="deleteQuestion()">Delete question</button>
+              <button class="saveChanges" (click)="saveQuestionChanges()" [disabled]="!areNewQuestionChanges()">Save</button>
+            </div>
           </div>
     </div>
 </div>
