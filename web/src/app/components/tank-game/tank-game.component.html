@@ -1,5 +1,5 @@
 <div class="main_container" *ngIf="!gameFinished">
-<app-live-score-board></app-live-score-board>
+<app-live-score-board [scoreboard]="scoreBoardMap"></app-live-score-board>
 </div>
 <app-scoreboard *ngIf="gameFinished" [testName]="testName" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [bonusScore]="playerScoreBonus" [totalScore]="testMaxPoints"
 [BARTLE_stars_picked]="starsPicked"
