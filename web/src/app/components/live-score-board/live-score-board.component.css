@@ -1,0 +1,135 @@
+.results-table{
+  background-color: #2b2b35;
+  color: white;
+  border: 2px solid #695497;
+  border-collapse: collapse;
+}
+.results-table :hover {
+  background-color: #24242d;
+}
+
+.header{
+  color: #695497;
+}
+
+
+.mat-mdc-row .mat-mdc-cell {
+  cursor: pointer;
+}
+
+.main-card {
+  background-color: #343a40;
+}
+
+.question-card {
+  background-color: #24242c;
+}
+
+mat-card, .mat-list-item, mat-card-subtitle{
+  color: white;
+}
+
+.answer-container {
+  padding: 6px 32px 6px 12px;
+  border: #3a4753 1px solid;
+  border-radius: 10px;
+  display: grid;
+  word-wrap: break-word;
+  white-space: normal;
+  position: relative;
+  color: white;
+  .answer{
+    color: white;
+  }
+
+  mat-icon {
+    position: absolute;
+    right: 12px;
+    top: 6px;
+  }
+
+  .correct{
+    color: #4caf50;
+  }
+
+  .incorrect{
+    color: #f44336;
+  }
+}
+li {
+  list-style-type: none;
+  padding: 0;
+  margin: 7px 0;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
+
+.points {
+  margin-left: auto;
+  color: #888888;
+}
+
+.points-small{
+  color: #888888;
+  font-size: 0.7em;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* Custom Scrollbar Styling */
+.bottom-right-table-container {
+  position: fixed; /* Fix the position relative to the viewport */
+  bottom: 10px; /* 10px from the bottom */
+  right: 10px; /* 10px from the right */
+  width: 14vw; /* No more than 10% of screen width */
+  max-height: 50vh; /* No more than 50% of screen height */
+  overflow-y: auto; /* Add vertical scrolling if content overflows */
+  background-color: #2b2b35; /* Match the table background */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Optional shadow for visual effect */
+  border-radius: 5px; /* Rounded corners for a nicer appearance */
+}
+
+/* Scrollbar Track */
+.bottom-right-table-container::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.bottom-right-table-container::-webkit-scrollbar-track {
+  background: #24242d; /* Dark background for the track */
+  border-radius: 5px; /* Rounded track edges */
+}
+
+/* Scrollbar Thumb */
+.bottom-right-table-container::-webkit-scrollbar-thumb {
+  background-color: #695497; /* Use your accent color for the thumb */
+  border-radius: 5px; /* Rounded thumb edges */
+  border: 2px solid #2b2b35; /* Add some space around the thumb for a nicer look */
+}
+
+.bottom-right-table-container::-webkit-scrollbar-thumb:hover {
+  background-color: #8a7bbd; /* Lighter shade on hover for better visibility */
+}
+
+
+.results-table {
+  width: 100%; /* Ensure table fits within its container */
+  table-layout: fixed; /* Makes columns consistent in size */
+  background-color: inherit; /* Inherit the background color from the parent */
+}
+
+.results-table th,
+.results-table td {
+  /*white-space: nowrap;  Prevent wrapping for table cells */
+  overflow: hidden; /* Hide overflow to prevent text spilling */
+  text-overflow: ellipsis; /* Add ellipsis if text overflows */
+  padding: 5px;
+}
+
+.tight-score-td{
+  width: 60px; /* Fixed width to fit up to 2-digit numbers */
+  text-align: right; /* Center-align numbers for a cleaner look */
+}
