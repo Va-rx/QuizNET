@@ -50,7 +50,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.weapon instanceof Sword) {
             endX = this.x + this.weapon.range;
         }
-        
+
         let hitbox = this.scene.add.rectangle(this.x+16, this.y, this.weapon.range, 30, 0xff0000, 0.5);
         // const hitboxBody = hitbox.body as Phaser.Physics.Arcade.Body;
         // hitboxBody.allowGravity = false;
@@ -65,6 +65,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             return true;
         }
         return false;
+    }
+
+    private determineAttackPixels() {
+        switch (this.direction) {
+            case Direction.RIGHT:
+                
+        }
     }
 
     public override update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
