@@ -1,0 +1,17 @@
+.container {
+  color: #d4d6d9;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  padding: 0;
+}
+
+
+.role-container {
+  background-color: #3e4b58;
+  color: #d4d6d9;
+  text-align: center;
+  border: solid 3px #695497;
+
+  border-radius: 10px;
+}

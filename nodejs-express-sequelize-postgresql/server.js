@@ -17,12 +17,13 @@ var corsOptions = {
 };
 
 // Multiplayeer Game
-var players = [];
+const players = {};
 var stars = [];
 var maxNumberOfStars = 5;
 var starsCounter = 0;
 var maxHealth = 100;
 let playersReady = 0;
+const maxQuestions = 2;
 let countdown;
 let countdownInterval;
 //
@@ -55,70 +56,84 @@ const sessions = new Map();
 const userToSocket = new Map();
 const socketToUser = new Map();
 io.on("connection", (socket) => {
-  players.push({posx: 100, posy: 450, id: socket.id, hp: maxHealth, visible: true, role: null});
+  players[socket.id] = {x: 100, y: 450, id: socket.id, hp: maxHealth, visible: true, role: null, isTargetable: true, questionsAnswered: 0}
+  // players.push({posx: 100, posy: 450, id: socket.id, hp: maxHealth, visible: true, role: null, isTargetable: true});
+  socket.on('requestCurrentPlayers', () => {
+    socket.emit('currentPlayers', players);
+  });
 
+  socket.on('requestCurrentStars', () => {
+    socket.emit('currentStars', stars);
+  });
+  socket.broadcast.emit('newPlayer', { id: socket.id, x: 100, y: 100, hp: maxHealth, visible: true, role: null, isTargetable: true, questionsAnswered: 0 });
+
+  socket.on('playerMovement', (movementData, direction) => {
+    const player = players[socket.id];
+    if (!player) return;
+
+    player.x += movementData.x;
+    player.y += movementData.y;
+    io.emit('playerMoved', { id: socket.id, x: player.x, y: player.y, direction: direction});
+  });
+
+
+  socket.on('requestAttackAnimation', (playerId) => {
+    io.emit('attackAnimation', playerId);
+  });
+
+  socket.on('playerAttack', ({ attackerId, targetId }) => {
+    if (players[attackerId] && players[targetId]) {
+      const player = players[targetId];
+      player.hp -= 10;
+      io.emit('playerAttacked', {id: targetId, hp: player.hp});
+      if (player.hp <= 0){
+        player.x = Math.floor(Math.random() * 800);
+        player.y = Math.floor(Math.random() * 600);
+        player.hp = 100;
+        io.emit('playerKilled', {id: targetId, hp: 100, x: player.x, y: player.y});
+      }
+    }
+  });
+
+  socket.on('collectStar', (star, playerId) => {
+    const player = players[playerId];
+    if (!player) return;
+
+    stars = stars.filter(s => s.x !== star.x && s.y !== star.y);
+    player.visible = false;
+
+    io.emit('playerStarCollected', star, playerId);
+  });
+
+  socket.on('playerQuestionAnswered', (playerId) => {
+    const player = players[playerId];
+    if (!player) return;
+
+    player.questionsAnswered++;
+    if (player.questionsAnswered >= maxQuestions) {
+      io.emit('gameFinished', playerId);
+    }
+    io.emit('playerQuestionAnswered', playerId, player.questionsAnswered);
+  })
   // update PLayers
   //Multiplayer Game
-  socket.on("updatePlayers", (data) => {
-    for (player of players){
-      if (player.id == socket.id){
-        player.posx = data.posx;
-        player.posy = data.posy;
-      }
-    }
-    socket.emit("updatePlayers", players);
-  })
+  //
+  // socket.on('start_multiplayer', () => {
+  //   if (!countdown) { // minimalna liczba graczy do rozpoczęcia
+  //     startCountdown();
+  //   }
+  // });
+  // socket.on("roleChosen", (role, id) => {
+  //   io.to(id).emit("roleChosen", role);
+  //   for (player of players){
+  //     if (player.id == socket.id){
+  //       player.role = role;
+  //       io.to(player.id).emit("roleChosen", role);
+  //     }
+  //   }
+  //   socket.emit("updatePlayers", players);
+  // })
 
-  socket.on('start_multiplayer', () => {
-    if (!countdown) { // minimalna liczba graczy do rozpoczęcia
-      startCountdown();
-    }
-  });
-  socket.on("roleChosen", (role) => {
-    for (player of players){
-      if (player.id == socket.id){
-        player.role = role;
-      }
-    }
-    socket.emit("updatePlayers", players);
-  })
-  socket.on("attack", (id) => {
-    for (player of players){
-      if (player.id == id){
-          player.hp -= 10;
-          if (player.hp <= 0) {
-            player.posx = Math.floor(Math.random() * 800);
-            player.posy = Math.floor(Math.random() * 600);
-            player.hp = maxHealth;
-            io.emit('playerDied', player.id, player.posx, player.posy);
-          }
-      }
-    }
-    io.emit("updatePlayers", players);
-  })
-
-  socket.on("questionAnswered", (id) => {
-    for (player of players){
-      if (player.id == id){
-        player.visible = true;
-      }
-    }
-    io.emit("updatePlayers", players);
-  })
-
-  socket.on("collectStar", (star, id) => {
-    stars = stars.filter(s => s.x !== star.x && s.y !== star.y);
-    for (player of players){
-        if (player.id == id){
-          player.visible = false;
-        }
-    }
-    io.emit("updatePlayer", players)
-    socket.emit("spawnQuestion")
-    io.emit("removeStar", star);
-  });
-  console.log("currentStars", stars);
-  io.emit("currentStars", stars);
 
   //Multiplayer Game END
 
@@ -172,7 +187,6 @@ io.on("connection", (socket) => {
       userToSocket.set(userName, { user: [socket] }); // TODO: dodac usuwanie z tego mappingu po disconnect
       socketToUser.set(socket, userName); // TODO: dodac usuwanie z tego mappingu po disconnect
       session.users.push(socket);
-      console.log('użytkownicy ajsdhjkashjdk',session.users);
       console.log("Event participant joined the event");
       socket.emit("joinedConfirmation");
       broadcastUserList(session);
@@ -193,6 +207,7 @@ io.on("connection", (socket) => {
       const xml = await generateQuizXML(test_id);
       const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
       if (session) {
+        setInterval(spawnStar, 5000);
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
             participantSocket.emit("gameStarted", game_route, test_id, testHistory.id);
@@ -208,6 +223,7 @@ io.on("connection", (socket) => {
     if (session) {
       session.scoreBoard.set(userName, userScore);
       session.scoreBoard.forEach((key, val) => console.log(key + val));
+      console.log("User score updated", session.scoreBoard);
       broadcastScoreBoard(session);
     }
   });
@@ -215,13 +231,15 @@ io.on("connection", (socket) => {
   // Handle disconnection
   socket.on("disconnect", () => {
     console.log("User disconnected");
-    let count = 0;
-    for (player of players){
-        if (player.id == socket.id){
-            players.splice(count,1);
-        }
-        count++;
-    }
+    // let count = 0;
+    // for (player of players){
+    //     if (player.id == socket.id){
+    //         players.splice(count,1);
+    //     }
+    //     count++;
+    // }
+    delete players[socket.id];
+    io.emit('playerDisconnected', socket.id);
     sessions.forEach((session, _) => {
       const index = session.users.indexOf(socket);
       if (index !== -1) {

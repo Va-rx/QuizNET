@@ -1,11 +1,21 @@
-<div *ngIf="chosenRole; else roleNotChosen">
-  <h1>You have chosen the {{ chosenRole }} role</h1>
-  <h1>Wait for others</h1>
+<div class="container">
+  <div *ngIf="chosenRole; else roleNotChosen">
+    <h1>You have chosen the {{ chosenRole }} role</h1>
+    <h1>Wait for others</h1>
+  </div>
+
+  <ng-template #roleNotChosen>
+    <div class="role-container">
+      <h1>Choose your role. Time left: {{timeLeft}}</h1>
+      <button mat-fab extended (click)="choose(MultiplayerRoles.DEFENSIVE)">
+        Defensive
+        <mat-icon>shield</mat-icon>
+      </button>
+
+      <button mat-fab extended (click)="choose(MultiplayerRoles.OFFENSIVE)">
+        Offensive
+        <mat-icon>Swords</mat-icon>
+      </button>
+    </div>
+  </ng-template>
 </div>
-
-<ng-template #roleNotChosen>
-  <h1>Choose your role. Time left: {{timeLeft}}</h1>
-  <button (click)="choose('defensive')">defensive</button>
-  <button (click)="choose('offensive')">offensive</button>
-</ng-template>
-

@@ -1,6 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {SocketServiceService} from "../../../services/socket/socket-service.service";
+import {MultiplayerRoles} from "./role.model";
 
 @Component({
   selector: 'app-role-dialog',
@@ -9,9 +10,11 @@ import {SocketServiceService} from "../../../services/socket/socket-service.serv
 })
 export class RoleDialogComponent implements OnInit{
 
+
   private socket: any;
-  chosenRole!: string;
+  chosenRole!: MultiplayerRoles;
   timeLeft!: number;
+  MultiplayerRoles = MultiplayerRoles;
   constructor(private socketService: SocketServiceService, @Inject(MAT_DIALOG_DATA) public data: {roles: string[]}, private dialogRef: MatDialogRef<RoleDialogComponent>) {
   }
 
@@ -28,17 +31,15 @@ export class RoleDialogComponent implements OnInit{
     });
   }
 
-  choose(role: string): void {
+  choose(role: MultiplayerRoles): void {
     this.socket.emit('roleChosen', role);
     this.chosenRole = role;
   }
 
   generateRandomRole(): void {
     if (!this.chosenRole) {
-      this.chosenRole = this.data.roles[Math.floor(Math.random() * this.data.roles.length)];
+      this.chosenRole = MultiplayerRoles.OFFENSIVE;
       this.socket.emit('roleChosen', this.chosenRole);
     }
   }
-
-
 }
