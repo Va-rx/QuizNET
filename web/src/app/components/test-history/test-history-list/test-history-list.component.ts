@@ -33,6 +33,10 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
 
     this.testHistoryService.get(this.testId).subscribe(data => {
       this.test = data;
+      if(this.test.questions)
+      this.test.questions.map(question => {
+        question.image_link = this.getImageUrl(question.image_link);
+      })
     })
 
   }
@@ -49,5 +53,20 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
 
   getMaxPoints(question): number {
     return question.answers.reduce((acc, curr) => curr.points > 0 ? acc + curr.points : acc, 0);
+  }
+
+  getImageUrl(imageData: any): string {
+    if (imageData === '') return '';
+    if (imageData && imageData.type === 'Buffer') {
+      const blob = new Blob([new Uint8Array(imageData.data)], {type: 'image/jpeg'});
+      return URL.createObjectURL(blob);
+    }
+
+    if (typeof imageData === 'string') {
+      return `data:image/jpeg;base64,${imageData}`;
+    } else if (imageData instanceof Blob) {
+      return URL.createObjectURL(imageData);
+    }
+    return '';
   }
 }
