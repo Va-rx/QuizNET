@@ -50,6 +50,7 @@ router.get("/:id/:userId", async (req, res) => {
         questions: parsedResult.test.questions.map((q) => ({
             question: q.$.question,
             id:  parseInt(q.$.id),
+            image_link: q.$.image_link,
             answers: q.answers.map((a) => ({
                 id: parseInt(a.$.id),
                 points: parseInt(a.$.points),
