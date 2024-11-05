@@ -211,7 +211,6 @@ export class TestDetailsComponent implements OnInit {
         })
       }
     })
-
     this.questionService.updateQuestion(this.selectedQuestion.id, this.selectedQuestion).subscribe({
       next: (updatedQuestion) => {
         const index = this.test.questions.findIndex(question => question.id === this.selectedQuestion.id);
@@ -227,8 +226,6 @@ export class TestDetailsComponent implements OnInit {
         }
         this.test.questions[index] = JSON.parse(JSON.stringify(this.selectedQuestion));
         this.test.questions = [...this.test.questions];
-
-
       },
       error: (err) => {
         console.log('Something went wrong with question update: ', err);
@@ -238,7 +235,7 @@ export class TestDetailsComponent implements OnInit {
 
   triggerFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLElement;
-    fileInput.click();  // Symulujemy kliknięcie na ukrytym input
+    fileInput.click();
   }
 
   addQuestion() {
