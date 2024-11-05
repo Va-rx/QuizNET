@@ -4,7 +4,6 @@ const xmlbuilder = require("xmlbuilder");
 const xml2js = require("xml2js");
 
 async function generateQuizXML(test) {
-    try {
     const testWithAnswers = await getTestWithAnswers(test.id);
     const testMaxPoints = await getTestMaxPoints(test.id);
     const quiz = xmlbuilder.create('test').att('name', test.name).att('description', test.description).att('max_points', testMaxPoints);
@@ -15,9 +14,6 @@ async function generateQuizXML(test) {
         });
     });
     return quiz.end({ pretty: true });
-} catch (err) {
-    console.log(err);
-}
 }
 
 async function parseXML(xml) {

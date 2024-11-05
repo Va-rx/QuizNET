@@ -46,7 +46,6 @@ export class TestDetailsComponent implements OnInit {
               for (let i = 0; i < this.test.questions.length; i++) {
                 this.questionService.getQuestion(this.test.questions[i].id).subscribe({
                   next: (question) => {
-                    this.test.questions[i].image_link = new Blob()
                     this.test.questions[i].answers = question.answers;
                     this.test.questions[i].answers.forEach(answer => {
                       answer.questionId = question.id;
@@ -212,7 +211,6 @@ export class TestDetailsComponent implements OnInit {
         })
       }
     })
-    console.log('1', this.selectedQuestion.image_link);
     this.questionService.updateQuestion(this.selectedQuestion.id, this.selectedQuestion).subscribe({
       next: (updatedQuestion) => {
         const index = this.test.questions.findIndex(question => question.id === this.selectedQuestion.id);
@@ -228,8 +226,6 @@ export class TestDetailsComponent implements OnInit {
         }
         this.test.questions[index] = JSON.parse(JSON.stringify(this.selectedQuestion));
         this.test.questions = [...this.test.questions];
-
-        console.log('2', this.selectedQuestion.image_link);
       },
       error: (err) => {
         console.log('Something went wrong with question update: ', err);
@@ -239,7 +235,7 @@ export class TestDetailsComponent implements OnInit {
 
   triggerFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLElement;
-    fileInput.click();  // Symulujemy kliknięcie na ukrytym input
+    fileInput.click();
   }
 
   addQuestion() {
