@@ -20,6 +20,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture);
 
+        
+
         this.weapon = new Sword();
 
         scene.physics.world.enable(this);
@@ -55,6 +57,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             frameRate: 25,
             repeat: -1
         });
+
+        this.body?.setSize(this.width * 0.6);
+        this.body?.setOffset((this.width - this.body.width) / 2, (this.height - this.body.height) / 2);
     }
 
 
@@ -164,6 +169,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         if (this.body?.touching.down) {
             this.jumpInRowCount = 0;
+        }
+
+        if (this.body?.touching.right) {
+
         }
     }
 }
