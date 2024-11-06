@@ -7,6 +7,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     private lastAttackTime: number = 0;
     private direction: Direction = Direction.RIGHT;
 
+    private jumpVelocity: number = -500;
+    private moveVelocity: number = -240
+
+
+    private lastJumpTime: number = 0;
+    private jumpButtonReleased: boolean = true;
+    private jumpInRowCount: number = 0;
+    private jumpInRowCountMax: number = 2;
+    
+
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture);
 
@@ -19,23 +29,31 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
 
         scene.anims.create({
-            key: 'right',
-            frames: scene.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
+            key: 'idle',
+            frames: scene.anims.generateFrameNumbers('frog-idle', { start: 0, end: 10 }),
+            frameRate: 25,
             repeat: -1
         });
 
         scene.anims.create({
-            key: 'left',
-            frames: scene.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 10,
+            key: 'run',
+            frames: scene.anims.generateFrameNumbers('frog-move', { start: 0, end: 11 }),
+            frameRate: 25,
             repeat: -1
         });
 
         scene.anims.create({
-            key: 'turn',
-            frames: [{ key: 'dude', frame: 4 }],
-            frameRate: 20
+            key: 'jump',
+            frames: scene.anims.generateFrameNumbers('frog-jump', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'jump-midair',
+            frames: scene.anims.generateFrameNumbers('frog-jump-midair', { start: 0, end: 5 }),
+            frameRate: 25,
+            repeat: -1
         });
     }
 
@@ -52,10 +70,59 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         let hitbox = this.scene.add.rectangle(this.x+16, this.y, this.weapon.range, 30, 0xff0000, 0.5);
-        // const hitboxBody = hitbox.body as Phaser.Physics.Arcade.Body;
-        // hitboxBody.allowGravity = false;
-
         this.scene.time.delayedCall(200, () => hitbox.destroy(), [], this);
+        return hitbox;
+    }
+
+    private canJump() {
+        return this.body?.touching.down;
+    }
+
+    private canJumpMidair() {
+        return !this.body?.touching.down && (Date.now() - this.lastJumpTime) < 1000 && this.jumpButtonReleased && this.jumpInRowCount < this.jumpInRowCountMax-1;
+    }
+
+    public jump() {
+        if (this.canJump()) {
+            this.performJump('jump');
+        } else if (this.canJumpMidair()) {
+            this.performJump('jump-midair');
+        }
+    }
+
+    public moveRight() {
+        this.setVelocityX(-this.moveVelocity);
+
+        this.flipX = false;
+        if (this.body?.touching.down) {
+            this.anims.play('run', true);
+        }
+    }
+
+    public moveLeft() {
+        this.setVelocityX(this.moveVelocity);
+
+        this.flipX = true;  // Enables animation rotation
+        if (this.body?.touching.down) {
+            this.anims.play('run', true);
+        }
+    }
+
+    public moveStop() {
+        this.setVelocityX(0);
+
+        if (this.body?.touching.down) {
+            this.anims.play('idle', true);
+        }
+    }
+
+    private performJump(animationKey: string) {
+        this.setVelocityY(this.jumpVelocity);
+        this.lastJumpTime = Date.now();
+        this.jumpInRowCount++;
+        this.jumpButtonReleased = false;
+
+        this.anims.play(animationKey, true);
     }
 
     private canAttackCooldown() {
@@ -74,24 +141,29 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    public override update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
-        if (cursors.left?.isDown) {
-            this.setVelocityX(-160);
-            this.anims.play('left', true);
-        } else if (cursors.right?.isDown) {
-            this.setVelocityX(160);
-            this.anims.play('right', true);
+    private handlePlayerMovement(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
+        if (cursors.left.isDown) {
+            this.moveLeft();
+        } else if (cursors.right.isDown) {
+            this.moveRight();
         } else {
-            this.setVelocityX(0);
-            this.anims.play('turn', false);
+            this.moveStop();
         }
 
-        if (cursors.up?.isDown && this.body?.touching.down) {
-            this.setVelocityY(-500);
+        if (cursors.up.isDown) {
+            this.jump();
+        }
+    }
+
+    public override update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
+        this.handlePlayerMovement(cursors);
+
+        if (cursors.up.isUp) {
+            this.jumpButtonReleased = true;
         }
 
-        if (cursors.shift.isDown) {
-            this.attack();
+        if (this.body?.touching.down) {
+            this.jumpInRowCount = 0;
         }
     }
 }

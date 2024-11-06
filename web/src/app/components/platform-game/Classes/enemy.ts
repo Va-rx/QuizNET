@@ -1,5 +1,31 @@
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
-    // health: number;
+    private health: number;
 
-    // constructor()
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
+        super(scene, x, y, texture);
+
+        scene.physics.add.existing(this);
+
+        scene.physics.world.enable(this);
+        scene.add.existing(this);
+
+        this.health = 100;
+
+        this.setBounce(0.2);
+        this.setCollideWorldBounds(true);
+    };
+
+    takeDamage(damage: number) {
+        this.health -= damage;
+        console.log(`I've got a hit! I have a ${this.health} hp left`);
+
+        if (this.health <= 0) this.die();
+    }
+
+    die() {
+        this.setActive(false);
+        this.setVisible(false);
+        this.disableBody(true, true);
+        console.log("Enemy defeated!");
+    }
 }
