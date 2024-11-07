@@ -20,15 +20,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture);
 
-        
-
         this.weapon = new Sword();
 
-        scene.physics.world.enable(this);
-        scene.add.existing(this);
+        this.setOrigin(0.5, 1);
 
-        this.setBounce(0.2);
-        this.setCollideWorldBounds(true);
+        scene.anims.create({
+            key: 'appear',
+            frames: scene.anims.generateFrameNumbers('appear', { start: 0, end: 6 }),
+            frameRate: 25,
+            repeat: 0
+        });
 
         scene.anims.create({
             key: 'idle',
@@ -53,13 +54,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         scene.anims.create({
             key: 'jump-midair',
-            frames: scene.anims.generateFrameNumbers('frog-jump-midair', { start: 0, end: 5 }),
+            frames: scene.anims.generateFrameNumbers('frog-jump-midair', { start: 0, end: 4 }),
             frameRate: 25,
             repeat: -1
         });
 
-        this.body?.setSize(this.width * 0.6);
-        this.body?.setOffset((this.width - this.body.width) / 2, (this.height - this.body.height) / 2);
+        scene.anims.create({
+            key: 'disappear',
+            frames: scene.anims.generateFrameNumbers('disappear', { start: 0, end: 4 }),
+            frameRate: 25,
+            repeat: -1
+        });
+                            
+
+        scene.physics.world.enable(this);
+        this.spawn();
+        this.setBounce(0.2);
     }
 
 
@@ -68,7 +78,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         let startX = this.x;
         let endX = this.x;
-        console.log('hm');
 
         if (this.weapon instanceof Sword) {
             endX = this.x + this.weapon.range;
@@ -160,7 +169,63 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
+    public spawn() {
+        this.scene.add.existing(this);
+        this.setCollideWorldBounds(true);
+
+        this.body?.setSize(32, 32);
+        this.refreshBody();
+        this.body?.setOffset(32, 64);
+        this.anims.play('appear', true);
+
+        this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
+            if (anim.key === 'appear') {
+                this.body?.setOffset(0,0);
+                this.anims.play('idle', true);
+            }
+        });
+    }
+
+    public despawn() {
+        // this.body?.setSize(32, 32);
+        console.log('halo');
+        this.anims.play('disappear', true);
+    }
+
+    public respawn(x: number, y: number) {
+        this.setVisible(true);
+        this.x = x;
+        this.y = y;
+
+        this.anims.play('appear', true);
+
+        this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
+            if (anim.key === 'appear') {
+                console.log('hm');
+                this.body?.setOffset(0,0);
+                this.anims.play('idle', true);
+            }
+        });
+    
+        // player.setCollideWorldBounds(true);
+        // player.setSize(32, 32);
+        // player.anims.play('idle', true);
+    }
+
+    public kill() {
+        // this.setVisible(false);
+        
+        // this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
+        //     if (anim.key === 'disappear') {
+        //         this.setVisible(false);
+        //         this.anims.stop();
+        //         this.destroy();
+        //     }
+        // });
+    }
+
     public override update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
+        if (this && this.active) {
         this.handlePlayerMovement(cursors);
 
         if (cursors.up.isUp) {
@@ -170,9 +235,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.body?.touching.down) {
             this.jumpInRowCount = 0;
         }
-
-        if (this.body?.touching.right) {
-
-        }
     }
+}
 }
