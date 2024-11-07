@@ -104,6 +104,7 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
       csvRows.push(rowValues.join(','));
     }
     return csvRows.join('\n');
+  }
 
   getImageUrl(imageData: any): string {
     if (imageData === '') return '';
