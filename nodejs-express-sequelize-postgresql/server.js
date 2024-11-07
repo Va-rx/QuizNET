@@ -106,13 +106,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("startGame", (date, time, game_route, test_id) => {
-    const session = getSessionBySocket(socket);
     console.log(`Game will start at ${time} on ${date}`);
   
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
   
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
+      const session = getSessionBySocket(socket);
       const xml = await generateQuizXML(test_id);
       const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
       if (session) {

@@ -20,6 +20,9 @@
           <mat-card-subtitle class="points">Maksymalnie {{getMaxPoints(question)}} pkt. do zdobycia</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
+          <div class="photo-container" *ngIf="question.image_link !== ''">
+            <img style="width: auto" [src]="question.image_link" alt="Selected Image"/>
+          </div>
           <ul>
             <li *ngFor="let answer of question.answers" >
                 <span class="points-small">{{answer.points}} pkt.</span>

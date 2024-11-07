@@ -11,6 +11,7 @@ export class TestHistory {
 export class QuestionHistory {
   id!: number;
   question!: string;
+  image_link?: String;
   answers!: AnswerHistory[];
 }
 

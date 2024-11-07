@@ -8,7 +8,7 @@ async function generateQuizXML(test) {
     const testMaxPoints = await getTestMaxPoints(test.id);
     const quiz = xmlbuilder.create('test').att('name', test.name).att('description', test.description).att('max_points', testMaxPoints);
     testWithAnswers.forEach(q => {
-        const question = quiz.ele('questions', { question: q.question, id: q.id, max_points: q.max_points});
+        const question = quiz.ele('questions', { question: q.question, id: q.id, max_points: q.max_points, image_link: byteaToBase64(q.image_link)});
         q.answers.forEach(answer => {
             question.ele('answers', { isCorrect: answer.isCorrect.toString(), answer: answer.answer, id: answer.id, points: answer.points });
         });
@@ -34,6 +34,13 @@ async function generateAnswerXML(answers) {
         });
     });
     return quiz.end({ pretty: true });
+}
+
+function byteaToBase64(byteaData) {
+    if (byteaData === null) {
+        return '';
+    }
+    return byteaData.toString('base64');
 }
 
 module.exports = {
