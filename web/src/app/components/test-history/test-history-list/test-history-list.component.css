@@ -78,3 +78,9 @@ ul {
   margin: 0;
   padding: 0;
 }
+
+.downloadResults {
+  background-color: #2b2b35;
+  border: 0;
+  color: #695497;
+}
