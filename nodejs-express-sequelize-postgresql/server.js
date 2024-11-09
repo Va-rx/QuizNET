@@ -13,7 +13,7 @@ const io = socketIo(server, {
   },
 });
 var corsOptions = {
-  // Origin: "http://localhost:8081" bez tego działa
+  // Origin: "http://72.145.1.108:8081" bez tego działa
 };
 
 app.use(cors(corsOptions));
