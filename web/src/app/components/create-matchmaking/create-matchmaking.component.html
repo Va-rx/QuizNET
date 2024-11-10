@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <button class="btn btn-primary mt-4" (click)="onSubmit()">Submit</button>
+  <button #targetSection class="btn btn-primary mt-4 plan" (click)="onSubmit()">Zaplanuj</button>
 </div>
 
 <app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [date]="dateControl.value" [time]="timeControl.value"></app-create-lobby>

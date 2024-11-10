@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ElementRef,ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { GamesService } from 'src/app/services/game/game.service';
 import { TestService } from 'src/app/services/test/test.service';
@@ -15,6 +15,7 @@ export class CreateMatchmakingComponent implements OnInit {
   timeControl = new FormControl(new Date());
   selectedGame: any;
   isSubmitted = false;
+  @ViewChild('targetSection') targetSection!: ElementRef;
 
 
   constructor(private testsService: TestService,private gameService: GamesService) { }
@@ -42,6 +43,7 @@ export class CreateMatchmakingComponent implements OnInit {
   }
 
   selectGame(game: any): void {
+    this.scrollToSection();
     this.selectedGame = game;
     console.log(this.selectedGame);
   }
@@ -65,5 +67,11 @@ export class CreateMatchmakingComponent implements OnInit {
     } else {
       console.log('Please select all required fields.');
     }
+  }
+
+  scrollToSection() {
+    this.targetSection?.nativeElement.scrollIntoView({
+      behavior: 'smooth'
+    });
   }
 }
