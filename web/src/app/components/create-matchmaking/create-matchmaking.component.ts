@@ -14,7 +14,7 @@ export class CreateMatchmakingComponent implements OnInit {
   dateControl = new FormControl(new Date());
   timeControl = new FormControl(new Date());
   selectedGame: any;
-  isSubmitted = false;
+  isSubmitted = false;// DEBUG: TRUE return to false in PROD env
   @ViewChild('targetSection') targetSection!: ElementRef;
 
 
