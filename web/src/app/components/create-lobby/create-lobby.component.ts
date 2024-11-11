@@ -19,6 +19,7 @@ export class CreateLobbyComponent implements OnInit {
   lobbyName!: string;
   userName: string = "Creator";
   scheduled: boolean = false;
+  timer:number=900;
   @Input() scoreBoard: Map<string, number> = new Map<string, number>();
 
 
@@ -26,6 +27,8 @@ export class CreateLobbyComponent implements OnInit {
   @Input() date !: Date | null;
   @Input() time !: Date | null;
   @Input() game: any;
+  @Input() timerInput: any;
+
 
   constructor(private socketService: SocketServiceService) { }
 
@@ -60,7 +63,7 @@ export class CreateLobbyComponent implements OnInit {
   }
 
   onStartGame(): void {
-    this.socket.emit('startGame', this.date, this.time, this.game, this.test);
+    this.socket.emit('startGame', this.date, this.time, this.game, this.test,this.timerInput);
     this.scheduled = true;
   }
 }

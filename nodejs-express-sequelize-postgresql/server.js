@@ -108,7 +108,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("startGame", (date, time, game_route, test_id) => {
+  socket.on("startGame", (date, time, game_route, test_id,timer) => {
     console.log(`Game will start at ${time} on ${date}`);
 
     codeToSessionInfo.set(getJoinCodeBySession(getSessionBySocket(socket)),{ date: `Game will start at ${time} on ${date}`, test: test_id, game:game_route})
@@ -123,7 +123,7 @@ io.on("connection", (socket) => {
       if (session) {
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer);
           }
         });
       }

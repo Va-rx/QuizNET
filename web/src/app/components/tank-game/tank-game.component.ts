@@ -81,6 +81,7 @@ export class TankGameComponent implements OnInit {
     this.testID=history.state.data.testId;
     //this.testID=1;
     this.historyTestId = history.state.data.testHistoryId;
+    this.timer=history.state.data.timer;
     this.phaserGame = new Phaser.Game(this.config);
 
     //Sometime there is problem with loading it at scene start, this fixes it

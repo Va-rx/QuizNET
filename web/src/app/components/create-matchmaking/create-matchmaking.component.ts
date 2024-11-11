@@ -13,6 +13,7 @@ export class CreateMatchmakingComponent implements OnInit {
   selectedTest: any;
   dateControl = new FormControl(new Date());
   timeControl = new FormControl(new Date());
+  timerControl = new FormControl(1);
   selectedGame: any;
   isSubmitted = false;// DEBUG: TRUE return to false in PROD env
   @ViewChild('targetSection') targetSection!: ElementRef;
@@ -53,13 +54,15 @@ export class CreateMatchmakingComponent implements OnInit {
     const selectedTime = this.timeControl.value;
     const selectedTest = this.selectedTest;
     const selectedGame = this.selectedGame;
-
+    const timerInMinutes = this.timerControl.value ?? 15;
+    const timerInSeconds = timerInMinutes * 60;
     if (selectedTest && selectedGame && selectedDate && selectedTime) {
       const data = {
         test: selectedTest,
         game: selectedGame,
         date: selectedDate,
-        time: selectedTime
+        time: selectedTime,
+        timerInSeconds: timerInSeconds
       };
 
       console.log('Submitting:', data);
@@ -73,5 +76,9 @@ export class CreateMatchmakingComponent implements OnInit {
     this.targetSection?.nativeElement.scrollIntoView({
       behavior: 'smooth'
     });
+  }
+
+  get timerInSeconds(): number {
+    return (this.timerControl.value ?? 15) * 60;
   }
 }

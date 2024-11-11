@@ -22,7 +22,11 @@
   <h2 class="mb-4">Wybierz datę i godzinę</h2>
   <div class="form-group">
     <input [formControl]="dateControl" type="date" class="form-control mb-2">
-    <input [formControl]="timeControl" type="time" class="form-control">
+    <input [formControl]="timeControl" type="time" class="form-control" >
+  </div>
+  <h2 class="mb-4">Ustaw czas trwania (w minutach)</h2>
+  <div class="form-group">
+    <input [formControl]="timerControl" type="number" min="1" class="form-control mb-2" placeholder="Wprowadź czas trwania w minutach">
   </div>
 
   <h2 class="mb-4">Wybierz grę</h2>
@@ -41,4 +45,4 @@
   <button #targetSection class="btn btn-primary mt-4 plan" (click)="onSubmit()">Zaplanuj</button>
 </div>
 
-<app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [date]="dateControl.value" [time]="timeControl.value"></app-create-lobby>
+<app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [date]="dateControl.value" [time]="timeControl.value" [timerInput]="timerInSeconds"></app-create-lobby>
