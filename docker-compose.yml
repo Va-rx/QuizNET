@@ -1,0 +1,61 @@
+# docker-compose.yml
+version: "3.8"
+services:
+  angular:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: angular_app
+    ports:
+      - "4200:80"
+    environment:
+      - TZ=Europe/Warsaw
+    networks:
+      - quiznet-network
+
+  nodejs:
+    build:
+      context: ./nodejs-express-sequelize-postgresql
+      dockerfile: Dockerfile
+    container_name: nodejs_server
+    environment:
+      - DB_HOST=postgre_quiznet
+      - DB_USER=root
+      - DB_PASSWORD=zaq1@WSX
+      - DB_NAME=postgres
+      - DB_PORT=5432
+      - TZ=Europe/Warsaw  
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgre_quiznet
+    networks:
+      - quiznet-network
+
+  postgre_quiznet:
+    container_name: postgre_quiznet
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: zaq1@WSX
+      POSTGRES_DB: postgres
+      TZ: Europe/Warsaw  
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./nodejs-express-sequelize-postgresql/dbInit:/docker-entrypoint-initdb.d
+    networks:
+      - quiznet-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  quiznet-network:
+    driver: bridge
+
+volumes:
+  db-data:

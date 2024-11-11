@@ -13,7 +13,11 @@ export class JoinLobbyComponent {
   joinCode: string = '';
   userList: string[] = [];
   joined: boolean = false;
-
+  scheduled :boolean = false;
+  startgame_str: string='';
+  test_name:string='';
+  game_name:string='';
+  test_desc:string='';
   constructor(private router: Router,private socketService:SocketServiceService,private auth:AuthService) { }
 
   ngOnInit(): void {
@@ -31,17 +35,26 @@ export class JoinLobbyComponent {
     //}
 
     this.socket.on('userList', (users: string[]) => {
-      this.userList = users;
+      this.userList = users.filter(user => user !== "Creator");
       this.joined = true;
     });
 
-    this.socket.on('gameStarted', (game_route,test, testHistoryId) => {
+    this.socket.on('receive_Data',(startdate:string,test_name:string,test_desc:string,game_name:string)=>{
+        this.scheduled=true;
+        this.startgame_str=startdate;
+        this.test_name=test_name;
+        this.test_desc=test_desc;
+        this.game_name=game_name;
+    })
+
+    this.socket.on('gameStarted', (game_route,test, testHistoryId,timer) => {
       //router to game
       console.log(game_route);
       console.log('Game started'+game_route+test.id);
       const data = {
         testId: test.id,
-        testHistoryId: testHistoryId
+        testHistoryId: testHistoryId,
+        timer: timer
       };
       this.router.navigate([game_route.route],{state:{data}});//test.id
     });

@@ -13,7 +13,7 @@ const io = socketIo(server, {
   },
 });
 var corsOptions = {
-  // Origin: "http://localhost:8081" bez tego działa
+  // Origin: "http://72.145.1.108:8081" bez tego działa
 };
 
 app.use(cors(corsOptions));
@@ -41,6 +41,7 @@ app.use("/api/user-results", userResultsRouter);
 
 const PORT = process.env.PORT || 8080;
 
+const codeToSessionInfo = new Map();
 const sessions = new Map();
 const userToSocket = new Map();
 const socketToUser = new Map();
@@ -98,6 +99,8 @@ io.on("connection", (socket) => {
       session.users.push(socket);
       console.log("Event participant joined the event");
       socket.emit("joinedConfirmation");
+      const sesInfo= codeToSessionInfo.get(joinCode);
+      socket.emit("receive_Data",sesInfo.date,sesInfo.test.name,sesInfo.test.description,sesInfo.game.game_name);
       broadcastUserList(session);
     } else {
       console.log("Invalid join code");
@@ -105,9 +108,11 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("startGame", (date, time, game_route, test_id) => {
+  socket.on("startGame", (date, time, game_route, test_id,timer) => {
     console.log(`Game will start at ${time} on ${date}`);
-  
+
+    codeToSessionInfo.set(getJoinCodeBySession(getSessionBySocket(socket)),{ date: `Game will start at ${time} on ${date}`, test: test_id, game:game_route})
+
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
   
@@ -118,7 +123,7 @@ io.on("connection", (socket) => {
       if (session) {
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer);
           }
         });
       }
@@ -174,6 +179,16 @@ io.on("connection", (socket) => {
     }
     return null;
   }
+
+  function getJoinCodeBySession(session) {
+    for (const [joinCode, storedSession] of sessions.entries()) {
+      if (storedSession === session) {
+        return joinCode;
+      }
+    }
+    return null; // Return null if the session is not found
+  }
+  
 });
 
 // Start the HTTP server

@@ -1,11 +1,194 @@
+body {
+  background: linear-gradient(135deg, #2b2f36, #1e232a);
+  color: #d9dcde;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #505d69;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .table-active {
-  background-color: #f1f1f1;
+  background-color: #695497;
+  box-shadow: inset 0 0 5px rgba(150, 98, 210, 0.8);
+}
+
+.table thead th {
+  color: #b0b3b8;
+  background-color: #333f4a;
+  border-bottom: 1px solid #695497;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.75rem;
+}
+
+.table tbody td {
+  color: #c9ccd1;
+  padding: 0.75rem;
+  font-size: 0.95em;
+  border-top: 1px solid #444b53;
+}
+
+table {
+  width: 100%;
+  color: #d9dcde;
+  background-color: #333f4a;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.form-group input[type="date"],
+.form-group input[type="time"] {
+  background-color: #333f4a;
+  border: solid 1px #695497;
+  color: #d1c3e2;
+  text-align: left;
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.form-group input[type="date"]:focus,
+.form-group input[type="time"]:focus {
+  border-color: rgba(150, 98, 210, 0.6);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) inset, 0 0 10px rgba(150, 98, 210, 0.6);
+  background-color: #5a466e;
+  outline: 0;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.btn {
+  background-color: #695497;
+  color: #d9dcde;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.btn:hover {
+  background-color: #9662d2;
+  transform: scale(1.03);
+}
+
+.btn:focus, .btn:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.card {
+  background-color: #333f4a;
+  border: 1px solid transparent;
+  color: #d9dcde;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  border-color: #695497;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .card.border-primary {
-  border-color: #007bff !important;
+  border-color: #695497 !important;
 }
 
 .card.border-primary .card-body {
-  background-color: rgba(0, 123, 255, 0.1);
+  background-color: rgba(150, 98, 210, 0.1);
+}
+
+.card-header {
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border-bottom: 1px solid #695497;
+}
+
+.card-header h4 {
+  font-size: 1.75em;
+  color: #b0b3b8;
+}
+
+.card-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #b0b3b8;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  color: #c9ccd1;
+  font-size: 1em;
+}
+
+h2 {
+  color: #b0b3b8;
+  margin-bottom: 1rem;
+  font-size: 1.5em;
+}
+
+p, .scheduled-game, .code-section {
+  color: #c9ccd1;
+}
+
+.code-section {
+  font-size: 1.25em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card .btn {
+  background-color: #695497;
+  color: #d9dcde;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  padding: 0.4rem 1rem;
+}
+
+.card .btn:hover {
+  background-color: #9662d2;
+  transform: scale(1.05);
+}
+
+.card:hover .card-title,
+.table-hover tbody tr:hover td {
+  color: #d1d4db;
+}
+
+.card.border-primary .card-body:hover {
+  background-color: rgba(150, 98, 210, 0.15);
+}
+
+.table tbody tr.table-active td {
+  color: #d9dcde;
+  font-weight: bold;
+}
+
+.plan {
+  width: 50%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin-bottom: 15px;
 }

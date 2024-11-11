@@ -9,7 +9,7 @@ export default class Example extends Phaser.Scene
     platforms;
     stars;
     player;
-    //socket=io('http://localhost:8080');
+    //socket=io('http://72.145.1.108:8080');
     others;
     othersprites;
     preload ()
@@ -85,15 +85,15 @@ export default class Example extends Phaser.Scene
     }
 
     override update ()
-    {      
+    {
         //emiting user score
         if(this.score!=this.lastScore){
             this.lastScore=this.score;
             this.game.events.emit('userScoreUpdate',this.score);
-        
+
             console.log(this.score);
         }
-        
+
         if (this.cursors.left.isDown)
         {
             this.player.setVelocityX(-160);
