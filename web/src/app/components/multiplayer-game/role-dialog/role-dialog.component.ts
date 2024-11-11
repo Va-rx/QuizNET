@@ -12,7 +12,7 @@ export class RoleDialogComponent implements OnInit{
 
 
   private socket: any;
-  chosenRole!: MultiplayerRoles;
+  chosenRole: MultiplayerRoles = MultiplayerRoles.NONE;
   timeLeft!: number;
   MultiplayerRoles = MultiplayerRoles;
   constructor(private socketService: SocketServiceService, @Inject(MAT_DIALOG_DATA) public data: {roles: string[]}, private dialogRef: MatDialogRef<RoleDialogComponent>) {
@@ -26,20 +26,28 @@ export class RoleDialogComponent implements OnInit{
     });
 
     this.socket.on('countdownEnd', () => {
-      this.generateRandomRole();
-      this.dialogRef.close(this.chosenRole);
+      this.submitRole();
+
     });
   }
 
   choose(role: MultiplayerRoles): void {
-    this.socket.emit('roleChosen', role);
+    console.log(role);
     this.chosenRole = role;
   }
 
   generateRandomRole(): void {
     if (!this.chosenRole) {
       this.chosenRole = MultiplayerRoles.OFFENSIVE;
-      this.socket.emit('roleChosen', this.chosenRole);
     }
+  }
+
+  submitRole(): void {
+    if (this.chosenRole == MultiplayerRoles.NONE) {
+      this.chosenRole = MultiplayerRoles.OFFENSIVE;
+    }
+
+    this.socket.emit('roleChosen', this.chosenRole, this.socket.id);
+    this.dialogRef.close(this.chosenRole);
   }
 }

@@ -39,6 +39,8 @@ import {MatSortModule} from "@angular/material/sort";
 import { TimerComponent } from './components/timer/timer.component';
 import {MultiplayerGameComponent} from "./components/multiplayer-game/multiplayer-game.component";
 import { RoleDialogComponent } from './components/multiplayer-game/role-dialog/role-dialog.component';
+import {MatTabsModule} from "@angular/material/tabs";
+import { ShareHealthComponent } from './components/multiplayer-game/share-health/share-health.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +65,7 @@ import { RoleDialogComponent } from './components/multiplayer-game/role-dialog/r
     TestHistoryListComponent,
     MultiplayerGameComponent,
     RoleDialogComponent,
+    ShareHealthComponent,
   ],
     imports: [
         BrowserModule,
@@ -81,7 +84,8 @@ import { RoleDialogComponent } from './components/multiplayer-game/role-dialog/r
         MatSnackBarModule,
         MatListModule,
         MatTableModule,
-        MatSortModule
+        MatSortModule,
+        MatTabsModule
     ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]

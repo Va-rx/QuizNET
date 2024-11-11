@@ -22,10 +22,22 @@ var stars = [];
 var maxNumberOfStars = 5;
 var starsCounter = 0;
 var maxHealth = 100;
-let playersReady = 0;
 const maxQuestions = 2;
 let countdown;
 let countdownInterval;
+const playerSpeed = 1.3;
+let MAX_HEIGHT = 1280;
+let MAX_WIDTH = 720;
+
+const MultiplayerRoles = Object.freeze({
+  OFFENSIVE: 0,
+  DEFENSIVE: 1,
+  NONE: 2
+});
+
+offensivePowerUps = ['damage', 'attackRange'];
+defensivePowerUps = ['health', 'speed'];
+
 //
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -41,6 +53,7 @@ const testHistoryRouter = require("./routes/test-history-routes");
 const userResultsRouter = require("./routes/user-results-routes");
 const {createTestHistory} = require("./database/database-queries/test-history-queries");
 const {generateQuizXML} = require("./XMLhandler");
+const {getNumberOfQuestions} = require("./database/database-queries/test-queries");
 
 app.use("/api/tests", testRouter);
 app.use("/api/games", gameRouter);
@@ -55,9 +68,12 @@ const PORT = process.env.PORT || 8080;
 const sessions = new Map();
 const userToSocket = new Map();
 const socketToUser = new Map();
-io.on("connection", (socket) => {
-  players[socket.id] = {x: 100, y: 450, id: socket.id, hp: maxHealth, visible: true, role: null, isTargetable: true, questionsAnswered: 0}
-  // players.push({posx: 100, posy: 450, id: socket.id, hp: maxHealth, visible: true, role: null, isTargetable: true});
+io.on("connection", async (socket) => {
+  players[socket.id] = {
+    x: 100, y: 450, id: socket.id, hp: maxHealth, visible: true, role: null, isTargetable: true,
+    questionsAnswered: 0, attackDamage: 10, attackRange: 50, maxHealth: maxHealth, speed: 1.3, playersKilled: 0
+  };
+
   socket.on('requestCurrentPlayers', () => {
     socket.emit('currentPlayers', players);
   });
@@ -65,15 +81,31 @@ io.on("connection", (socket) => {
   socket.on('requestCurrentStars', () => {
     socket.emit('currentStars', stars);
   });
-  socket.broadcast.emit('newPlayer', { id: socket.id, x: 100, y: 100, hp: maxHealth, visible: true, role: null, isTargetable: true, questionsAnswered: 0 });
 
-  socket.on('playerMovement', (movementData, direction) => {
+  socket.on('mapBoundaries', (boundaries) => {
+    MAX_WIDTH = boundaries.width;
+    MAX_HEIGHT = boundaries.height;
+  })
+  socket.broadcast.emit('newPlayer', {
+    id: socket.id, x: 100, y: 100, hp: maxHealth, visible: true, role: null, isTargetable: true,
+    questionsAnswered: 0, attackDamage: 10, attackRange: 50, maxHealth: maxHealth, speed: 1.3, playersKilled: 0
+  });
+
+  socket.on('playerMovement', (movementData, direction, boundaries) => {
     const player = players[socket.id];
     if (!player) return;
 
-    player.x += movementData.x;
-    player.y += movementData.y;
-    io.emit('playerMoved', { id: socket.id, x: player.x, y: player.y, direction: direction});
+    player.x = movementData.x;
+    player.y = movementData.y;
+    // player.y += movementData.y;
+    // player.x += movementData.x;
+    //
+    // if (player.x < 0){ player.x = 0 }
+    // if (player.y < 0){ player.y = 0 }
+    // if (player.x > MAX_WIDTH){ player.x = MAX_WIDTH }
+    // if (player.y > MAX_HEIGHT){ player.y = MAX_HEIGHT }
+
+    io.emit('playerMoved', {id: socket.id, x: player.x, y: player.y, direction: direction});
   });
 
 
@@ -81,16 +113,25 @@ io.on("connection", (socket) => {
     io.emit('attackAnimation', playerId);
   });
 
-  socket.on('playerAttack', ({ attackerId, targetId }) => {
+  socket.on('playerAttack', ({attackerId, targetId}) => {
     if (players[attackerId] && players[targetId]) {
       const player = players[targetId];
-      player.hp -= 10;
+      player.hp -= players[attackerId].attackDamage;
       io.emit('playerAttacked', {id: targetId, hp: player.hp});
-      if (player.hp <= 0){
+      if (player.hp <= 0) {
         player.x = Math.floor(Math.random() * 800);
         player.y = Math.floor(Math.random() * 600);
-        player.hp = 100;
-        io.emit('playerKilled', {id: targetId, hp: 100, x: player.x, y: player.y});
+        player.hp = player.maxHealth;
+        const attacker = players[attackerId];
+        attacker.playersKilled++;
+        io.emit('playerKilled', {
+          id: targetId,
+          hp: player.hp,
+          x: player.x,
+          y: player.y,
+          killerId: attackerId,
+          killerKills: attacker.playersKilled
+        });
       }
     }
   });
@@ -104,6 +145,13 @@ io.on("connection", (socket) => {
 
     io.emit('playerStarCollected', star, playerId);
   });
+  socket.on('playerRandomBuff', (id, attackDamage) => {
+    const player = players[id];
+    if (!player) return;
+
+    player.attackDamage = attackDamage;
+    io.emit('playerBuffed', id, attackDamage);
+  })
 
   socket.on('playerQuestionAnswered', (playerId) => {
     const player = players[playerId];
@@ -115,34 +163,38 @@ io.on("connection", (socket) => {
     }
     io.emit('playerQuestionAnswered', playerId, player.questionsAnswered);
   })
+
+  socket.on('MULTIPLAYER_shareHealth', (playerId) => {
+    const filteredPlayers = Object.values(players);
+    console.log(filteredPlayers);
+  });
   // update PLayers
   //Multiplayer Game
   //
-  // socket.on('start_multiplayer', () => {
-  //   if (!countdown) { // minimalna liczba graczy do rozpoczęcia
-  //     startCountdown();
-  //   }
-  // });
-  // socket.on("roleChosen", (role, id) => {
-  //   io.to(id).emit("roleChosen", role);
-  //   for (player of players){
-  //     if (player.id == socket.id){
-  //       player.role = role;
-  //       io.to(player.id).emit("roleChosen", role);
-  //     }
-  //   }
-  //   socket.emit("updatePlayers", players);
-  // })
+  socket.on('start_multiplayer', () => {
+    if (!countdown) {
+      startCountdown();
+    }
+  });
+
+  socket.on("roleChosen", (role, id) => {
+    const player = players[id];
+    if (!player) return;
+
+    player.role = role;
+    const powerUp = generateRandomPowerUp(player);
+    io.emit("playerRoleChosen", role, id, powerUp);
+  })
 
 
   //Multiplayer Game END
 
   //Handle Health sharing
-  socket.on("shareHealth",(userName)=>{
+  socket.on("shareHealth", (userName) => {
     const session = getSessionBySocket(socket);
     const filteredUsers = session.users
-    .map((socket) => socketToUser.get(socket))
-    .filter((user) => user !== userName && user !== 'Creator');
+        .map((socket) => socketToUser.get(socket))
+        .filter((user) => user !== userName && user !== 'Creator');
 
     console.log(filteredUsers);
 
@@ -151,18 +203,18 @@ io.on("connection", (socket) => {
       console.log(randomUser);
       console.log(userToSocket.get(randomUser))
       console.log(userToSocket)
-      userToSocket.get(randomUser).user[0].emit("receiveHealth",userName);
+      userToSocket.get(randomUser).user[0].emit("receiveHealth", userName);
     } else {
       console.log("No valid users found.");
     }
 
 
   })
-  
+
   // Handle event coordinator request for join code
   socket.on("requestJoinCode", (userName, lobbyName) => {
     console.log(
-      "Event coordinator requested a join code" +
+        "Event coordinator requested a join code" +
         " Coordinator: " +
         userName +
         " with lobbyName: " +
@@ -170,9 +222,9 @@ io.on("connection", (socket) => {
     );
     const joinCode = generateJoinCode();
     // Create a new session with the join code and an empty user list
-    sessions.set(joinCode, { users: [socket], scoreBoard: new Map() });
+    sessions.set(joinCode, {users: [socket], scoreBoard: new Map()});
     //map userName or userToken to socket, assuming userName is unique
-    userToSocket.set(userName, { user: [socket] });
+    userToSocket.set(userName, {user: [socket]});
     socketToUser.set(socket, userName);
     socket.emit("joinCode", joinCode);
   });
@@ -180,11 +232,11 @@ io.on("connection", (socket) => {
   // Handle event participant request to join the event
   socket.on("joinByCode", (joinCode, userName) => {
     console.log(
-      `Event participant: ${userName} requested to join event with join code: ${joinCode}`
+        `Event participant: ${userName} requested to join event with join code: ${joinCode}`
     );
     const session = sessions.get(joinCode);
     if (session) {
-      userToSocket.set(userName, { user: [socket] }); // TODO: dodac usuwanie z tego mappingu po disconnect
+      userToSocket.set(userName, {user: [socket]}); // TODO: dodac usuwanie z tego mappingu po disconnect
       socketToUser.set(socket, userName); // TODO: dodac usuwanie z tego mappingu po disconnect
       session.users.push(socket);
       console.log("Event participant joined the event");
@@ -199,12 +251,17 @@ io.on("connection", (socket) => {
   socket.on("startGame", (date, time, game_route, test_id) => {
     const session = getSessionBySocket(socket);
     console.log(`Game will start at ${time} on ${date}`);
-  
+
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
-  
+
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
       const xml = await generateQuizXML(test_id);
+      console.log('Przed questionsNum');
+      let questionsNum = parseInt((await getNumberOfQuestions(1)).rows[0].count);
+      console.log(`Questions number: ${questionsNum}`);
+      const maxNumberOfStars = questionsNum * Object.keys(players).length + 2;
+      console.log('po', maxNumberOfStars);
       const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
       if (session) {
         setInterval(spawnStar, 5000);
@@ -253,8 +310,8 @@ io.on("connection", (socket) => {
     session.users.forEach((userSocket) => {
       console.log(JSON.stringify(Object.fromEntries(session.scoreBoard)));
       userSocket.emit(
-        "broadcastScoreBoard",
-        JSON.stringify(Object.fromEntries(session.scoreBoard))
+          "broadcastScoreBoard",
+          JSON.stringify(Object.fromEntries(session.scoreBoard))
       );
     });
   }
@@ -262,8 +319,8 @@ io.on("connection", (socket) => {
   function broadcastUserList(session) {
     session.users.forEach((userSocket) => {
       userSocket.emit(
-        "userList",
-        session.users.map((socket) => socketToUser.get(socket))
+          "userList",
+          session.users.map((socket) => socketToUser.get(socket))
       );
     });
   }
@@ -304,9 +361,8 @@ function spawnStar() {
   if (starsCounter >= maxNumberOfStars) {
     return;
   }
-
-  const x = Math.floor(Math.random() * 800); // Assuming map width is 800
-  const y = Math.floor(Math.random() * 600); // Assuming map height is 600
+  const x = Math.floor(Math.random() * MAX_WIDTH); // Assuming map width is 800
+  const y = Math.floor(Math.random() * MAX_HEIGHT); // Assuming map height is 600
   const star = { x, y };
   stars.push(star);
   io.emit("spawnStar", star);
@@ -329,4 +385,33 @@ function startCountdown() {
     }
   }, 1000);
 }
+
+
+function generateRandomPowerUp(player){
+  if (player.role === MultiplayerRoles.OFFENSIVE) {
+    return addPowerUp(player, offensivePowerUps[Math.floor(Math.random() * offensivePowerUps.length)]);
+  }
+  return addPowerUp(player, defensivePowerUps[Math.floor(Math.random() * defensivePowerUps.length)]);
+}
+
+function addPowerUp(player, powerUp){
+  switch (powerUp) {
+    case 'attackRange':
+      player.attackRange += 20;
+      break;
+    case 'damage':
+      player.attackDamage += 10;
+      break;
+    case 'health':
+      player.maxHealth = 200;
+      player.hp += 100;
+      break;
+    case 'speed':
+      player.speed += 1.0;
+      break;
+  }
+
+  return powerUp;
+}
+
 // Multiplayer Game END

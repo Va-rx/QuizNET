@@ -12,6 +12,7 @@ import {Question} from "../../models/question.model";
 import {AuthService} from "../../services/auth/auth.service";
 import {UserAnswersService} from "../../services/user-answers/user-answers.service";
 import {UserResultsService} from "../../services/user-results/user-results.service";
+import {ShareHealthComponent} from "./share-health/share-health.component";
 
 @Component({
   selector: 'app-multiplayer-game',
@@ -49,11 +50,9 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.config = {
       type: Phaser.AUTO,
       width: 1280,
-      height: 736,
+      height: 720,
       scale: {
-        // Fit to window
         mode: Phaser.Scale.FIT,
-        // Center vertically and horizontally
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
       scene: new multiplayerScene({key: 'multiplayerScene'}, this.socket, this.nickname),
@@ -61,7 +60,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
       physics: {
         default: 'matter',
         matter: {
-          debug: true,
+          debug: false,
           gravity: {
             x: 0,
             y: 0
@@ -81,6 +80,10 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
       const dialogRef = this.dialog.open(RoleDialogComponent, {
         data: { roles: this.roles },
         disableClose: true
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+          this.phaserGame.scene.game.events.emit('enableMovement');
       });
     });
 
@@ -132,7 +135,6 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.userResultsService.create(results).subscribe(data => {
       console.log(data);
     });
-
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
     this.socket.off('spawnStar');
     this.socket.off('currentPlayers');
@@ -151,6 +153,16 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.phaserGame.scene.game.events.off('spawnQuestion');
     this.phaserGame.scene.game.events.off('questionAnswered');
     this.phaserGame.scene.game.events.off('requestFinishGame');
+
+    const dialogRef = this.dialog.open(ShareHealthComponent, {
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.socket.emit('MULTIPLAYER_shareHealth', this.socketService.getUserId());
+      }
+    });
+
     this.phaserGame.destroy(true);
     this.gameFinished = true;
   }
