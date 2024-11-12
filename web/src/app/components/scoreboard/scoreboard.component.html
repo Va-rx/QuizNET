@@ -9,7 +9,7 @@
         <span class="score-label">Score</span>
       </div>
       <ul>
-        <li *ngFor="let entry of scoreboard | keyvalue" [ngClass]="{'current-player': entry.key === currentPlayer}">
+        <li *ngFor="let entry of sortedScoreboard" [ngClass]="{'current-player': entry.key === currentPlayer}">
           <span class="username">{{ entry.key }}</span>
           <span class="time">{{everyUserTime}} s.</span>
           <span class="score">{{ entry.value }} pt.</span>
