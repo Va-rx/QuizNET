@@ -77,6 +77,21 @@ export default class platformerScene extends Phaser.Scene {
 
         const fruitObjects = map.getObjectLayer('Collectibles')?.objects;
 
+        this.anims.create({
+            key: 'cherry',
+            frames: this.anims.generateFrameNumbers('cherry', { start: 0, end: 16 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'fruit-collect',
+            frames: this.anims.generateFrameNumbers('fruit-collect', { start: 0, end: 5 }),
+            frameRate: 25,
+            repeat: 0
+        });
+
+
         fruitObjects?.forEach(fruitObject => {
             if (fruitObject.name === 'fruit') {
                 if (fruitObject.x && fruitObject.y) {
@@ -201,8 +216,4 @@ export default class platformerScene extends Phaser.Scene {
         }
         // this.spikerr?.updatex();
     };
-
-    private collectFruit(player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, fruit: Phaser.Physics.Arcade.Sprite) {
-        fruit.disableBody(true, true);
-    }
 }
