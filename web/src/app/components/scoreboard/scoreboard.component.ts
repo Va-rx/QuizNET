@@ -59,4 +59,10 @@ export class ScoreboardComponent implements OnChanges {
     }
     this.achieverScore = (this.BARTLE_turrets_destroyed / this.allTurrets) * 100; // Normalized by total turrets
   }
+
+  get sortedScoreboard(): { key: string, value: number }[] {
+    return Array.from(this.scoreboard.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([key, value]) => ({ key, value }));
+  }
 }
