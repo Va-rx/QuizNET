@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand" *ngIf="role !== roles.NONE">
+<nav class="navbar navbar-expand" *ngIf="role !== roles.NONE && showNavbar">
     <a routerLink="" class="navbar-brand" routerLinkActive="active">QuizNET</a>
     <div class="navbar-nav mr-auto">
         <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
