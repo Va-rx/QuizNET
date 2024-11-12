@@ -14,15 +14,27 @@ export class PlatformGameComponent {
   ngOnInit() {
     this.config = {
       type: Phaser.AUTO,
-      height: 600,
-      width: 800,
-      // height: window.innerHeight,
-      // width: window.innerWidth,
+      // antialias: false,
+      height: 960,
+      width: 1632,
+      // width: window.innerWidth * 0.8,
+      // height: window.innerHeight * 0.8,
+      // height: window.innerHeight / 2,
+      // width: window.innerWidth / 2,
+      backgroundColor: 'red',
+      parent: 'phaser-game',
+      pixelArt: true,
+      scale: {
+        mode: Phaser.Scale.FIT,
+        // autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+      transparent: true,
       physics: {
         default: 'arcade',
         arcade: {
           debug: true,
-          gravity: { x: 0, y: 1200}
+          gravity: { x: 0, y: 1200},
+          tileBias: 64
         }
       },
       scene: new platformerScene({key: 'platformerScene'}),

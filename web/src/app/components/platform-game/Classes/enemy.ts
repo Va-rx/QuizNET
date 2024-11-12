@@ -1,4 +1,4 @@
-export default class Enemy extends Phaser.Physics.Arcade.Sprite {
+export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
     private health: number;
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
@@ -11,8 +11,10 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.health = 100;
 
-        this.setBounce(0.2);
+        // this.setBounce(0.2);
         this.setCollideWorldBounds(true);
+        this.setImmovable(true);
+        (this.body as Phaser.Physics.Arcade.Body).pushable = false;
     };
 
     takeDamage(damage: number) {

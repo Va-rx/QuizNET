@@ -1,99 +1,48 @@
-import { Sword } from "./sword";
 import { Direction } from "./direction";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-    private health: number = 100;
-    private weapon: Sword;
-    private lastAttackTime: number = 0;
     private direction: Direction = Direction.RIGHT;
 
     private jumpVelocity: number = -500;
     private moveVelocity: number = -240
 
-
     private lastJumpTime: number = 0;
     private jumpButtonReleased: boolean = true;
     private jumpInRowCount: number = 0;
     private jumpInRowCountMax: number = 2;
-    
+
+    private canControl: boolean = false;
+
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture);
+        // this.setOrigin(0,0);
 
-        this.weapon = new Sword();
-
-        this.setOrigin(0.5, 1);
-
-        scene.anims.create({
-            key: 'appear',
-            frames: scene.anims.generateFrameNumbers('appear', { start: 0, end: 6 }),
-            frameRate: 25,
-            repeat: 0
-        });
-
-        scene.anims.create({
-            key: 'idle',
-            frames: scene.anims.generateFrameNumbers('frog-idle', { start: 0, end: 10 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        scene.anims.create({
-            key: 'run',
-            frames: scene.anims.generateFrameNumbers('frog-move', { start: 0, end: 11 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        scene.anims.create({
-            key: 'jump',
-            frames: scene.anims.generateFrameNumbers('frog-jump', { start: 0, end: 0 }),
-            frameRate: 1,
-            repeat: -1
-        });
-
-        scene.anims.create({
-            key: 'jump-midair',
-            frames: scene.anims.generateFrameNumbers('frog-jump-midair', { start: 0, end: 4 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        scene.anims.create({
-            key: 'disappear',
-            frames: scene.anims.generateFrameNumbers('disappear', { start: 0, end: 4 }),
-            frameRate: 25,
-            repeat: -1
-        });
-                            
-
+        this.loadAnimations();
         scene.physics.world.enable(this);
+
+        this.setBounce(0.2);  
+        this.body?.setSize(28, 28);    
+
         this.spawn();
-        this.setBounce(0.2);
     }
 
+    public spawn() {
+        this.scene.add.existing(this);
+        this.setCollideWorldBounds(true);
+        this.setOrigin(0,0);
 
-    public attack() {
-        if(!this.canAttackCooldown()) return;
+        this.body?.setOffset(-28, -28);
+        this.anims.play('appear', true);
+        this.body?.setOffset(-28, -28);
 
-        let startX = this.x;
-        let endX = this.x;
-
-        if (this.weapon instanceof Sword) {
-            endX = this.x + this.weapon.range;
-        }
-
-        let hitbox = this.scene.add.rectangle(this.x+16, this.y, this.weapon.range, 30, 0xff0000, 0.5);
-        this.scene.time.delayedCall(200, () => hitbox.destroy(), [], this);
-        return hitbox;
-    }
-
-    private canJump() {
-        return this.body?.touching.down;
-    }
-
-    private canJumpMidair() {
-        return !this.body?.touching.down && (Date.now() - this.lastJumpTime) < 1000 && this.jumpButtonReleased && this.jumpInRowCount < this.jumpInRowCountMax-1;
+        this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
+            if (anim.key === 'appear') {
+                this.canControl = true;
+                this.body?.setOffset(2,4);
+                this.anims.play('idle', true);
+            }
+        });
     }
 
     public jump() {
@@ -104,30 +53,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    public moveRight() {
-        this.setVelocityX(-this.moveVelocity);
-
-        this.flipX = false;
-        if (this.body?.touching.down) {
-            this.anims.play('run', true);
-        }
+    private canJump() {
+        return this.body?.blocked.down;
     }
 
-    public moveLeft() {
-        this.setVelocityX(this.moveVelocity);
-
-        this.flipX = true;  // Enables animation rotation
-        if (this.body?.touching.down) {
-            this.anims.play('run', true);
-        }
-    }
-
-    public moveStop() {
-        this.setVelocityX(0);
-
-        if (this.body?.touching.down) {
-            this.anims.play('idle', true);
-        }
+    private canJumpMidair() {
+        return !this.body?.blocked.down && (Date.now() - this.lastJumpTime) < 1000 && this.jumpButtonReleased && this.jumpInRowCount < this.jumpInRowCountMax-1;
     }
 
     private performJump(animationKey: string) {
@@ -139,19 +70,29 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.anims.play(animationKey, true);
     }
 
-    private canAttackCooldown() {
-        const currentTime = Date.now();
-        if (currentTime - this.lastAttackTime > this.weapon.attackCooldown) {
-            this.lastAttackTime = currentTime;
-            return true;
+    public moveRight() {
+        this.setVelocityX(-this.moveVelocity);
+
+        this.flipX = false;
+        if (this.body?.blocked.down) {
+            this.anims.play('run', true);
         }
-        return false;
     }
 
-    private determineAttackPixels() {
-        switch (this.direction) {
-            case Direction.RIGHT:
-                
+    public moveLeft() {
+        this.setVelocityX(this.moveVelocity);
+
+        this.flipX = true;  // Enables animation rotation
+        if (this.body?.blocked.down) {
+            this.anims.play('run', true);
+        }
+    }
+
+    public moveStop() {
+        this.setVelocityX(0);
+
+        if (this.body?.blocked.down) {
+            this.anims.play('idle', true);
         }
     }
 
@@ -169,72 +110,105 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    public spawn() {
-        this.scene.add.existing(this);
-        this.setCollideWorldBounds(true);
-
-        this.body?.setSize(32, 32);
-        this.refreshBody();
-        this.body?.setOffset(32, 64);
-        this.anims.play('appear', true);
-
-        this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
-            if (anim.key === 'appear') {
-                this.body?.setOffset(0,0);
-                this.anims.play('idle', true);
-            }
-        });
-    }
-
-    public despawn() {
-        // this.body?.setSize(32, 32);
-        console.log('halo');
-        this.anims.play('disappear', true);
-    }
-
     public respawn(x: number, y: number) {
+        this.setCollideWorldBounds(true);
         this.setVisible(true);
         this.x = x;
         this.y = y;
+        this.setOrigin(0,0);
 
-        this.anims.play('appear', true);
+
+
+        // this.anims.play('appear', true);
+        // this.setOrigin(0.5, 0.5);
+        this.body?.setSize(32, 32);
+        this.body?.setOffset(32, 32);
+        // this.setOrigin(0.5, 1);
+        this.refreshBody();
 
         this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
             if (anim.key === 'appear') {
-                console.log('hm');
+                this.setVelocityY(0);
                 this.body?.setOffset(0,0);
                 this.anims.play('idle', true);
             }
         });
-    
-        // player.setCollideWorldBounds(true);
-        // player.setSize(32, 32);
-        // player.anims.play('idle', true);
     }
 
-    public kill() {
-        // this.setVisible(false);
-        
-        // this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
-        //     if (anim.key === 'disappear') {
-        //         this.setVisible(false);
-        //         this.anims.stop();
-        //         this.destroy();
-        //     }
-        // });
+    public kill(): Promise<void> {
+        return new Promise((resolve) => {
+            this.canControl = false;
+            this.setVelocityX(0);
+            this.setVelocityY(300);
+
+        this.body?.setOffset(32, 32);
+            this.anims.play('disappear', true);
+            this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
+                if (anim.key === 'disappear') {
+                    resolve();
+                }
+            })
+        });
     }
 
     public override update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
-        if (this && this.active) {
+        if (this && this.active && this.canControl) {
         this.handlePlayerMovement(cursors);
 
         if (cursors.up.isUp) {
             this.jumpButtonReleased = true;
         }
 
-        if (this.body?.touching.down) {
+        if (this.body?.blocked.down) {
             this.jumpInRowCount = 0;
         }
+
+        // console.log('x:', this.x)
+        // console.log(this.y);
     }
-}
+    }
+
+    private loadAnimations() {
+        this.scene.anims.create({
+            key: 'appear',
+            frames: this.scene.anims.generateFrameNumbers('appear', { start: 0, end: 6 }),
+            frameRate: 25,
+            repeat: 0
+        });
+
+        this.scene.anims.create({
+            key: 'idle',
+            frames: this.scene.anims.generateFrameNumbers('frog-idle', { start: 0, end: 10 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'run',
+            frames: this.scene.anims.generateFrameNumbers('frog-move', { start: 0, end: 11 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'jump',
+            frames: this.scene.anims.generateFrameNumbers('frog-jump', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'jump-midair',
+            frames: this.scene.anims.generateFrameNumbers('frog-jump-midair', { start: 0, end: 4 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'disappear',
+            frames: this.scene.anims.generateFrameNumbers('disappear', { start: 0, end: 4 }),
+            frameRate: 25,
+            repeat: 0
+        });
+    }
 }
