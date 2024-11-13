@@ -20,7 +20,7 @@ import {
 import {TestHistoryListComponent} from "./components/test-history/test-history-list/test-history-list.component";
 import {TestHistoryGuard} from "./guards/test-history.guard";
 const routes: Routes = [
-  { path: '', component: HomeComponent, canActivate: [authGuard] },
+  { path: '', component: JoinLobbyComponent, canActivate: [authGuard] },
   { path: 'create-lobby', component: CreateLobbyComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'join-lobby', component: JoinLobbyComponent, canActivate: [authGuard]},
   { path: 'game', component: GameComponent, canActivate: [authGuard]},
@@ -34,8 +34,8 @@ const routes: Routes = [
   { path: 'tests/:id', component: TestDetailsComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'test-history', component: TestHistoryComponent, canActivate: [authGuard]},
   { path: 'test-history/:id/:userId', component: TestHistoryDetailsComponent, canActivate: [authGuard, TestHistoryGuard]},
-  { path: 'test-history/:id', component: TestHistoryListComponent, canActivate: [authGuard, RoleGuard] }
-
+  { path: 'test-history/:id', component: TestHistoryListComponent, canActivate: [authGuard, RoleGuard] },
+  { path: 'ankieta', component: HomeComponent, canActivate: [authGuard]}
 ];
 
 @NgModule({
