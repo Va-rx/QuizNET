@@ -1,5 +1,6 @@
 <div class="role-container">
-  <h4>Do you want to share health with other player</h4>
-  <button mat-button (click)="shareHealth(true)">Yes</button>
-  <button mat-button (click)="shareHealth(false)">No</button>
+  <h4>Czy chcesz przekazać reszte swojego zdrowia innym graczom?</h4>
+  <button mat-button (click)="shareHealth(ShareHealthAnswer.NO)">Nie</button>
+  <button mat-button (click)="shareHealth(ShareHealthAnswer.YES)">Przekaż zdrowie losowemu graczowi</button>
+  <button mat-button (click)="shareHealth(ShareHealthAnswer.SPLIT)">Rodziel je między wszystkich graczy</button>
 </div>

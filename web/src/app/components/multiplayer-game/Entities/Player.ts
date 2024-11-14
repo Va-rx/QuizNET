@@ -8,7 +8,7 @@ export class Player {
   health: number;
   healthBar!: Phaser.GameObjects.Graphics;
   canMove!: boolean;
-  isTargetable!: boolean;
+  isTargetable: boolean = true;
   direction = 'down';
   lastDirection = 'idleDown';
   questionsAnswered = 0;
@@ -21,6 +21,7 @@ export class Player {
   movementSpeed = 1.3;
   visibilityScale: number = 9;
   vision;
+  isAnswering: boolean = false;
 
   // Offensive
   offensivePowerUps: string[] = ['damage', 'attackRange'];
@@ -32,14 +33,12 @@ export class Player {
     this.sprite.setScale(2);
     this.health = health;
     this.canMove = false;
-    this.isTargetable = false;
     this.healthBar = this.sprite.scene.add.graphics();
     this.id = id;
     this.drawHealthBar();
     this.vision = vision;
     this.vision.scale = this.visibilityScale;
-
-    this.nameText = this.sprite.scene.add.text(this.sprite.x, this.sprite.y - 50, 'debil2137', {
+    this.nameText = this.sprite.scene.add.text(this.sprite.x, this.sprite.y - 50, nickname, {
       fontSize: '16px',
       color: '#ffffff'
     }).setOrigin(0.5);
@@ -49,6 +48,7 @@ export class Player {
     this.attackDamage = damage;
   }
   public collectStar(): void{
+    this.isAnswering = true;
     this.isTargetable = false;
     this.canMove = false;
     this.sprite.setVisible(false);
@@ -56,7 +56,10 @@ export class Player {
     this.healthBar.setVisible(false);
   }
 
+
+  // Used only after collecting star
   public showPlayer(): void{
+    this.isAnswering = false;
     this.isTargetable = true;
     this.canMove = true;
     this.sprite.setVisible(true);
@@ -68,6 +71,14 @@ export class Player {
     this.sprite.setVisible(false);
     this.healthBar.setVisible(false);
     this.nameText.setVisible(false);
+  }
+
+  public unHidePlayer(): void {
+    if (!this.isAnswering) {
+      this.sprite.setVisible(true);
+      this.healthBar.setVisible(true);
+      this.nameText.setVisible(true);
+    }
   }
 
   public removePlayer(): void{
@@ -88,7 +99,7 @@ export class Player {
     const barWidth = 100;
     const barHeight = 10;
     const borderColor = 0x000000;
-    const fillColor = 0xff0000;
+    const fillColor = this.sprite.name === 'enemy' ? 0xff0000 : 0x00ff00;
     this.healthBar.clear();
     this.healthBar.lineStyle(2, borderColor);
     this.healthBar.strokeRect(this.sprite.x - barWidth / 2, this.sprite.y - 40, barWidth, barHeight);
@@ -121,25 +132,19 @@ export class Player {
   }
 
   public addPowerUp(powerUp: string): void {
-    console.log('powerup', powerUp);
       switch (powerUp) {
         case 'attackRange':
           this.attackRange += 20;
-          console.log('dodałem zasięg');
           break;
         case 'damage':
           this.attackDamage += 10;
-          console.log('dodałem obrażenia');
           break;
         case 'health':
-
           this.maxHealth = 200;
           this.health = this.maxHealth;
-          console.log('dodałem zdrowie');
           break;
         case 'speed':
           this.movementSpeed += 1.0;
-          console.log('dodałem szybkość');
           break;
       }
   }

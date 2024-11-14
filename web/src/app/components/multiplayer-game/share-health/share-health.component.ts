@@ -8,9 +8,16 @@ import {MatDialogRef} from "@angular/material/dialog";
 })
 export class ShareHealthComponent {
 
+  ShareHealthAnswer = ShareHealthAnswer;
   constructor(private dialogRef: MatDialogRef<ShareHealthComponent>) {}
-  shareHealth(value: boolean): void {
+  shareHealth(value: ShareHealthAnswer): void {
     this.dialogRef.close(value);
   }
 
+}
+
+export enum ShareHealthAnswer {
+  NO,
+  YES,
+  SPLIT
 }

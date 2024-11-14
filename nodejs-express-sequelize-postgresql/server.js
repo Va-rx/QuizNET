@@ -19,7 +19,7 @@ var corsOptions = {
 // Multiplayeer Game
 const players = {};
 var stars = [];
-var maxNumberOfStars = 5;
+var maxNumberOfStars;
 var starsCounter = 0;
 var maxHealth = 100;
 const maxQuestions = 2;
@@ -28,11 +28,20 @@ let countdownInterval;
 const playerSpeed = 1.3;
 let MAX_HEIGHT = 1280;
 let MAX_WIDTH = 720;
+var readyClients = 0;
+let spawnInterval;
+var boundariesSet = false;
 
 const MultiplayerRoles = Object.freeze({
   OFFENSIVE: 0,
   DEFENSIVE: 1,
   NONE: 2
+});
+
+const ShareHealthAnswer = Object.freeze({
+  NO: 0,
+  YES: 1,
+  SPLIT: 2
 });
 
 offensivePowerUps = ['damage', 'attackRange'];
@@ -69,11 +78,6 @@ const sessions = new Map();
 const userToSocket = new Map();
 const socketToUser = new Map();
 io.on("connection", async (socket) => {
-  players[socket.id] = {
-    x: 100, y: 450, id: socket.id, hp: maxHealth, visible: true, role: null, isTargetable: true,
-    questionsAnswered: 0, attackDamage: 10, attackRange: 50, maxHealth: maxHealth, speed: 1.3, playersKilled: 0
-  };
-
   socket.on('requestCurrentPlayers', () => {
     socket.emit('currentPlayers', players);
   });
@@ -83,13 +87,19 @@ io.on("connection", async (socket) => {
   });
 
   socket.on('mapBoundaries', (boundaries) => {
+
     MAX_WIDTH = boundaries.width;
-    MAX_HEIGHT = boundaries.height;
+    MAX_HEIGHT = boundaries.height
+    if (!boundariesSet) {
+      boundariesSet = true;
+      Object.values(players).forEach(player => {
+        player.x = Math.floor(Math.random() * MAX_WIDTH);
+        player.y = Math.floor(Math.random() * MAX_HEIGHT);
+        console.log(player.x, player.y);
+        io.emit('randomPlacePlayers', { id: player.id, x: player.x, y: player.y});
+      });
+    }
   })
-  socket.broadcast.emit('newPlayer', {
-    id: socket.id, x: 100, y: 100, hp: maxHealth, visible: true, role: null, isTargetable: true,
-    questionsAnswered: 0, attackDamage: 10, attackRange: 50, maxHealth: maxHealth, speed: 1.3, playersKilled: 0
-  });
 
   socket.on('playerMovement', (movementData, direction, boundaries) => {
     const player = players[socket.id];
@@ -119,8 +129,8 @@ io.on("connection", async (socket) => {
       player.hp -= players[attackerId].attackDamage;
       io.emit('playerAttacked', {id: targetId, hp: player.hp});
       if (player.hp <= 0) {
-        player.x = Math.floor(Math.random() * 800);
-        player.y = Math.floor(Math.random() * 600);
+        player.x = Math.floor(Math.random() * MAX_WIDTH);
+        player.y = Math.floor(Math.random() * MAX_HEIGHT);
         player.hp = player.maxHealth;
         const attacker = players[attackerId];
         attacker.playersKilled++;
@@ -164,9 +174,33 @@ io.on("connection", async (socket) => {
     io.emit('playerQuestionAnswered', playerId, player.questionsAnswered);
   })
 
-  socket.on('MULTIPLAYER_shareHealth', (playerId) => {
-    const filteredPlayers = Object.values(players);
-    console.log(filteredPlayers);
+  socket.on("clientReady", () => {
+    readyClients++;
+    if (readyClients === Object.keys(players).length) {
+      spawnStar();
+    }
+  });
+
+  socket.on('MULTIPLAYER_shareHealth', (playerId, shareType) => {
+    const filteredPlayers = Object.values(players).filter(player => (player.id !== playerId && player.questionsAnswered < maxQuestions));
+    if (filteredPlayers && filteredPlayers.length > 0) {
+      switch (shareType) {
+        case ShareHealthAnswer.YES:
+          const randomPlayer = filteredPlayers[Math.floor(Math.random() * filteredPlayers.length)];
+          players[randomPlayer.id].hp = Math.min(players[randomPlayer.id].hp + players[playerId].hp, players[randomPlayer.id].maxHealth); // Adjust the health value as needed
+          io.emit('healthShared', [{ id: randomPlayer.id, hp: players[randomPlayer.id].hp }]);
+          break
+        case ShareHealthAnswer.SPLIT:
+          const healthToShare = Math.floor(players[playerId].hp / filteredPlayers.length);
+          filteredPlayers.forEach(player => {
+            players[player.id].hp = Math.min(players[player.id].hp + healthToShare, players[player.id].maxHealth);
+          });
+          io.emit('healthShared', filteredPlayers.map(player => ({ id: player.id, hp: players[player.id].hp })));
+          break
+      }
+    }
+
+
   });
   // update PLayers
   //Multiplayer Game
@@ -241,6 +275,10 @@ io.on("connection", async (socket) => {
       session.users.push(socket);
       console.log("Event participant joined the event");
       socket.emit("joinedConfirmation");
+      players[socket.id] = {
+        x: 100, y: 450, id: socket.id, hp: maxHealth, visible: true, role: null, isTargetable: true,
+        questionsAnswered: 0, attackDamage: 10, attackRange: 50, maxHealth: maxHealth, speed: 1.3, playersKilled: 0, nickname: userName
+      };
       broadcastUserList(session);
     } else {
       console.log("Invalid join code");
@@ -257,17 +295,16 @@ io.on("connection", async (socket) => {
 
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
       const xml = await generateQuizXML(test_id);
-      console.log('Przed questionsNum');
       let questionsNum = parseInt((await getNumberOfQuestions(1)).rows[0].count);
-      console.log(`Questions number: ${questionsNum}`);
-      const maxNumberOfStars = questionsNum * Object.keys(players).length + 2;
-      console.log('po', maxNumberOfStars);
+      maxNumberOfStars = questionsNum * Object.keys(players).length + 2;
       const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
       if (session) {
-        setInterval(spawnStar, 5000);
+        starsCounter = 0;
+        stars = [];
+        readyClients = 0;
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id, players);
           }
         });
       }
@@ -288,13 +325,6 @@ io.on("connection", async (socket) => {
   // Handle disconnection
   socket.on("disconnect", () => {
     console.log("User disconnected");
-    // let count = 0;
-    // for (player of players){
-    //     if (player.id == socket.id){
-    //         players.splice(count,1);
-    //     }
-    //     count++;
-    // }
     delete players[socket.id];
     io.emit('playerDisconnected', socket.id);
     sessions.forEach((session, _) => {
@@ -358,18 +388,19 @@ function generateJoinCode() {
 // Multiplayer Game
 
 function spawnStar() {
-  if (starsCounter >= maxNumberOfStars) {
-    return;
-  }
-  const x = Math.floor(Math.random() * MAX_WIDTH); // Assuming map width is 800
-  const y = Math.floor(Math.random() * MAX_HEIGHT); // Assuming map height is 600
-  const star = { x, y };
-  stars.push(star);
-  io.emit("spawnStar", star);
-  starsCounter++;
+  spawnInterval = setInterval(() => {
+    if (starsCounter >= maxNumberOfStars) {
+      clearInterval(spawnInterval)
+      return;
+    }
+    const x = Math.floor(Math.random() * MAX_WIDTH);
+    const y = Math.floor(Math.random() * MAX_HEIGHT);
+    const star = {x, y};
+    stars.push(star);
+    io.emit("spawnStar", star);
+    starsCounter++;
+  }, 5000);
 }
-
-setInterval(spawnStar, 5000);
 
 function startCountdown() {
   countdown = 5;

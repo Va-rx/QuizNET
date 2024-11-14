@@ -15,6 +15,7 @@ export class ScoreboardComponent implements OnChanges {
   @Input() BARTLE_turrets_destroyed: number = 0; // Points for Achiever (normalized by allTurrets)
   @Input() allTurrets: number = 0; // Total number of turrets for normalization
   @Input() testName: string = '';
+  @Input() killerScore: number = 0;
   currentPlayerScore: number = 0;
   currentPlayerScoreOnlyQuestions: number = 0;
   currentPlayerPercentage: number = 0;

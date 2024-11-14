@@ -14,15 +14,18 @@
     nickname = '';
     questionsToAnswer = 2;
     players: { [id: string]: Player } = {};
+    startingPlayers: any;
     mapBoundaries: {height: number, width: number } = {height: 0, width: 0};
     visibilityRadius: number = 15;
+    bonusText;
 
     private socket: Socket;
 
-    constructor(config: Phaser.Types.Scenes.SettingsConfig, socket: Socket, nickname: string) {
+    constructor(config: Phaser.Types.Scenes.SettingsConfig, socket: Socket, startingPlayers: any) {
       super(config);
       this.socket = socket;
-      this.nickname = nickname;
+      this.startingPlayers = startingPlayers;
+
     }
 
     preload() {
@@ -59,8 +62,18 @@
       }
       }
 
+      for (let id in this.startingPlayers) {
+        this.addPlayer(id, this.startingPlayers[id]);
+        if (id === this.socket.id ) {
+          this.player = this.players[id];
+        }
+      }
 
 
+      this.bonusText = this.add.text(10, 10, 'Bonus: None', { fontSize: '16px'}).setDepth(5);
+      rt.mask = new Phaser.Display.Masks.GeometryMask(this, this.player.vision)
+      rt.mask.invertAlpha = true
+      this.cameras.main.startFollow(this.player.sprite, true);
 
       // fill it with black
 
@@ -76,19 +89,8 @@
       this.socket.emit('mapBoundaries', this.mapBoundaries);
 
       this.cameras.main.setBounds(0, 0, this.mapBoundaries.width, this.mapBoundaries.height);
-      this.socket.emit('requestCurrentPlayers');
+      // this.socket.emit('requestCurrentPlayers');
       this.socket.emit('requestCurrentStars');
-      this.socket.on('currentPlayers', (players) => {
-        for (let id in players) {
-          this.addPlayer(id, players[id]);
-          if (id === this.socket.id ) {
-            this.player = this.players[id];
-            rt.mask = new Phaser.Display.Masks.GeometryMask(this, this.player.vision)
-            rt.mask.invertAlpha = true
-            this.cameras.main.startFollow(this.player.sprite, true);
-          }
-        }
-      });
       this.game.events.emit('chooseRole');
 
       this.socket.on('currentStars', (stars) => {
@@ -102,14 +104,10 @@
 
       this.pointer = this.input.activePointer;
 
-      this.socket.on('newPlayer', (player) => {
-        this.addPlayer(player.id, player);
-      });
-
       this.socket.on('gameFinished', (id) => {
         if (this.players[id]) {
           if (id === this.socket.id) {
-            this.game.events.emit('requestFinishGame');
+            this.game.events.emit('requestFinishGame', this.player.playersKilled);
           }
           this.players[id].removePlayer();
           delete this.players[id];
@@ -173,8 +171,10 @@
         if (killedPlayer) {
           killedPlayer.health = player.hp;
           killedPlayer.stopAnimation = true;
+          killedPlayer.isTargetable = false;
           killedPlayer.sprite.anims.play('death', true).once('animationcomplete', () => {
             killedPlayer.stopAnimation = false;
+            killedPlayer.isTargetable = true;
             killedPlayer.sprite.setPosition(player.x, player.y);
           });
         }
@@ -327,6 +327,23 @@
         this.addStar(star.x, star.y);
       });
 
+      this.socket.on('healthShared', (players) => {
+        players.forEach((player: {id: number, hp: number}) => {
+          if (this.players[player.id]) {
+            this.players[player.id].health = player.hp;
+            this.players[player.id].updateHealthBar();
+          }
+        })
+      })
+
+      this.socket.on('randomPlacePlayers', (player: {id: string, x: number, y: number}) => {
+        if (this.players[player.id]) {
+          this.players[player.id].sprite.setPosition(player.x, player.y);
+        }
+      });
+
+
+      this.socket.emit('clientReady');
     }
 
     override update() {
@@ -357,6 +374,7 @@
       }
       this.checkPlayerVisibility();
       this.player.updateNameText();
+      this.bonusText.setPosition(this.cameras.main.scrollX + 10, this.cameras.main.scrollY + 10)
     }
     }
 
@@ -365,35 +383,39 @@
       if (this.players[id]) {
         this.players[id].role = role;
         this.players[id].addPowerUp(powerUp);
+        if (id === this.socket.id) {
+          this.bonusText.setText(`Bonus: ${powerUp}`);
+        }
       }
     }
 
-    addPlayer(id, position) {
+    addPlayer(id, player) {
       if (!this.players[id]) {
-        const playerSprite = this.matter.add.sprite(position.x, position.y, 'dude').setCircle(12).setOrigin(0.5, 0.65);
+        const playerSprite = this.matter.add.sprite(player.x, player.y, 'dude').setCircle(12).setOrigin(0.5, 0.65);
         playerSprite.setName(this.socket.id === id ? 'dude' : 'enemy');
-        // playerSprite.setStatic(true);
-        const vision = this.make.graphics({ x: position.x, y: position.y });
+        const vision = this.make.graphics({ x: player.x, y: player.y });
         vision.fillStyle(0xffffff, 0.5);
-        vision.fillCircle(0, 0, this.visibilityRadius); // Adjust the radius as needed
+        vision.fillCircle(0, 0, this.visibilityRadius);
 
-        this.players[id] = new Player(playerSprite, this.nickname, 100, id, vision);
+        this.players[id] = new Player(playerSprite, player.nickname, 100, id, vision);
       }
     }
 
     addStar(x, y){
-      let star = this.matter.add.image(x, y, 'star');
-      star.setName('star');
-      star.setSensor(true);
-      star.setOnCollide((pair) => {
-        const {bodyA, bodyB} = pair;
-        if (bodyA.gameObject && bodyB.gameObject) {
-          if (bodyA.gameObject.name == 'star' && bodyB.gameObject.name == 'dude' || bodyA.gameObject.name == 'dude' && bodyB.gameObject.name == 'star') {
-            this.socket.emit('collectStar',  star, this.socket.id);
+      if (this.matter.add) {
+        let star = this.matter.add.image(x, y, 'star');
+        star.setName('star');
+        star.setSensor(true);
+        star.setOnCollide((pair) => {
+          const {bodyA, bodyB} = pair;
+          if (bodyA.gameObject && bodyB.gameObject) {
+            if (bodyA.gameObject.name == 'star' && bodyB.gameObject.name == 'dude' || bodyA.gameObject.name == 'dude' && bodyB.gameObject.name == 'star') {
+              this.socket.emit('collectStar', star, this.socket.id);
+            }
           }
-        }
-      });
-      this.stars.push(star);
+        });
+        this.stars.push(star);
+      }
     }
 
     removeStar(star) {
@@ -411,7 +433,7 @@
           const otherPlayer = this.players[id];
           const distance = Phaser.Math.Distance.Between(this.player.sprite.x, this.player.sprite.y, otherPlayer.sprite.x, otherPlayer.sprite.y);
           if (distance <= visionRadius) {
-            otherPlayer.showPlayer();
+            otherPlayer.unHidePlayer();
           } else {
             otherPlayer.hidePlayer();
           }

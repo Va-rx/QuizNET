@@ -32,7 +32,6 @@ export class RoleDialogComponent implements OnInit{
   }
 
   choose(role: MultiplayerRoles): void {
-    console.log(role);
     this.chosenRole = role;
   }
 

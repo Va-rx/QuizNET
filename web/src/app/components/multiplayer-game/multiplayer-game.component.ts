@@ -12,7 +12,7 @@ import {Question} from "../../models/question.model";
 import {AuthService} from "../../services/auth/auth.service";
 import {UserAnswersService} from "../../services/user-answers/user-answers.service";
 import {UserResultsService} from "../../services/user-results/user-results.service";
-import {ShareHealthComponent} from "./share-health/share-health.component";
+import {ShareHealthAnswer, ShareHealthComponent} from "./share-health/share-health.component";
 
 @Component({
   selector: 'app-multiplayer-game',
@@ -23,6 +23,8 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   phaserGame!: Phaser.Game;
   config!: Phaser.Types.Core.GameConfig;
   private socket: any;
+  testId!: number;
+  historyTestId!: number;
   test!: Test;
   roles: string[] = ['offensive', 'defensive'];
   questions: Question[] = []
@@ -31,9 +33,14 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   testName: string = '';
   gameFinished: boolean = false;
   scoreBoardMap: Map<string, number> = new Map<string, number>();
+  killBoardMap: Map<string, [string, number]> = new Map<string, [string, number]>();
+  killBoard: any[] = [];
   scoreBoard: any[] = [];
   nickname = '';
   playerScore = 0;
+  killerScore = 0;
+  socializerScore = 0;
+  players;
 
   constructor(private socketService:SocketServiceService,
               private dialog: MatDialog,
@@ -46,7 +53,16 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
 
   async ngOnInit(): Promise<void> {
     this.socket=this.socketService.getSocket();
+    this.testId=history.state.data.testId;
+    this.historyTestId = history.state.data.testHistoryId;
+    this.players = history.state.data.multiplayerPlayers;
 
+
+    Object.keys(this.players).forEach((key) => {
+      this.killBoardMap.set(this.players[key].id, [this.players[key].nickname,0]);
+    });
+
+    this.killBoard = Array.from(this.killBoardMap.entries());
     this.config = {
       type: Phaser.AUTO,
       width: 1280,
@@ -55,7 +71,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
-      scene: new multiplayerScene({key: 'multiplayerScene'}, this.socket, this.nickname),
+      scene: new multiplayerScene({key: 'multiplayerScene'}, this.socket, this.players),
       parent: 'gameContainer',
       physics: {
         default: 'matter',
@@ -69,10 +85,6 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
       }
     };
     this.phaserGame = new Phaser.Game(this.config);
-
-    this.socket.on('currentPlayers', (players) => {
-      this.phaserGame.scene.game.events.emit('currentPlayers', players);
-    });
     await this.loadTestDetails()
 
     this.phaserGame.scene.game.events.on('chooseRole', (data) => {
@@ -101,14 +113,20 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     });
 
     this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
-      console.log(jsonScoreBoard);
       this.scoreBoardMap = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
       this.scoreBoard = Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({ username, score }));
-      console.log(this.scoreBoard);
     });
 
-    this.phaserGame.scene.game.events.on('requestFinishGame', () => {
 
+    this.socket.on('playerKilled', (killer)=> {
+      if (this.players[killer.killerId]) {
+        this.killBoardMap.set(killer.killerId, [this.players[killer.killerId].nickname, killer.killerKills])
+        this.killBoard = Array.from(this.killBoardMap.entries());
+      }
+    })
+
+    this.phaserGame.scene.game.events.on('requestFinishGame', (playersKilled: number) => {
+      this.killerScore = ((Math.min(playersKilled, 5)) / 5) * 100;
       this.finishGame();
     });
 
@@ -120,7 +138,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
 
   async loadTestDetails() {
     try {
-      const data = await this.testService.getTestDetails(1).toPromise();
+      const data = await this.testService.getTestDetails(this.testId).toPromise();
       this.questions = data.questions;
       this.maxLevel = data.questions.length;
       this.testMaxPoints = data.maxPoints;
@@ -131,9 +149,8 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   }
 
   finishGame(){
-    let results = this.userAnswersService.getWrappedResult(1);
+    let results = this.userAnswersService.getWrappedResult(this.historyTestId);
     this.userResultsService.create(results).subscribe(data => {
-      console.log(data);
     });
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
     this.socket.off('spawnStar');
@@ -157,10 +174,18 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     const dialogRef = this.dialog.open(ShareHealthComponent, {
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.socket.emit('MULTIPLAYER_shareHealth', this.socketService.getUserId());
-      }
+    dialogRef.afterClosed().subscribe((result: ShareHealthAnswer) => {
+        this.socket.emit('MULTIPLAYER_shareHealth', this.socket.id, result);
+        switch (result) {
+          case ShareHealthAnswer.YES:
+          case ShareHealthAnswer.SPLIT:
+            this.socializerScore = Math.max(100 - this.killerScore, 20);
+            break
+          case ShareHealthAnswer.NO:
+            this.socializerScore = 0;
+            break;
+
+        }
     });
 
     this.phaserGame.destroy(true);
