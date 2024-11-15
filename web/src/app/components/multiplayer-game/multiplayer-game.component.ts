@@ -27,7 +27,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   test!: Test;
   roles: string[] = ['offensive', 'defensive'];
   questions: Question[] = []
-  maxLevel: number = -1;
+  maxQuestions: number = -1;
   testMaxPoints: number = 0;
   testName: string = '';
   gameFinished: boolean = false;
@@ -55,7 +55,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.testId=history.state.data.testId;
     this.historyTestId = history.state.data.testHistoryId;
     this.players = history.state.data.multiplayerPlayers;
-
+    this.maxQuestions = history.state.data.maxQuestions;
 
     Object.keys(this.players).forEach((key) => {
       this.killBoardMap.set(this.players[key].id, [this.players[key].nickname,0]);
@@ -70,7 +70,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
-      scene: new multiplayerScene({key: 'multiplayerScene'}, this.socket, this.players),
+      scene: new multiplayerScene({key: 'multiplayerScene'}, this.socket, this.players, this.maxQuestions),
       parent: 'gameContainer',
       physics: {
         default: 'matter',
@@ -87,7 +87,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     await this.loadTestDetails()
 
     const roleDialogRef = this.dialog.open(RoleDialogComponent, {
-      data: { roles: this.roles },
+      data: { roles: this.roles, maxQuestions: this.maxQuestions },
       disableClose: true
     });
 
@@ -137,7 +137,6 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     try {
       const data = await this.testService.getTestDetails(this.testId).toPromise();
       this.questions = data.questions;
-      this.maxLevel = data.questions.length;
       this.testMaxPoints = data.maxPoints;
       this.testName = data.name;
     } catch (error) {

@@ -15,7 +15,7 @@ export class RoleDialogComponent implements OnInit{
   chosenRole: MultiplayerRoles = MultiplayerRoles.NONE;
   timeLeft!: number;
   MultiplayerRoles = MultiplayerRoles;
-  constructor(private socketService: SocketServiceService, @Inject(MAT_DIALOG_DATA) public data: {roles: string[]}, private dialogRef: MatDialogRef<RoleDialogComponent>) {
+  constructor(private socketService: SocketServiceService, @Inject(MAT_DIALOG_DATA) public data: {roles: string[], maxQuestions: number}, private dialogRef: MatDialogRef<RoleDialogComponent>) {
   }
 
   ngOnInit(): void {

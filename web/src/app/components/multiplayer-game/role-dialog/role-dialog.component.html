@@ -1,26 +1,43 @@
 <div class="container">
     <div class="role-container">
-      <h2>Witaj!! </h2>
+      <h2 class="title">Witaj graczu!! </h2>
       <h6> Celem gry jest zbieranie gwiazdek, które umożliwią nam odpowiedzieć na pytania. W trakcie gry gracze mogą sobie
-        nawzajem przeszkadzać, atakując innych graczy. Do wyboru są dwie klasy: Defensive oraz Offensive.
-        Wybierając klasę defensive otrzymasz dodatkowe punkty życia lub prędkości ruchu,
-        natomiast wybierając klasę offensive otrzymasz dodatkowe punkty obrażeń lub zasięgu ataku.
+        nawzajem przeszkadzać, atakując się nawzajem. Do wyboru są dwie klasy: Defensywna oraz Ofensywna.
+        Wybierając klasę defensywną otrzymasz dodatkowe punkty życia lub prędkości ruchu,
+        natomiast wybierając klasę ofensyną otrzymasz dodatkowe punkty obrażeń lub zasięgu ataku.
+        <br/>
+        Gracz kończy swoją rozgrywę po zebraniu <b>{{data.maxQuestions}}</b> gwiazdek
       </h6>
-      <h4>Wybierz jedną z dostępnych klas aby otrzymać dodatkowy bonus do statystyk</h4>
+
+      <h4 class="title">Sterowanie</h4>
+
+      <div style="display: flex; justify-content: center;">
+        <h6>Ruch: &nbsp;  </h6>
+        <mat-icon>arrow_back</mat-icon>
+        <mat-icon>arrow_forward</mat-icon>
+        <mat-icon>arrow_upward</mat-icon>
+        <mat-icon>arrow_downward</mat-icon>
+      </div>
+      <div style="display: flex; justify-content: center;">
+        <h6>Atak: &nbsp;</h6>
+        <mat-icon>mouse</mat-icon> - lewy przycisk myszy
+      </div>
+
+      <h4 class="title">Wybierz jedną z dostępnych klas aby otrzymać dodatkowy bonus do statystyk</h4>
+      <h5 class="title"> (W przypadku braku wyboru klasa jest losowana)</h5>
       <div class="row">
         <div class="col-sm">
           <button class="answer" [ngClass]="{'answer-selected': chosenRole === MultiplayerRoles.DEFENSIVE}" (click)="choose(MultiplayerRoles.DEFENSIVE)">
-            Defensive
-            <mat-icon>shield</mat-icon>
+            Klasa defensywna
           </button>
         </div>
         <div class="col-sm">
           <button class="answer pull" [ngClass]="{'answer-selected': chosenRole === MultiplayerRoles.OFFENSIVE}" (click)="choose(MultiplayerRoles.OFFENSIVE)">
-            Offensive
-            <mat-icon fontIcon="swords"></mat-icon>
+            Klasa ofensywna
           </button>
         </div>
-        <h4 class="">Time left: {{timeLeft}}</h4>
+        <mat-divider></mat-divider>
+        <p class="time-left">Czas do rozpoczęcia rozgrywki: {{timeLeft}} sekund</p>
       </div>
     </div>
 

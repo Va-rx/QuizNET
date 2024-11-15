@@ -16,15 +16,17 @@ export default class multiplayerScene extends Phaser.Scene {
   startingPlayers: any;
   mapBoundaries: {height: number, width: number } = {height: 0, width: 0};
   visibilityRadius: number = 15;
-  bonusText;
+  bonusText!: Phaser.GameObjects.Text;
+  questionsLeftText!: Phaser.GameObjects.Text;
+  maxQuestions: number = 0;
 
   private socket: Socket;
 
-  constructor(config: Phaser.Types.Scenes.SettingsConfig, socket: Socket, startingPlayers: any) {
+  constructor(config: Phaser.Types.Scenes.SettingsConfig, socket: Socket, startingPlayers: any, maxQuestions: number) {
     super(config);
     this.socket = socket;
     this.startingPlayers = startingPlayers;
-
+    this.maxQuestions = maxQuestions;
   }
 
   preload() {
@@ -69,7 +71,37 @@ export default class multiplayerScene extends Phaser.Scene {
     }
 
 
-    this.bonusText = this.add.text(10, 10, 'Bonus: None', { fontSize: '16px'}).setDepth(5);
+
+    this.bonusText = this.add.text(10, 10, 'Bonus: None', {  fontSize: '16px',
+      fontStyle: 'bold',
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 4,
+      shadow: {
+        offsetX: 2,
+        offsetY: 2,
+        color: '#000000',
+        blur: 2,
+        stroke: true,
+        fill: true
+      }}).setDepth(5);
+
+    this.questionsLeftText = this.add.text(10, 30, '', {
+      fontSize: '16px',
+      fontStyle: 'bold',
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 4,
+      shadow: {
+        offsetX: 2,
+        offsetY: 2,
+        color: '#000000',
+        blur: 2,
+        stroke: true,
+        fill: true
+      }
+    }).setDepth(5);
+
     rt.mask = new Phaser.Display.Masks.GeometryMask(this, this.player.vision)
     rt.mask.invertAlpha = true
     this.cameras.main.startFollow(this.player.sprite, true);
@@ -372,6 +404,7 @@ export default class multiplayerScene extends Phaser.Scene {
       this.checkPlayerVisibility();
       this.player.updateNameText();
       this.bonusText.setPosition(this.cameras.main.scrollX + 10, this.cameras.main.scrollY + 10)
+      this.questionsLeftText.setText(`${this.player.questionsAnswered}/${this.maxQuestions}`).setPosition(this.cameras.main.scrollX + 10, this.cameras.main.scrollY + 30);
     }
   }
 

@@ -300,7 +300,7 @@ io.on("connection", (socket) => {
         readyClients = 0;
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions);
           }
         });
       }
