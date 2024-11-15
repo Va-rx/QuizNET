@@ -88,9 +88,7 @@ export default class multiplayerScene extends Phaser.Scene {
     this.socket.emit('mapBoundaries', this.mapBoundaries);
 
     this.cameras.main.setBounds(0, 0, this.mapBoundaries.width, this.mapBoundaries.height);
-    // this.socket.emit('requestCurrentPlayers');
     this.socket.emit('requestCurrentStars');
-    this.game.events.emit('chooseRole');
 
     this.socket.on('currentStars', (stars) => {
       for (let star of stars) {
@@ -418,10 +416,12 @@ export default class multiplayerScene extends Phaser.Scene {
   }
 
   removeStar(star) {
-    const index = this.stars.findIndex(s => s.x === star.x && s.y === star.y);
-    if (index !== -1) {
-      this.stars[index].destroy();
-      this.stars.splice(index, 1);
+    if (star) {
+      const index = this.stars.findIndex(s => s.x === star.x && s.y === star.y);
+      if (index !== -1) {
+        this.stars[index].destroy();
+        this.stars.splice(index, 1);
+      }
     }
   }
 

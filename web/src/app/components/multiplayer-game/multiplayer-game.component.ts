@@ -1,8 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import Phaser, {Scene} from "phaser";
+import Phaser from "phaser";
 import {SocketServiceService} from "../../services/socket/socket-service.service";
 import {MatDialog} from "@angular/material/dialog";
-import Example from "../game/example-scene";
 import multiplayerScene from "./multiplayer-scene";
 import {TestService} from "../../services/test/test.service";
 import {QuestionViewComponent} from "../question-view/question-view.component";
@@ -87,17 +86,16 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.phaserGame = new Phaser.Game(this.config);
     await this.loadTestDetails()
 
-    this.phaserGame.scene.game.events.on('chooseRole', (data) => {
-
-      const dialogRef = this.dialog.open(RoleDialogComponent, {
-        data: { roles: this.roles },
-        disableClose: true
-      });
-
-      dialogRef.afterClosed().subscribe(() => {
-        this.phaserGame.scene.game.events.emit('enableMovement');
-      });
+    const roleDialogRef = this.dialog.open(RoleDialogComponent, {
+      data: { roles: this.roles },
+      disableClose: true
     });
+
+    roleDialogRef.afterClosed().subscribe(chosenRole => {
+      this.socket.emit('roleChosen', chosenRole, this.socket.id);
+      this.phaserGame.scene.game.events.emit('enableMovement');
+    });
+
 
     this.phaserGame.scene.game.events.on('spawnQuestion', (questionsAnswered) => {
       const dialogRef = this.dialog.open(QuestionViewComponent, {
@@ -149,8 +147,10 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   }
 
   finishGame(){
-    let results = this.userAnswersService.getWrappedResult(this.historyTestId);
+    let results = JSON.parse(this.userAnswersService.getWrappedResult(this.historyTestId));
+    results.score = Math.round(this.playerScore * 100) / 100;
     this.userResultsService.create(results).subscribe(data => {
+      console.log("Tu powinien być zwrócony wynik:",data);
     });
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
     this.socket.off('spawnStar');

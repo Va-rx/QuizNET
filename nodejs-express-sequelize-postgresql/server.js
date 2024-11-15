@@ -407,7 +407,7 @@ function spawnStar() {
 }
 
 function startCountdown() {
-  countdown = 5;
+  countdown = 50;
   io.emit('countdownUpdate', countdown);
 
   countdownInterval = setInterval(() => {
