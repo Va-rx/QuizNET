@@ -17,6 +17,7 @@ export class ScoreboardComponent implements OnChanges {
   @Input() testName: string = '';
   @Input() totalStars:number=0;
   @Input() totalHealth:number=0;
+  @Input() killerScore: number = 0;
   currentPlayerScore: number = 0;
   currentPlayerScoreOnlyQuestions: number = 0;
   currentPlayerPercentage: number = 0;

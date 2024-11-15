@@ -38,6 +38,10 @@ import {MatTableModule} from "@angular/material/table";
 import {MatSortModule} from "@angular/material/sort";
 import { TimerComponent } from './components/timer/timer.component';
 import { LiveScoreBoardComponent } from './components/live-score-board/live-score-board.component';
+import { MultiplayerGameComponent } from './components/multiplayer-game/multiplayer-game.component';
+import { RoleDialogComponent } from './components/multiplayer-game/role-dialog/role-dialog.component';
+import { ShareHealthComponent } from './components/multiplayer-game/share-health/share-health.component';
+import {MatTabsModule} from "@angular/material/tabs";
 
 @NgModule({
   declarations: [
@@ -61,6 +65,9 @@ import { LiveScoreBoardComponent } from './components/live-score-board/live-scor
     TimerComponent,
     TestHistoryListComponent,
     LiveScoreBoardComponent,
+    MultiplayerGameComponent,
+    RoleDialogComponent,
+    ShareHealthComponent,
   ],
     imports: [
         BrowserModule,
@@ -79,7 +86,8 @@ import { LiveScoreBoardComponent } from './components/live-score-board/live-scor
         MatSnackBarModule,
         MatListModule,
         MatTableModule,
-        MatSortModule
+        MatSortModule,
+        MatTabsModule
     ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]
