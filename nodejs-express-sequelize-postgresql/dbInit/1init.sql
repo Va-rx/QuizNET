@@ -55,7 +55,7 @@ CREATE TABLE tests (
 CREATE TABLE test_history (
     id int  NOT NULL,
     test_name varchar(50)  NOT NULL,
-    content varchar(100000)  NOT NULL,
+    content text NOT NULL,
     created_at timestamp  NOT NULL,
     CONSTRAINT test_history_pk PRIMARY KEY (id)
 );

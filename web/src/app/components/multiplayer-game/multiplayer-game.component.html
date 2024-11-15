@@ -1,0 +1,41 @@
+<div class="main_container" *ngIf="!gameFinished">
+  <div class="container">
+    <h2>Scoreboard</h2>
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
+      <mat-tab label="First">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Username</th>
+            <th>Score</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let player of scoreBoard">
+            <td>{{ player.username }}</td>
+            <td>{{ player.score }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </mat-tab>
+      <mat-tab label="Second">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Username</th>
+            <th>Players Killed</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let player of killBoard">
+            <td>{{ player[1][0] }}</td>
+            <td>{{ player[1][1] }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
+
+<app-scoreboard *ngIf="gameFinished" [testName]="testName" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [killerScore]="killerScore" [totalScore]="testMaxPoints"></app-scoreboard>
