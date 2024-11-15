@@ -1,11 +1,4 @@
 <div class="container">
-  <div *ngIf="chosenRole !== MultiplayerRoles.NONE; else roleNotChosen">
-    <h1>You have chosen the {{ chosenRole }} role</h1>
-    <h1>Wait for others</h1>
-    <p>Remaining time left: {{timeLeft}}</p>
-  </div>
-
-  <ng-template #roleNotChosen>
     <div class="role-container">
       <h2>Witaj!! </h2>
       <h6> Celem gry jest zbieranie gwiazdek, które umożliwią nam odpowiedzieć na pytania. W trakcie gry gracze mogą sobie
@@ -16,13 +9,13 @@
       <h4>Wybierz jedną z dostępnych klas aby otrzymać dodatkowy bonus do statystyk</h4>
       <div class="row">
         <div class="col-sm">
-          <button class="answer" (click)="choose(MultiplayerRoles.DEFENSIVE)">
+          <button class="answer" [ngClass]="{'answer-selected': chosenRole === MultiplayerRoles.DEFENSIVE}" (click)="choose(MultiplayerRoles.DEFENSIVE)">
             Defensive
             <mat-icon>shield</mat-icon>
           </button>
         </div>
         <div class="col-sm">
-          <button class="answer pull" (click)="choose(MultiplayerRoles.OFFENSIVE)">
+          <button class="answer pull" [ngClass]="{'answer-selected': chosenRole === MultiplayerRoles.OFFENSIVE}" (click)="choose(MultiplayerRoles.OFFENSIVE)">
             Offensive
             <mat-icon fontIcon="swords"></mat-icon>
           </button>
@@ -30,5 +23,5 @@
         <h4 class="">Time left: {{timeLeft}}</h4>
       </div>
     </div>
-  </ng-template>
+
 </div>

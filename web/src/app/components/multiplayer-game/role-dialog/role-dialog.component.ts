@@ -35,15 +35,13 @@ export class RoleDialogComponent implements OnInit{
     this.chosenRole = role;
   }
 
-  generateRandomRole(): void {
-    if (!this.chosenRole) {
-      this.chosenRole = MultiplayerRoles.OFFENSIVE;
-    }
+  generateRandomRole(): MultiplayerRoles {
+    return Math.floor(Math.random() * 2);
   }
 
   submitRole(): void {
     if (this.chosenRole == MultiplayerRoles.NONE) {
-      this.chosenRole = MultiplayerRoles.OFFENSIVE;
+      this.chosenRole = this.generateRandomRole();
     }
 
     this.socket.emit('roleChosen', this.chosenRole, this.socket.id);
