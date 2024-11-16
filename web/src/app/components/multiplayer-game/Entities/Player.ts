@@ -4,7 +4,7 @@ import {MultiplayerRoles} from "../role-dialog/role.model";
 export class Player {
   sprite: Phaser.GameObjects.Sprite;
   nameText!: Phaser.GameObjects.Text;
-  maxHealth = 100;
+  maxHealth = 30;
   health: number;
   healthBar!: Phaser.GameObjects.Graphics;
   canMove!: boolean;
@@ -17,11 +17,12 @@ export class Player {
   stopAnimation = false;
   playersKilled = 0;
   attackDamage = 10;
-  attackRange = 50;
+  attackRange = 60;
   movementSpeed = 1.3;
   visibilityScale: number = 9;
   vision;
   isAnswering: boolean = false;
+  canCollectStar: boolean = false;
 
   // Offensive
   offensivePowerUps: string[] = ['damage', 'attackRange'];
@@ -134,13 +135,13 @@ export class Player {
   public addPowerUp(powerUp: string): void {
     switch (powerUp) {
       case 'attackRange':
-        this.attackRange += 20;
+        this.attackRange += 30;
         break;
       case 'damage':
-        this.attackDamage += 10;
+        this.attackDamage += 5;
         break;
       case 'health':
-        this.maxHealth = 200;
+        this.maxHealth = 45;
         this.health = this.maxHealth;
         break;
       case 'speed':

@@ -21,7 +21,7 @@ const players = {};
 var stars = [];
 var maxNumberOfStars;
 var starsCounter = 0;
-var maxHealth = 100;
+var maxHealth = 30;
 var maxQuestions = 2;
 let countdown;
 let countdownInterval;
@@ -173,7 +173,9 @@ io.on("connection", (socket) => {
   socket.on("clientReady", () => {
     readyClients++;
     if (readyClients === Object.keys(players).length) {
-      spawnStar();
+      setTimeout(() => {
+        spawnStar();
+      }, 50000)
     }
   });
 
@@ -208,6 +210,7 @@ io.on("connection", (socket) => {
   socket.on("roleChosen", (role, id) => {
     const player = players[id];
     if (!player) return;
+    if (player.role !== MultiplayerRoles.NONE) return;
 
     player.role = role;
     const powerUp = generateRandomPowerUp(player);
@@ -268,8 +271,8 @@ io.on("connection", (socket) => {
       console.log("Event participant joined the event");
       socket.emit("joinedConfirmation");
       players[socket.id] = {
-        x: 100, y: 450, id: socket.id, hp: maxHealth, visible: true, role: null, isTargetable: true,
-        questionsAnswered: 0, attackDamage: 10, attackRange: 50, maxHealth: maxHealth, speed: 1.3, playersKilled: 0, nickname: userName
+        x: 100, y: 450, id: socket.id, hp: maxHealth, visible: true, role: MultiplayerRoles.NONE, isTargetable: true,
+        questionsAnswered: 0, attackDamage: 10, attackRange: 60, maxHealth: maxHealth, speed: 1.3, playersKilled: 0, nickname: userName
       };
       const sesInfo= codeToSessionInfo.get(joinCode);
       socket.emit("receive_Data",sesInfo.date,sesInfo.test.name,sesInfo.test.description,sesInfo.game.game_name);
@@ -432,14 +435,14 @@ function generateRandomPowerUp(player){
 function addPowerUp(player, powerUp){
   switch (powerUp) {
     case 'attackRange':
-      player.attackRange += 20;
+      player.attackRange += 30;
       break;
     case 'damage':
-      player.attackDamage += 10;
+      player.attackDamage += 5;
       break;
     case 'health':
-      player.maxHealth = 200;
-      player.hp += 100;
+      player.maxHealth = 45;
+      player.hp += 15;
       break;
     case 'speed':
       player.speed += 1.0;

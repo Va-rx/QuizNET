@@ -35,6 +35,7 @@ export default class multiplayerScene extends Phaser.Scene {
     this.load.tilemapTiledJSON('map', 'assets/games/multiplayergame/Map/multiplayerMap.json');
     this.load.image('plains', 'assets/games/multiplayergame/Map/plains.png');
     this.load.image('grass', 'assets/games/multiplayergame/Map/grass.png');
+    this.load.image('fences', 'assets/games/multiplayergame/Map/fences.png');
   }
 
   create() {
@@ -42,6 +43,7 @@ export default class multiplayerScene extends Phaser.Scene {
     let mappy = this.make.tilemap({ key: 'map' });
     let plains = mappy.addTilesetImage( 'plains', 'plains');
     let grass = mappy.addTilesetImage( 'grass', 'grass');
+    let fences = mappy.addTilesetImage( 'fences', 'fences');
     this.mapBoundaries.height = mappy.heightInPixels;
     this.mapBoundaries.width = mappy.widthInPixels;
     const rt = this.make.renderTexture({
@@ -49,9 +51,9 @@ export default class multiplayerScene extends Phaser.Scene {
       height: this.mapBoundaries.height * 2
     }, true)
     rt.fill(0x000000, 0.8)
-    if (plains && grass) {
+    if (plains && grass && fences) {
       let botLayer = mappy.createLayer("bot", [grass, plains], 0, 0)?.setDepth(-1);
-      let topLayer = mappy.createLayer("top", plains, 0, 0);
+      let topLayer = mappy.createLayer("top", [plains, fences], 0, 0)?.setDepth(0);
       if (botLayer) {
         this.matter.world.convertTilemapLayer(botLayer);
         rt.draw(botLayer)
@@ -244,6 +246,7 @@ export default class multiplayerScene extends Phaser.Scene {
     this.game.events.on('enableMovement', () => {
       if (this.player) {
         this.player.canMove = true;
+        this.player.canCollectStar = true;
       }
     })
 
@@ -402,6 +405,7 @@ export default class multiplayerScene extends Phaser.Scene {
         this.player.vision.y = this.player.sprite.y
       }
       this.checkPlayerVisibility();
+      this.checkStarVisibility();
       this.player.updateNameText();
       this.bonusText.setPosition(this.cameras.main.scrollX + 10, this.cameras.main.scrollY + 10)
       this.questionsLeftText.setText(`${this.player.questionsAnswered}/${this.maxQuestions}`).setPosition(this.cameras.main.scrollX + 10, this.cameras.main.scrollY + 30);
@@ -427,7 +431,7 @@ export default class multiplayerScene extends Phaser.Scene {
       vision.fillStyle(0xffffff, 0.5);
       vision.fillCircle(0, 0, this.visibilityRadius);
 
-      this.players[id] = new Player(playerSprite, player.nickname, 100, id, vision);
+      this.players[id] = new Player(playerSprite, player.nickname, 30, id, vision);
     }
   }
 
@@ -440,7 +444,9 @@ export default class multiplayerScene extends Phaser.Scene {
         const {bodyA, bodyB} = pair;
         if (bodyA.gameObject && bodyB.gameObject) {
           if (bodyA.gameObject.name == 'star' && bodyB.gameObject.name == 'dude' || bodyA.gameObject.name == 'dude' && bodyB.gameObject.name == 'star') {
-            this.socket.emit('collectStar', star, this.socket.id);
+            if (this.player && this.player.canCollectStar) {
+              this.socket.emit('collectStar', star, this.socket.id);
+            }
           }
         }
       });
@@ -470,6 +476,20 @@ export default class multiplayerScene extends Phaser.Scene {
           otherPlayer.hidePlayer();
         }
       }
+    }
+  }
+
+  checkStarVisibility(){
+    const visionRadius =  15 * this.player.vision.scale + (this.player.sprite.height / 2)
+    if (this.stars) {
+      this.stars.forEach(star => {
+        const distance = Phaser.Math.Distance.Between(this.player.sprite.x, this.player.sprite.y, star.x, star.y);
+        if (distance <= visionRadius) {
+          star.setVisible(true);
+        } else {
+          star.setVisible(false);
+        }
+      });
     }
   }
 }

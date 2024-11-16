@@ -18,6 +18,7 @@ export class ScoreboardComponent implements OnChanges {
   @Input() totalStars:number=0;
   @Input() totalHealth:number=0;
   @Input() killerScore: number = 0;
+  @Input() multiplayerSocializerScore = -1;
   currentPlayerScore: number = 0;
   currentPlayerScoreOnlyQuestions: number = 0;
   currentPlayerPercentage: number = 0;
@@ -59,6 +60,12 @@ export class ScoreboardComponent implements OnChanges {
       this.socializerScore = (this.BARTLE_medkits_shared / this.totalHealth) * 100;
     }
     this.achieverScore = (this.BARTLE_turrets_destroyed / this.allTurrets) * 100; // Normalized by total turrets
+
+
+    // For multiplayer purposes
+    if(this.multiplayerSocializerScore != -1){
+      this.socializerScore = this.multiplayerSocializerScore;
+    }
   }
 
   get sortedScoreboard(): { key: string, value: number }[] {
