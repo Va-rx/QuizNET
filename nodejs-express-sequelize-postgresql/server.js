@@ -25,7 +25,7 @@ var maxHealth = 30;
 var maxQuestions = 2;
 let countdown;
 let countdownInterval;
-const playerSpeed = 1.3;
+const playerSpeed = 2.2;
 let MAX_HEIGHT = 1280;
 let MAX_WIDTH = 720;
 var readyClients = 0;
@@ -272,7 +272,7 @@ io.on("connection", (socket) => {
       socket.emit("joinedConfirmation");
       players[socket.id] = {
         x: 100, y: 450, id: socket.id, hp: maxHealth, visible: true, role: MultiplayerRoles.NONE, isTargetable: true,
-        questionsAnswered: 0, attackDamage: 10, attackRange: 60, maxHealth: maxHealth, speed: 1.3, playersKilled: 0, nickname: userName
+        questionsAnswered: 0, attackDamage: 10, attackRange: 60, maxHealth: maxHealth, speed: 2.2, playersKilled: 0, nickname: userName
       };
       const sesInfo= codeToSessionInfo.get(joinCode);
       socket.emit("receive_Data",sesInfo.date,sesInfo.test.name,sesInfo.test.description,sesInfo.game.game_name);
@@ -445,7 +445,7 @@ function addPowerUp(player, powerUp){
       player.hp += 15;
       break;
     case 'speed':
-      player.speed += 1.0;
+      player.speed += 0.8;
       break;
   }
 

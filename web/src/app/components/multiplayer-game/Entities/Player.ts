@@ -18,7 +18,7 @@ export class Player {
   playersKilled = 0;
   attackDamage = 10;
   attackRange = 60;
-  movementSpeed = 1.3;
+  movementSpeed = 2.2;
   visibilityScale: number = 9;
   vision;
   isAnswering: boolean = false;
@@ -145,7 +145,7 @@ export class Player {
         this.health = this.maxHealth;
         break;
       case 'speed':
-        this.movementSpeed += 1.0;
+        this.movementSpeed += 0.8;
         break;
     }
   }
