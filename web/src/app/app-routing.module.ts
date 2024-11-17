@@ -36,7 +36,8 @@ const routes: Routes = [
   { path: 'test-history', component: TestHistoryComponent, canActivate: [authGuard]},
   { path: 'test-history/:id/:userId', component: TestHistoryDetailsComponent, canActivate: [authGuard, TestHistoryGuard]},
   { path: 'test-history/:id', component: TestHistoryListComponent, canActivate: [authGuard, RoleGuard] },
-  { path: 'deathmatch', component: MultiplayerGameComponent, canActivate: [authGuard]}
+  { path: 'deathmatch', component: MultiplayerGameComponent, canActivate: [authGuard]},
+  { path: 'ankieta', component: HomeComponent, canActivate: [authGuard]}
 
 ];
 
