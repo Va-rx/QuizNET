@@ -81,6 +81,10 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
             y: 0
           }
         },
+      },
+      fps: {
+        target: 60,
+        forceSetTimeOut: true
       }
     };
     this.phaserGame = new Phaser.Game(this.config);
