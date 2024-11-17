@@ -5,7 +5,7 @@ import {Role, User} from "../../models/user.model";
 import {TokenStorageService} from "../token-storage/token-storage.service";
 
 
-const baseUrl = 'http://localhost:8080/api/users';
+const baseUrl = 'http://72.145.1.108:8080/api/users';
 @Injectable({
   providedIn: 'root'
 })
