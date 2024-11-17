@@ -10,21 +10,14 @@ export class ScoreboardComponent implements OnChanges {
   @Input() currentPlayer: string = '';
   @Input() totalScore: number = 0;//max amount of points
   @Input() bonusScore: number = 0;
-  @Input() BARTLE_stars_picked: number = 0; // Points for Explorer (max 4)
-  @Input() BARTLE_medkits_shared: number = 0; // Points for Socializer (max 10)
-  @Input() BARTLE_turrets_destroyed: number = 0; // Points for Achiever (normalized by allTurrets)
-  @Input() allTurrets: number = 0; // Total number of turrets for normalization
   @Input() testName: string = '';
-  @Input() totalStars:number=0;
-  @Input() totalHealth:number=0;
-  @Input() killerScore: number = 0;
-  @Input() multiplayerSocializerScore = -1;
   currentPlayerScore: number = 0;
   currentPlayerScoreOnlyQuestions: number = 0;
   currentPlayerPercentage: number = 0;
-  explorerScore: number = 0;
-  socializerScore: number = 0;
-  achieverScore: number = 0;
+  @Input() explorerScore: number = -1;
+  @Input() socializerScore: number = -1;
+  @Input() achieverScore: number = -1;
+  @Input() killerScore: number = -1;
 
   //newOnes, need to calculate them!
   timeLeft: number = 12.37 // current player left time for the test
@@ -44,28 +37,6 @@ export class ScoreboardComponent implements OnChanges {
     console.log(this.currentPlayerScore);
     console.log(this.bonusScore)
     console.log(this.currentPlayerScoreOnlyQuestions);
-
-    // Cap and normalize Bartle scores
-    const cappedMedkitsShared = Math.min(this.BARTLE_medkits_shared, 10); // Max 10 for Socializer
-    if(this.totalStars==0){
-      this.explorerScore=0;
-    }else{
-      this.explorerScore = (this.BARTLE_stars_picked / this.totalStars) * 100; // Max 4 points
-    }
-
-    if(this.totalHealth>10){
-      this.socializerScore = (cappedMedkitsShared / 10) * 100;
-    }
-    else{
-      this.socializerScore = (this.BARTLE_medkits_shared / this.totalHealth) * 100;
-    }
-    this.achieverScore = (this.BARTLE_turrets_destroyed / this.allTurrets) * 100; // Normalized by total turrets
-
-
-    // For multiplayer purposes
-    if(this.multiplayerSocializerScore != -1){
-      this.socializerScore = this.multiplayerSocializerScore;
-    }
   }
 
   get sortedScoreboard(): { key: string, value: number }[] {
