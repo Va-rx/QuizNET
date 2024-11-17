@@ -10,7 +10,7 @@ export class SocketServiceService {
   private joinCode!:String;
 
   constructor() {
-    this.socket=io('http://localhost:8080');
+    this.socket=io('http://72.145.1.108:8080');
    }
 
    getSocket():Socket{
