@@ -42,6 +42,11 @@ export class TankGameComponent implements OnInit {
   timerStarted:boolean=false;
   totalStars:number=0;
   totalHealth:number=0;
+  //BARTLE SCOREBOARD//
+  explorerScore:number=0;
+  socializerScore:number=0;
+  achieverScore:number=0;
+
   constructor(private dialog: MatDialog,
     private TestsService: TestService,
     private socketService: SocketServiceService,
@@ -181,7 +186,27 @@ export class TankGameComponent implements OnInit {
 
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
     this.phaserGame.destroy(true);
+    this.calculateScores();
     this.gameFinished = true;
+
+
+  }
+
+  calculateScores() {
+    const cappedMedkitsShared = Math.min(this.medkitsShared, 10); // Max 10 for Socializer
+    if(this.totalStars==0){
+      this.explorerScore=0;
+    }else{
+      this.explorerScore = (this.starsPicked / this.totalStars) * 100; // Max 4 points
+    }
+
+    if(this.totalHealth>10){
+      this.socializerScore = (cappedMedkitsShared / 10) * 100;
+    }
+    else{
+      this.socializerScore = (this.medkitsShared / this.totalHealth) * 100;
+    }
+    this.achieverScore = (this.turretsDestroyed / this.totalTurrets) * 100; // Normalized by total turrets
   }
 
   ngOnDestroy() {

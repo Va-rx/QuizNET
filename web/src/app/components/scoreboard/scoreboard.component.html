@@ -35,22 +35,22 @@
       </div>
       <div class="bartle-metrics">
         <p class="bartle-label">Bartle player taxonomy</p>
-        <div class="metric">
+        <div class="metric" *ngIf="explorerScore>=0">
           <span>Explorer:</span>
           <div class="progress-bar" [ngStyle]="{'width': explorerScore + '%'}"></div>
           <span>{{explorerScore.toFixed(1)}}%</span>
         </div>
-        <div class="metric">
+        <div class="metric" *ngIf="socializerScore>=0">
           <span>Socializer:</span>
           <div class="progress-bar" [ngStyle]="{'width': socializerScore + '%'}"></div>
           <span>{{socializerScore.toFixed(1)}}%</span>
         </div>
-        <div class="metric">
+        <div class="metric" *ngIf="achieverScore>=0">
           <span>Achiever:</span>
           <div class="progress-bar" [ngStyle]="{'width': achieverScore + '%'}"></div>
           <span>{{achieverScore.toFixed(1)}}%</span>
         </div>
-        <div class="metric">
+        <div class="metric" *ngIf="killerScore>=0">
           <span>Killer:</span>
           <div class="progress-bar" [ngStyle]="{'width': killerScore + '%'}"></div>
           <span>{{killerScore.toFixed(1)}}%</span>

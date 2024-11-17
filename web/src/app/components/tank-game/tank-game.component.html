@@ -2,11 +2,8 @@
 <app-live-score-board [scoreboard]="scoreBoardMap"></app-live-score-board>
 </div>
 <app-scoreboard *ngIf="gameFinished" [testName]="testName" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [bonusScore]="playerScoreBonus" [totalScore]="testMaxPoints"
-[BARTLE_stars_picked]="starsPicked"
-[BARTLE_medkits_shared]="medkitsShared"
-[BARTLE_turrets_destroyed]="turretsDestroyed"
-[totalStars]="totalStars"
-[allTurrets]="totalTurrets"
-[totalHealth]="totalHealth">
+[achieverScore]="achieverScore"
+[socializerScore]="socializerScore"
+[explorerScore]="explorerScore"
 ></app-scoreboard>
 <app-timer *ngIf="!timerEnded" [seconds]="timer" (timerEnded)="onTimerEnded()"></app-timer>
