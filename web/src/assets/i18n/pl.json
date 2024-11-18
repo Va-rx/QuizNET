@@ -1,0 +1,25 @@
+{
+  "NAVIGATION": {
+    "TESTS": "Testy",
+    "JOIN_LOBBY": "Dołącz do poczekalni",
+    "CREATE_LOBBY": "Zaplanuj test",
+    "TESTS_HISTORY": "Historia testów",
+    "LOG_OUT": "Wyloguj"
+  },
+  "LOBBY": {
+    "JOIN_LOBBY": "Dołącz do poczekalni",
+    "ENTER_CODE": "Wprowadź kod poczekalni",
+    "GAME_SCHEDULED": "Test zaplanowany",
+    "START_TIME": "Czas rozpoczęcia",
+    "GAME": "Gra",
+    "TEST": "Test",
+    "DESCRIPTION": "Opis",
+    "PLAYERS": "Użytkownicy w poczekalni"
+  },
+  "TEST_HISTORY": {
+    "CREATED_AT": "Utworzono",
+    "POINTS": "Pkt.",
+    "MARK": "Ocena",
+    "NOT_FOUND": "Nie znaleziono testu"
+  }
+}

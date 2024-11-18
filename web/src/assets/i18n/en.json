@@ -1,0 +1,25 @@
+{
+  "NAVIGATION": {
+    "TESTS": "Tests",
+    "JOIN_LOBBY": "Join Lobby",
+    "CREATE_LOBBY": "Schedule test",
+    "TESTS_HISTORY": "Tests history",
+    "LOG_OUT": "Log out"
+  },
+  "LOBBY": {
+    "JOIN_LOBBY": "Join Lobby",
+    "ENTER_CODE": "Enter join code",
+    "GAME_SCHEDULED": "Game Scheduled",
+    "START_TIME": "Start time",
+    "GAME": "Game",
+    "TEST": "Test",
+    "DESCRIPTION": "Description",
+    "PLAYERS": "Users in lobby"
+  },
+  "TEST_HISTORY": {
+    "CREATED_AT": "Created at",
+    "POINTS": "Pts.",
+    "MARK": "Mark",
+    "NOT_FOUND": "Test not found"
+  }
+}
