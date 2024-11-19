@@ -1,12 +1,12 @@
 <div class="scoreboard-container">
 
   <div class="scoreboard">
-    <p class="scoreboard-label">Scoreboard</p>
+    <p class="scoreboard-label">{{'SCOREBOARD.TITLE' | translate}}</p>
     <div class="scoreboard-entry-box">
       <div class="scoreboard-labels">
-        <span class="username-label">Nickname</span>
-        <span class="time-label">Time</span>
-        <span class="score-label">Score</span>
+        <span class="username-label">{{'SCOREBOARD.NICKNAME' | translate}}</span>
+        <span class="time-label">{{'SCOREBOARD.TIME' | translate}}</span>
+        <span class="score-label">{{'SCOREBOARD.SCORE' | translate}}</span>
       </div>
       <ul>
         <li *ngFor="let entry of sortedScoreboard" [ngClass]="{'current-player': entry.key === currentPlayer}">
@@ -34,24 +34,24 @@
         <p>Pozostały czas: {{ timeLeft.toFixed(2) }} s.</p>
       </div>
       <div class="bartle-metrics">
-        <p class="bartle-label">Bartle player taxonomy</p>
+        <p class="bartle-label">{{'BARTLE_TAXONOMY.TITLE' | translate}}</p>
         <div class="metric" *ngIf="explorerScore>=0">
-          <span>Explorer:</span>
+          <span>{{'BARTLE_TAXONOMY.EXPLORER' | translate}}:</span>
           <div class="progress-bar" [ngStyle]="{'width': explorerScore + '%'}"></div>
           <span>{{explorerScore.toFixed(1)}}%</span>
         </div>
         <div class="metric" *ngIf="socializerScore>=0">
-          <span>Socializer:</span>
+          <span>{{'BARTLE_TAXONOMY.SOCIALIZER' | translate}}:</span>
           <div class="progress-bar" [ngStyle]="{'width': socializerScore + '%'}"></div>
           <span>{{socializerScore.toFixed(1)}}%</span>
         </div>
         <div class="metric" *ngIf="achieverScore>=0">
-          <span>Achiever:</span>
+          <span>{{'BARTLE_TAXONOMY.ACHIEVER' | translate}}:</span>
           <div class="progress-bar" [ngStyle]="{'width': achieverScore + '%'}"></div>
           <span>{{achieverScore.toFixed(1)}}%</span>
         </div>
         <div class="metric" *ngIf="killerScore>=0">
-          <span>Killer:</span>
+          <span>{{'BARTLE_TAXONOMY.KILLER' | translate}}:</span>
           <div class="progress-bar" [ngStyle]="{'width': killerScore + '%'}"></div>
           <span>{{killerScore.toFixed(1)}}%</span>
         </div>

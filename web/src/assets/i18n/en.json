@@ -1,4 +1,8 @@
 {
+  "GENERAL": {
+
+
+  },
   "NAVIGATION": {
     "TESTS": "Tests",
     "JOIN_LOBBY": "Join Lobby",
@@ -7,8 +11,11 @@
     "LOG_OUT": "Log out"
   },
   "LOBBY": {
+    "CREATE_LOBBY": "Create Lobby",
     "JOIN_LOBBY": "Join Lobby",
+    "CODE": "Join code",
     "ENTER_CODE": "Enter join code",
+    "ENTER_NAME": "Enter lobby name",
     "GAME_SCHEDULED": "Game Scheduled",
     "START_TIME": "Start time",
     "GAME": "Game",
@@ -21,5 +28,55 @@
     "POINTS": "Pts.",
     "MARK": "Mark",
     "NOT_FOUND": "Test not found"
+  },
+  "SCOREBOARD": {
+    "TITLE": "Scoreboard",
+    "NICKNAME": "Nickname",
+    "TIME": "Time",
+    "SCORE": "Score"
+  },
+  "BARTLE_TAXONOMY": {
+    "TITLE": "Player's Bartle Taxonomy",
+    "ACHIEVER": "Achiever",
+    "EXPLORER": "Explorer",
+    "KILLER": "Killer",
+    "SOCIALIZER": "Socializer"
+  },
+  "TEST_CREATION": {
+    "DELETE_TEST": "Delete test",
+    "SAVE": "Save",
+    "MULTIPLE": "multiple choice",
+    "SINGLE": "single choice",
+    "ADD_ANSWER": "Add answer",
+    "ADD_FILE": "Add file",
+    "DELETE_QUESTION": "Delete question",
+    "ENTER_ANSWER": "Enter answer"
+  },
+  "CREATE_MATCHMAKING" :{
+    "CHOOSE_TEST": "Choose test",
+    "ID": "Id",
+    "NAME": "Name",
+    "DESCRIPTION": "Description",
+    "CHOOSE": "Choose",
+    "CHOOSE_DATE_TIME": "Choose date and time",
+    "SET_DURATION": "Set duration (in minutes)",
+    "ENTER_DURATION": "Enter duration in minutes",
+    "CHOOSE_GAME": "Choose game",
+    "SCHEDULE": "Schedule"
+  },
+  "LIVE_SCOREBOARD": {
+    "SCORE": "Score",
+    "NAME": "Name"
+  },
+  "QUESTION_VIEW": {
+    "CONFIRM": "Confirm"
+  },
+  "HISTORY_LIST": {
+    "CREATED_AT": "Test creation date",
+    "MAX_POINTS": "Maximum number of points to achieve",
+    "MAX": "Max",
+    "TO_ACHIEVE": "to achieve",
+    "POINTS": "Pts.",
+    "DOWNLOAD_RESULTS": "Download results"
   }
 }

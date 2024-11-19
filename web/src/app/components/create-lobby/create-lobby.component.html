@@ -2,23 +2,23 @@
   <div class="col-md-4 lobby-card">
     <div class="card">
       <div class="card-header bg-primary text-white">
-        <h4>Create Lobby</h4>
+        <h4>{{'LOBBY.CREATE_LOBBY' | translate}}</h4>
       </div>
       <div class="card-body">
         <form>
           <div class="form-group">
-            <input type="text" class="form-control" id="lobbyName" placeholder="Enter lobby name" [(ngModel)]="lobbyName" [ngModelOptions]="{standalone: true}">
+            <input type="text" class="form-control" id="lobbyName" placeholder="{{'LOBBY.ENTER_NAME' | translate}}" [(ngModel)]="lobbyName" [ngModelOptions]="{standalone: true}">
           </div>
-          <button type="submit" *ngIf="!created" (click)="onSubmit()" class="btn btn-block button">Create Lobby</button>
+          <button type="submit" *ngIf="!created" (click)="onSubmit()" class="btn btn-block button">{{'LOBBY.CREATE_LOBBY' | translate}}</button>
           <div *ngIf="scheduled" class="scheduled-game">
-            <h4>Game Scheduled</h4>
-            <p>Game will start at {{date}} {{time}}</p>
+            <h4>{{'LOBBY.GAME_SCHEDULED' | translate}}</h4>
+            <p>{{'LOBBY.START_TIME' | translate}} {{date}} {{time}}</p>
           </div>
         </form>
       </div>
       <div class="card-body code-section">
         <div *ngIf="joinCode != ''">
-          <h4>Join Code</h4>
+          <h4>{{'LOBBY.CODE' | translate}}</h4>
           <p>{{joinCode}}</p>
         </div>
       </div>
@@ -26,7 +26,7 @@
   </div>
 
   <div *ngIf="userList.length > 0" class="col-md-4 user-list-container">
-    <h4 style="color: white;">Users in lobby:</h4>
+    <h4 style="color: white;">{{'LOBBY.GAME_PLAYERS' | translate}}:</h4>
     <ul class="user-list">
       <li *ngFor="let user of userList" class="user-list-item" >
         <span>{{ user }}</span>

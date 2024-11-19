@@ -7,8 +7,11 @@
     "LOG_OUT": "Wyloguj"
   },
   "LOBBY": {
+    "CREATE_LOBBY": "Utwórz poczekalnię",
     "JOIN_LOBBY": "Dołącz do poczekalni",
+    "CODE": "Kod dołączenia",
     "ENTER_CODE": "Wprowadź kod poczekalni",
+    "ENTER_NAME": "Wprowadź nazwę poczekalni",
     "GAME_SCHEDULED": "Test zaplanowany",
     "START_TIME": "Czas rozpoczęcia",
     "GAME": "Gra",
@@ -21,5 +24,55 @@
     "POINTS": "Pkt.",
     "MARK": "Ocena",
     "NOT_FOUND": "Nie znaleziono testu"
+  },
+  "SCOREBOARD": {
+    "TITLE": "Tablica wyników",
+    "NICKNAME": "Nazwa użytkownika",
+    "TIME": "Czas",
+    "SCORE": "Wynik"
+  },
+  "BARTLE_TAXONOMY": {
+    "TITLE": "Taksonomia Bartle'a gracza",
+    "ACHIEVER": "Zdobywca",
+    "EXPLORER": "Odkrywca",
+    "KILLER": "Zabójca",
+    "SOCIALIZER": "Społecznik"
+  },
+  "TEST_CREATION": {
+    "DELETE_TEST": "Usuń test",
+    "SAVE": "Zapisz",
+    "MULTIPLE": "Wielokrotny wybór",
+    "SINGLE": "Jednokrotny wybór",
+    "ADD_ANSWER": "Dodaj odpowiedź",
+    "ADD_FILE": "Dodaj plik",
+    "DELETE_QUESTION": "Usuń pytanie",
+    "ENTER_ANSWER": "Wprowadź odpowiedź"
+  },
+  "CREATE_MATCHMAKING" :{
+    "CHOOSE_TEST": "Wybierz test",
+    "ID": "Id",
+    "NAME": "Nazwa",
+    "DESCRIPTION": "Opis",
+    "CHOOSE": "Wybierz",
+    "CHOOSE_DATE_TIME": "Wybierz datę i godzin",
+    "SET_DURATION": "Ustaw czas trwania (w minutach)",
+    "ENTER_DURATION": "Wprowadź czas w minutach",
+    "CHOOSE_GAME": "Wybierz grę",
+    "SCHEDULE": "Zaplanuj"
+  },
+  "LIVE_SCOREBOARD": {
+    "SCORE": "Wynik",
+    "NAME": "Nazwa"
+  },
+  "QUESTION_VIEW": {
+    "CONFIRM": "Zatwierdź"
+  },
+  "HISTORY_LIST": {
+    "CREATED_AT": "Data utworzenia testu",
+    "MAX_POINTS": "Maksymalna liczba punktów do zdobycia",
+    "MAX": "Maksymalnie",
+    "TO_ACHIEVE": "do zdobycia",
+    "POINTS": "Pkt.",
+    "DOWNLOAD_RESULTS": "Pobierz wyniki"
   }
 }

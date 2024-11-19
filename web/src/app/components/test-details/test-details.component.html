@@ -42,8 +42,8 @@
       </div>
         <div class="buttons">
           <div class="questionOperations">
-            <button class="deleteQuestion" (click)="deleteTest()" [routerLink]="['/tests']">Delete test</button>
-            <button class="saveChanges" (click)="saveTestDetailsChanges()" [disabled]="!areNewTestDetailsChanges()">Save</button>
+            <button class="deleteQuestion" (click)="deleteTest()" [routerLink]="['/tests']">{{'TEST_CREATION.DELETE_TEST' | translate}}</button>
+            <button class="saveChanges" (click)="saveTestDetailsChanges()" [disabled]="!areNewTestDetailsChanges()">{{'TEST_CREATION.SAVE' | translate}}</button>
           </div>
         </div>
     </div>
@@ -68,11 +68,11 @@
         <div class="options">
           <div class="option">
               <input type="radio" id="singleChoice" name="option" class="option-input" [(ngModel)]="selectedQuestion.type" value="single">
-              <label for="singleChoice" class="option-label">Single choice</label>
+              <label for="singleChoice" class="option-label">{{'TEST_CREATION.SINGLE' | translate}}</label>
             </div>
             <div class="option">
               <input type="radio" id="multipleChoice" name="option" class="option-input" [(ngModel)]="selectedQuestion.type" value="multi">
-              <label for="multipleChoice" class="option-label">Multiple choice</label>
+              <label for="multipleChoice" class="option-label">{{'TEST_CREATION.MULTIPLE' | translate}}</label>
             </div>
           </div>
       <div class="photo-container" *ngIf="selectedQuestion.image_link">
@@ -80,7 +80,7 @@
       </div>
           <div class="answers">
             <div class="answer" *ngFor="let answer of selectedQuestion.answers; let i = index">
-              <input type="text" [(ngModel)]="answer.answer" placeholder="Enter your answer here">
+              <input type="text" [(ngModel)]="answer.answer" placeholder="{{'TEST_CREATION.ENTER_ANSWER' | translate}}">
               <i [ngClass]="{
                     'bi bi-check-square-fill': answer.isCorrect,
                     'bi bi-x-square-fill': !answer.isCorrect
@@ -90,16 +90,16 @@
               <input type="number" [(ngModel)]="answer.points" class="points-input" />
               <i class="bi bi-trash-fill" (click)="deleteAnswer(answer)"></i>
             </div>
-            <button class="addAnswer" (click)="createAddAnswer()">Add answer</button>
+            <button class="addAnswer" (click)="createAddAnswer()">{{'TEST_CREATION.ADD_ANSWER' | translate}}</button>
           </div>
           <div class="file-input">
           </div>
           <div class="buttons">
             <input type="file" id="fileInput" (change)="onFileChange($event)" style="display: none;">
-            <button type="button" class="imgButton" (click)="triggerFileInput()">Choose File</button>
+            <button type="button" class="imgButton" (click)="triggerFileInput()">{{'TEST_CREATION.ADD_FILE' | translate}}</button>
             <div class="questionOperations">
-              <button class="deleteQuestion" (click)="deleteQuestion()">Delete question</button>
-              <button class="saveChanges" (click)="saveQuestionChanges()" [disabled]="!areNewQuestionChanges()">Save</button>
+              <button class="deleteQuestion" (click)="deleteQuestion()">{{'TEST_CREATION.DELETE_QUESTION' | translate}}</button>
+              <button class="saveChanges" (click)="saveQuestionChanges()" [disabled]="!areNewQuestionChanges()">{{'TEST_CREATION.SAVE' | translate}}</button>
             </div>
           </div>
     </div>
