@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
 import { GameComponent } from './components/game/game.component';
@@ -42,6 +42,12 @@ import { MultiplayerGameComponent } from './components/multiplayer-game/multipla
 import { RoleDialogComponent } from './components/multiplayer-game/role-dialog/role-dialog.component';
 import { ShareHealthComponent } from './components/multiplayer-game/share-health/share-health.component';
 import {MatTabsModule} from "@angular/material/tabs";
+import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
+import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -87,7 +93,14 @@ import {MatTabsModule} from "@angular/material/tabs";
         MatListModule,
         MatTableModule,
         MatSortModule,
-        MatTabsModule
+        MatTabsModule,
+        TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+        }
+      })
     ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]

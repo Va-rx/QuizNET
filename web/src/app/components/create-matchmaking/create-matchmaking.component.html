@@ -1,12 +1,12 @@
 <div class="container mt-4" *ngIf="!isSubmitted">
-  <h2 class="mb-4">Wybierz test</h2>
+  <h2 class="mb-4">{{ 'CREATE_MATCHMAKING.CHOOSE_TEST' | translate }}</h2>
   <table class="table table-hover">
     <thead class="thead-dark">
       <tr>
-        <th>ID</th>
-        <th>Nazwa</th>
-        <th>Opis</th>
-        <th>Wybierz</th>
+        <th>{{ 'CREATE_MATCHMAKING.ID' | translate }}</th>
+        <th>{{ 'CREATE_MATCHMAKING.NAME' | translate }}</th>
+        <th>{{ 'CREATE_MATCHMAKING.DESCRIPTION' | translate }}</th>
+        <th>{{ 'CREATE_MATCHMAKING.CHOOSE' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -14,35 +14,35 @@
         <td>{{ test.id }}</td>
         <td>{{ test.name }}</td>
         <td>{{ test.description }}</td>
-        <td><button class="btn btn-primary" (click)="selectTest(test); $event.stopPropagation()">Wybierz</button></td>
+        <td><button class="btn btn-primary" (click)="selectTest(test); $event.stopPropagation()">{{ 'CREATE_MATCHMAKING.CHOOSE' | translate }}</button></td>
       </tr>
     </tbody>
   </table>
 
-  <h2 class="mb-4">Wybierz datę i godzinę</h2>
+  <h2 class="mb-4">{{ 'CREATE_MATCHMAKING.CHOOSE_DATE_TIME' | translate }}</h2>
   <div class="form-group">
     <input [formControl]="dateControl" type="date" class="form-control mb-2">
     <input [formControl]="timeControl" type="time" class="form-control" >
   </div>
-  <h2 class="mb-4">Ustaw czas trwania (w minutach)</h2>
+  <h2 class="mb-4">{{ 'CREATE_MATCHMAKING.SET_DURATION' | translate }}</h2>
   <div class="form-group">
-    <input [formControl]="timerControl" type="number" min="1" class="form-control mb-2" placeholder="Wprowadź czas trwania w minutach">
+    <input [formControl]="timerControl" type="number" min="1" class="form-control mb-2" placeholder="{{ 'CREATE_MATCHMAKING.ENTER_DURATION' | translate }}">
   </div>
 
-  <h2 class="mb-4">Wybierz grę</h2>
+  <h2 class="mb-4">{{ 'CREATE_MATCHMAKING.CHOOSE_GAME' | translate }}</h2>
   <div class="row">
     <div class="col-md-4" *ngFor="let game of games">
       <div class="card mb-4" [class.border-primary]="game === selectedGame" (click)="selectGame(game)">
         <div class="card-body">
           <h5 class="card-title">{{ game.game_name }}</h5>
           <p class="card-text">{{ game.description }}</p>
-          <button class="btn btn-primary" (click)="selectGame(game); $event.stopPropagation()">Wybierz</button>
+          <button class="btn btn-primary" (click)="selectGame(game); $event.stopPropagation()">{{ 'CREATE_MATCHMAKING.CHOOSE' | translate }}</button>
         </div>
       </div>
     </div>
   </div>
 
-  <button #targetSection class="btn btn-primary mt-4 plan" (click)="onSubmit()">Zaplanuj</button>
+  <button #targetSection class="btn btn-primary mt-4 plan" (click)="onSubmit()">{{ 'CREATE_MATCHMAKING.SCHEDULE' | translate }}</button>
 </div>
 
 <app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [date]="dateControl.value" [time]="timeControl.value" [timerInput]="timerInSeconds"></app-create-lobby>
