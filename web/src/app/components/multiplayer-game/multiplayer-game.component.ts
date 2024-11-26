@@ -12,6 +12,8 @@ import {AuthService} from "../../services/auth/auth.service";
 import {UserAnswersService} from "../../services/user-answers/user-answers.service";
 import {UserResultsService} from "../../services/user-results/user-results.service";
 import {ShareHealthAnswer, ShareHealthComponent} from "./share-health/share-health.component";
+import {PersonalityResults} from "../../models/user-personality-results";
+import {UserPersonalityResultsService} from "../../services/user-personality-results/user-personality-results.service";
 
 @Component({
   selector: 'app-multiplayer-game',
@@ -46,7 +48,8 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
               private testService: TestService,
               private auth: AuthService,
               private userAnswersService: UserAnswersService,
-              private userResultsService: UserResultsService) {
+              private userResultsService: UserResultsService,
+              private userPersonalityResultsService: UserPersonalityResultsService) {
     this.nickname = this.auth.getNickname();
   }
 
@@ -148,12 +151,11 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     }
   }
 
-  finishGame(){
+  async finishGame(){
     let results = JSON.parse(this.userAnswersService.getWrappedResult(this.historyTestId));
     results.score = Math.round(this.playerScore * 100) / 100;
-    this.userResultsService.create(results).subscribe(data => {
-      console.log("Tu powinien być zwrócony wynik:",data);
-    });
+    let createdResults = await this.userResultsService.create(results).toPromise();
+
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
     this.socket.off('spawnStar');
     this.socket.off('currentPlayers');
@@ -176,8 +178,9 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     const dialogRef = this.dialog.open(ShareHealthComponent, {
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe((result: ShareHealthAnswer) => {
+    dialogRef.afterClosed().subscribe(async (result: ShareHealthAnswer) => {
       this.socket.emit('MULTIPLAYER_shareHealth', this.socket.id, result);
+
       switch (result) {
         case ShareHealthAnswer.YES:
         case ShareHealthAnswer.SPLIT:
@@ -186,8 +189,16 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
         case ShareHealthAnswer.NO:
           this.socializerScore = 0;
           break;
-
       }
+
+      let personalityResults: PersonalityResults = {
+        userResultsId: createdResults.id,
+        explorer: 0,
+        socializer: this.socializerScore,
+        killer: this.killerScore,
+        achiever: 0
+      };
+      await this.userPersonalityResultsService.create(personalityResults).toPromise();
     });
 
     this.phaserGame.destroy(true);

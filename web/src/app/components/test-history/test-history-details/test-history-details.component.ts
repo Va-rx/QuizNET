@@ -4,6 +4,10 @@ import {UserResultsService} from "../../../services/user-results/user-results.se
 import {ActivatedRoute} from "@angular/router";
 import {AnswerHistory, TestHistory} from "../../../models/test-history.model";
 import {AuthService} from "../../../services/auth/auth.service";
+import {
+  UserPersonalityResultsService
+} from "../../../services/user-personality-results/user-personality-results.service";
+import {PersonalityResults} from "../../../models/user-personality-results";
 
 @Component({
   selector: 'app-test-history-details',
@@ -15,7 +19,8 @@ export class TestHistoryDetailsComponent implements OnInit {
   test!: TestHistory;
   testId!: number;
   userId!: number;
-  constructor(private userResultsService: UserResultsService, private route: ActivatedRoute, private authService: AuthService) {}
+  personalityResults!: PersonalityResults;
+  constructor(private userResultsService: UserResultsService, private route: ActivatedRoute, private authService: AuthService, private userPersonalityResultsService: UserPersonalityResultsService) {}
 
   ngOnInit(): void {
    this.testId = this.route.snapshot.params['id'];
@@ -28,6 +33,10 @@ export class TestHistoryDetailsComponent implements OnInit {
         question.image_link = this.getImageUrl(question.image_link);
       });
    });
+
+   this.userPersonalityResultsService.getPlayerPersonalityResults(this.testId, this.userId).subscribe((data: PersonalityResults) => {
+     this.personalityResults = data;
+   })
   }
 
   calculateQuestionScore(answers: AnswerHistory[]): string{

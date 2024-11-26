@@ -37,6 +37,7 @@
   },
   "BARTLE_TAXONOMY": {
     "TITLE": "Player's Bartle Taxonomy",
+    "TITLE_PLURAL": "Players' Bartle Taxonomy",
     "ACHIEVER": "Achiever",
     "EXPLORER": "Explorer",
     "KILLER": "Killer",

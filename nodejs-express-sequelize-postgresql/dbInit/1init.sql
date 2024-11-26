@@ -69,6 +69,16 @@ CREATE TABLE user_results (
     CONSTRAINT user_results_pk  PRIMARY KEY (id)
 );
 
+CREATE TABLE user_personality_results (
+    id int  NOT NULL,
+    user_results_id int  NOT NULL,
+    socializer DECIMAL(10,2)  NOT NULL,
+    killer DECIMAL(10, 2)  NOT NULL,
+    achiever DECIMAL(10, 2)  NOT NULL,
+    explorer DECIMAL(10, 2)  NOT NULL,
+    CONSTRAINT user_personality_results_pk  PRIMARY KEY (id)
+);
+
 ALTER TABLE answers ADD CONSTRAINT answers_questions
     FOREIGN KEY (question_id)
     REFERENCES questions (question_id)
@@ -104,6 +114,13 @@ ALTER TABLE user_results ADD CONSTRAINT user_results_users
     INITIALLY IMMEDIATE
 ;
 
+ALTER TABLE user_personality_results ADD CONSTRAINT user_personality_results_user_results
+    FOREIGN KEY (user_results_id)
+    REFERENCES user_results (id)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
+
 CREATE SEQUENCE tests_id_seq;
 ALTER TABLE tests ALTER COLUMN test_id SET DEFAULT nextval('tests_id_seq');
 
@@ -124,6 +141,9 @@ ALTER TABLE test_history ALTER COLUMN id SET DEFAULT nextval('test_history_id_se
 
 CREATE SEQUENCE user_results_id_seq;
 ALTER TABLE user_results ALTER COLUMN id SET DEFAULT nextval('user_results_id_seq');
+
+CREATE SEQUENCE user_personality_results_id_seq;
+ALTER TABLE user_personality_results ALTER COLUMN id SET DEFAULT nextval('user_personality_results_id_seq');
 
 ALTER TABLE questions
 ALTER COLUMN question_id SET DATA TYPE INTEGER,

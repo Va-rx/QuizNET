@@ -36,6 +36,32 @@
         </mat-card>
       </mat-card-content>
     </mat-card>
+
+    <div class="personality-container">
+      <div class="bartle-metrics" *ngIf="personalityResults">
+        <p class="bartle-label">{{'BARTLE_TAXONOMY.TITLE' | translate}}</p>
+        <div class="metric" *ngIf="personalityResults.explorer>=0">
+          <span>{{'BARTLE_TAXONOMY.EXPLORER' | translate}}:</span>
+          <div class="progress-bar" [ngStyle]="{'width': personalityResults.explorer + '%'}"></div>
+          <span>{{personalityResults.explorer}}%</span>
+        </div>
+        <div class="metric" *ngIf="personalityResults.socializer>=0">
+          <span>{{'BARTLE_TAXONOMY.SOCIALIZER' | translate}}:</span>
+          <div class="progress-bar" [ngStyle]="{'width': personalityResults.socializer + '%'}"></div>
+          <span>{{personalityResults.socializer}}%</span>
+        </div>
+        <div class="metric" *ngIf="personalityResults.achiever>=0">
+          <span>{{'BARTLE_TAXONOMY.ACHIEVER' | translate}}:</span>
+          <div class="progress-bar" [ngStyle]="{'width': personalityResults.achiever + '%'}"></div>
+          <span>{{personalityResults.achiever}}%</span>
+        </div>
+        <div class="metric" *ngIf="personalityResults.killer>=0">
+          <span>{{'BARTLE_TAXONOMY.KILLER' | translate}}:</span>
+          <div class="progress-bar" [ngStyle]="{'width': personalityResults.killer + '%'}"></div>
+          <span>{{personalityResults.killer}}%</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <ng-template #emptyTest>

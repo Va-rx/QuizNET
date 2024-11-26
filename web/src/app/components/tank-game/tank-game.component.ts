@@ -10,6 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserResultsService } from "../../services/user-results/user-results.service";
 import { UserAnswersService } from "../../services/user-answers/user-answers.service";
+import {UserPersonalityResultsService} from "../../services/user-personality-results/user-personality-results.service";
+import {PersonalityResults} from "../../models/user-personality-results";
 
 @Component({
   selector: 'app-tank-game',
@@ -53,7 +55,7 @@ export class TankGameComponent implements OnInit {
     private route: ActivatedRoute,
     private auth: AuthService,
     private userAnswersService: UserAnswersService,
-    private userResultsService: UserResultsService) {
+    private userResultsService: UserResultsService, private userPersonalityResultsService: UserPersonalityResultsService ) {
     this.config = {
       type: Phaser.AUTO,
       //height as window
@@ -163,7 +165,7 @@ export class TankGameComponent implements OnInit {
     this.finishGame();
   }
 
-  finishGame(){
+  async finishGame(){
     console.log("Game Over");
     this.timerEnded=true;
     let results = JSON.parse(this.userAnswersService.getWrappedResult(this.historyTestId));
@@ -180,13 +182,21 @@ export class TankGameComponent implements OnInit {
     ///////////////////////////////////////
     this.playerScore = Math.round(this.playerScore * 100) / 100;
     results.score=this.playerScore;
-    this.userResultsService.create(results).subscribe(data => {
-      console.log("Tu powinien być zwrócony wynik:",data);
-    });
+    let createdResults = await this.userResultsService.create(results).toPromise();
 
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
     this.phaserGame.destroy(true);
     this.calculateScores();
+
+    let personalityResults: PersonalityResults = {
+      userResultsId: createdResults.id,
+      explorer: this.explorerScore,
+      socializer: this.socializerScore,
+      killer: 0,
+      achiever: this.achieverScore
+    };
+    await this.userPersonalityResultsService.create(personalityResults).toPromise();
+
     this.gameFinished = true;
 
 

@@ -6,6 +6,10 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {TestHistoryService} from "../../../services/test-history/test-history.service";
 import {TestHistory} from "../../../models/test-history.model";
+import {
+  UserPersonalityResultsService
+} from "../../../services/user-personality-results/user-personality-results.service";
+import {PersonalityResults} from "../../../models/user-personality-results";
 
 @Component({
   selector: 'app-test-history-list',
@@ -21,9 +25,10 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'surname', 'score']
   testId: number = -1;
   test!: TestHistory;
+  averagePersonalityResults!: PersonalityResults;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private route: ActivatedRoute, private userResultsService: UserResultsService, private router: Router, private testHistoryService: TestHistoryService) { }
+  constructor(private route: ActivatedRoute, private userResultsService: UserResultsService, private router: Router, private testHistoryService: TestHistoryService, private userPersonalityResultsService: UserPersonalityResultsService) { }
 
   ngOnInit(): void {
     this.testId =  this.route.snapshot.params['id'];
@@ -40,6 +45,11 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
         question.image_link = this.getImageUrl(question.image_link);
       })
     })
+
+    this.userPersonalityResultsService.getAveragePersonalityResults(this.testId).subscribe((data: PersonalityResults) => {
+      this.averagePersonalityResults = data;
+
+    });
   }
 
   ngAfterViewInit(): void {
@@ -58,18 +68,18 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
 
   downloadResults() {
     const csvData = this.convertToCSV(this.userData);
-    
+
     const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
+
     link.setAttribute('href', url);
     link.setAttribute('download', `${this.test.testName}_results`);
     link.style.visibility = 'hidden';
-    
+
     document.body.appendChild(link);
     link.click();
-    
+
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }
@@ -80,10 +90,10 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
     }
 
     const headers = ['Imię', 'Nazwisko', 'Numer ID', 'E-mail', 'Punkty'];
-    const csvRows: string[] = [];    
+    const csvRows: string[] = [];
 
     csvRows.push(headers.join(','));
-    
+
     for (const row of data) {
       const rowValues = headers.map(header => {
         switch (header) {

@@ -84,3 +84,47 @@ ul {
   border: 0;
   color: #695497;
 }
+
+bartle-metrics {
+  margin: 40px;
+  border-radius: 10px;
+  background-color: #3e4b58;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  width: 100%;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+}
+
+.metric span {
+  font-size: 1.2em;
+}
+
+.progress-bar {
+  height: 20px;
+  background-color: #9662d2;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  margin-left: 10px;
+}
+
+.metric span:last-child {
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.personality-container {
+  background-color: #2b2b35;
+  padding: 10px 20px;
+  margin-top: 20px;
+  border: solid #695497 3px;
+  background-color: rgba(36, 36, 44, 0.8);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  color: #d4d6d9;
+  border-radius: 20px;
+}
