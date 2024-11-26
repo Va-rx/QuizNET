@@ -7,7 +7,6 @@ import { Finish } from "./Classes/finish";
 
 export default class platformerScene extends Phaser.Scene {
 
-    private map?: Phaser.Tilemaps.Tilemap
 
     private player?: Player;
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -19,107 +18,110 @@ export default class platformerScene extends Phaser.Scene {
     private fruits?: Phaser.Physics.Arcade.StaticGroup;
     private finishes?: Phaser.Physics.Arcade.StaticGroup;
 
+    private currentLevel?: number;
+
 
     private enemies!: Phaser.Physics.Arcade.Group;
 
     private spikerr?: Spiker;
 
-    private playerAttackHitboxes?: Phaser.Physics.Arcade.StaticGroup;
+    private map?: Phaser.Tilemaps.Tilemap
+    private tilesets?: Phaser.Tilemaps.Tileset[];
+    private layer?: Phaser.Tilemaps.TilemapLayer;
 
     constructor(config: Phaser.Types.Scenes.SettingsConfig) {
         super(config);
     }
 
     preload() {
-        this.load.tilemapTiledJSON('mapa', 'assets/games/platformer/mapa-3.json'); //7
-        this.load.image('tileset', 'assets/games/platformer/Terrain (16x16).png');
-        this.load.image('spikes', 'assets/games/platformer/Spikes.png');
-        this.load.spritesheet('fruit-collect', 'assets/games/platformer/Collected.png', {frameWidth: 32, frameHeight: 32});
+        this.load.tilemapTiledJSON('map1', 'assets/games/platformer/levels/mapa-1.json');
+        this.load.tilemapTiledJSON('map2', 'assets/games/platformer/levels/mapa-2.json');
+        this.load.tilemapTiledJSON('map3', 'assets/games/platformer/levels/mapa-3.json');
+
+        this.load.image('tileset', 'assets/games/platformer/tilesets/Terrain (16x16).png');
+        this.load.image('spikes', 'assets/games/platformer/tilesets/Spikes.png');
+
+        this.load.image('pink-bg', 'assets/games/platformer/backgrounds/Pink.png');
+        this.load.image('brown-bg', 'assets/games/platformer/backgrounds/Brown.png');
+        this.load.image('gray-bg', 'assets/games/platformer/backgrounds/Gray.png');
+        this.load.image('green-bg', 'assets/games/platformer/backgrounds/Green.png');
+        this.load.image('blue-bg', 'assets/games/platformer/backgrounds/Blue.png');
+        this.load.image('purple-bg', 'assets/games/platformer/backgrounds/Purple.png');
+        this.load.image('yellow-bg', 'assets/games/platformer/backgrounds/Yellow.png');
+
+        this.load.spritesheet('appear', 'assets/games/platformer/characters/basics/Appearing.png', {frameWidth: 96, frameHeight: 96});
+        this.load.spritesheet('disappear', 'assets/games/platformer/characters/basics/Disappearing.png', {frameWidth: 96, frameHeight: 96});
+
+        this.load.spritesheet('frog-idle', 'assets/games/platformer/characters/frog/Idle.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('frog-move', 'assets/games/platformer/characters/frog/Run.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('frog-jump', 'assets/games/platformer/characters/frog/Jump.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('frog-jump-midair', 'assets/games/platformer/characters/frog/Double Jump.png', {frameWidth: 32, frameHeight: 32});
+
+        this.load.spritesheet('cherry', 'assets/games/platformer/fruits/Cherries.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('fruit-collect', 'assets/games/platformer/fruits/Collected.png', {frameWidth: 32, frameHeight: 32});
 
 
-        this.load.spritesheet('dude', 'assets/games/firstgame/assets/dude.png', {frameWidth: 32, frameHeight: 48});
-        this.load.image('star', 'assets/games/firstgame/assets/star.png');
-        this.load.image('sky', 'assets/games/firstgame/assets/sky.png');
-        this.load.image('ground', 'assets/games/firstgame/assets/platform.png');
+        // this.load.image('spiker-idle', 'assets/games/platformer/spiker/Idle.png');
+        // this.load.spritesheet('spiker-blink', 'assets/games/platformer/spiker/Blink (54x52).png', {frameWidth: 54, frameHeight: 52});
 
-        this.load.spritesheet('frog-idle', 'assets/games/platformer/Idle (32x32).png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('frog-move', 'assets/games/platformer/Run (32x32).png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('frog-jump', 'assets/games/platformer/Jump (32x32).png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('frog-jump-midair', 'assets/games/platformer/Double Jump (32x32).png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('appear', 'assets/games/platformer/Appearing (96x96).png', {frameWidth: 96, frameHeight: 96});
-        this.load.spritesheet('disappear', 'assets/games/platformer/Disappearing (96x96).png', {frameWidth: 96, frameHeight: 96});
-
-        this.load.spritesheet('cherry', 'assets/games/platformer/Cherries.png', {frameWidth: 32, frameHeight: 32});
-
-        this.load.image('spiker-idle', 'assets/games/platformer/spiker/Idle.png');
-        this.load.spritesheet('spiker-blink', 'assets/games/platformer/spiker/Blink (54x52).png', {frameWidth: 54, frameHeight: 52});
-
-
-
-        this.load.image('pink-bg', 'assets/games/platformer/Pink.png');
-        this.load.image('brown-bg', 'assets/games/platformer/Brown.png');
-        this.load.image('gray-bg', 'assets/games/platformer/Gray.png');
-        this.load.image('green-bg', 'assets/games/platformer/Green.png');
-        this.load.image('blue-bg', 'assets/games/platformer/Blue.png');
-        this.load.image('purple-bg', 'assets/games/platformer/Purple.png');
-        this.load.image('yellow-bg', 'assets/games/platformer/Yellow.png');
-
-        this.load.image('finish-not-yet', 'assets/games/platformer/Checkpoint (No Flag).png');
-        this.load.spritesheet('finish-flag-out', 'assets/games/platformer/Checkpoint (Flag Out) (64x64).png', {frameWidth: 64, frameHeight: 64});
-        this.load.spritesheet('finish-flag-idle', 'assets/games/platformer/Checkpoint (Flag Idle)(64x64).png', {frameWidth: 64, frameHeight: 64});
-    };
+        this.load.image('finish-not-yet', 'assets/games/platformer/finishes/Finish (No Flag).png');
+        this.load.spritesheet('finish-flag-out', 'assets/games/platformer/finishes/Finish (Flag Out).png', {frameWidth: 64, frameHeight: 64});
+        this.load.spritesheet('finish-flag-idle', 'assets/games/platformer/finishes/Finish (Flag Idle).png', {frameWidth: 64, frameHeight: 64});
+    }
 
     create() {
+        this.createAnimations();
+
+        this.currentLevel = 1;
+        this.loadLevel(this.currentLevel);
+    }
+
+    override update() {
+        if (this.background) {
+            this.background.tilePositionX -= 0.5;
+        }
+
+        if (this.cursors) {
+            this.player?.update(this.cursors);
+        }
+
+        // console.log(this.fruits?.children.size);
+
+        if (this.fruits?.children.size === 0) {
+            this.finishes?.children.entries.forEach((finish) => {
+                if (finish instanceof Finish && !finish.getCanFinish()) {
+                finish.enableFinish();
+                }
+            })
+        } 
+        // this.spikerr?.updatex();
+    }
+
+    loadLevel(level: number) {
+        this.map = this.make.tilemap({ key: `map${level}` });
+        const tileset1 = this.map.addTilesetImage('adv_map_tiles', 'tileset');
+        const tileset2 = this.map.addTilesetImage('Spikes', 'spikes');
+        if (tileset1 && tileset2) {
+            this.tilesets = [tileset1, tileset2];
+        } else {
+            console.error('Loading tilesets error');
+            return;
+        }
+
+        this.layer = this.map.createLayer('Tile Layer 1', this.tilesets, 0, 0)!;
+        this.layer.setScale(2);
+        this.layer.setCollisionByExclusion([-1]);
+
         this.fruits = this.physics.add.staticGroup();
         this.spikes = this.physics.add.staticGroup();
         this.finishes = this.physics.add.staticGroup();
 
-        const map = this.make.tilemap({ key: 'mapa' });
-        const tileset = map.addTilesetImage('adv_map_tiles', 'tileset');
-        const tileset2 = map.addTilesetImage('Spikes', 'spikes');
-        if (map && map !== null) {
+        const playerStartingPosX = this.map.getObjectLayer('Player')?.objects[0].x;
+        const playerStartingPosY = this.map.getObjectLayer('Player')?.objects[0].y;
 
-        if (tileset && tileset2) {
-        const layer = map.createLayer('Tile Layer 1', [tileset, tileset2], 0, 0);
-        layer?.setScale(2);
-        layer?.setCollisionByExclusion([-1]);
-
-        const playerObjX = map.getObjectLayer('Player')?.objects[0].x;
-        const playerObjY = map.getObjectLayer('Player')?.objects[0].y;
-
-        const fruitObjects = map.getObjectLayer('Collectibles')?.objects;
-        const spikeObjects = map.getObjectLayer('Spikes')?.objects;
-        const finishObjects = map.getObjectLayer('Finish')?.objects;
-
-
-        this.anims.create({
-            key: 'cherry',
-            frames: this.anims.generateFrameNumbers('cherry', { start: 0, end: 16 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'fruit-collect',
-            frames: this.anims.generateFrameNumbers('fruit-collect', { start: 0, end: 5 }),
-            frameRate: 25,
-            repeat: 0
-        });
-
-        this.anims.create({
-            key: 'finish-flag-out',
-            frames: this.anims.generateFrameNumbers('finish-flag-out', {start: 0, end: 25}),
-            frameRate: 25,
-            repeat: 0
-        });
-
-        this.anims.create({
-            key: 'finish-flag-idle',
-            frames: this.anims.generateFrameNumbers('finish-flag-idle', {start: 0, end: 9}),
-            frameRate: 25,
-            repeat: -1
-        });
-        
+        const fruitObjects = this.map.getObjectLayer('Collectibles')?.objects;
+        const spikeObjects = this.map.getObjectLayer('Spikes')?.objects;
+        const finishObjects = this.map.getObjectLayer('Finish')?.objects;
 
         fruitObjects?.forEach(fruitObject => {
             if (fruitObject.name === 'fruit') {
@@ -150,23 +152,20 @@ export default class platformerScene extends Phaser.Scene {
             }
         });
 
+        if (playerStartingPosX && playerStartingPosY) {
+            this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, 'frog-idle');
+            this.player.setScale(2);
 
-
-
-        if (playerObjX && playerObjY) {
-        this.player = new Player(this, 2*playerObjX, 2*playerObjY, 'frog-idle');
-        this.player.setScale(2);
-        if (layer)
-        this.physics.add.collider(this.player, layer);
-
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        this.background = this.add.tileSprite(0, 0, this.cameras.main.width, this.cameras.main.height, 'pink-bg');
-        this.background.setOrigin(0, 0);
-        this.background.setDepth(-1);
-        this.cameras.main.startFollow(this.player);
-        this.cameras.main.setRoundPixels(true);
+            this.physics.add.collider(this.player, this.layer);
+    
+            this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+            this.background = this.add.tileSprite(0, 0, this.cameras.main.width, this.cameras.main.height, 'pink-bg');
+            this.background.setOrigin(0, 0);
+            this.background.setDepth(-1);
+            this.cameras.main.startFollow(this.player);
+            this.cameras.main.setRoundPixels(true);
         }
-         
+
         if (this.player) {
             this.physics.add.overlap(this.player, this.fruits, (player, fruit) => {
                 const fruitObject = fruit as Fruit;
@@ -174,37 +173,63 @@ export default class platformerScene extends Phaser.Scene {
             });
 
             this.physics.add.collider(this.player, this.spikes, () => {
-                // if (playerObjX && playerObjY)
-                // this.player?.respawn(2*playerObjX, 2*playerObjY)
-
                 this.player?.kill().then(() => {
-                    if (playerObjX && playerObjY)
-                    this.player?.respawn(2*playerObjX, 2*playerObjY)
+                    if (playerStartingPosX && playerStartingPosY)
+                    this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY)
                 })
             });
 
+            this.physics.add.overlap(this.player, this.finishes, (player, finish) => {
+                this.map?.destroy();
+                this.player?.destroy();
+                this.layer?.destroy();
+                this.fruits?.clear();
+                this.finishes?.clear();
+                this.spikes?.clear();
+                let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite);
+                allSprites.forEach(x => x.destroy());
+                this.nextLevel();
+            });
 
             this.cursors = this.input.keyboard?.createCursorKeys();
-        }};}}
-
-    override update() {
-        if (this.background) {
-            this.background.tilePositionX -= 0.5;
         }
+    }
 
-        if (this.cursors) {
-            this.player?.update(this.cursors);
+    nextLevel() {
+        if (this.currentLevel) {
+            this.loadLevel(this.currentLevel+1);
+        } else {
+            this.loadLevel(1);
         }
+    }
 
-        // console.log(this.fruits?.children.size);
+    createAnimations() {
+        this.anims.create({
+            key: 'cherry',
+            frames: this.anims.generateFrameNumbers('cherry', { start: 0, end: 16 }),
+            frameRate: 25,
+            repeat: -1
+        });
 
-        if (this.fruits?.children.size === 0) {
-            this.finishes?.children.entries.forEach((finish) => {
-                if (finish instanceof Finish && !finish.getCanFinish()) {
-                finish.enableFinish();
-                }
-            })
-        } 
-        // this.spikerr?.updatex();
-    };
+        this.anims.create({
+            key: 'fruit-collect',
+            frames: this.anims.generateFrameNumbers('fruit-collect', { start: 0, end: 5 }),
+            frameRate: 25,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'finish-flag-out',
+            frames: this.anims.generateFrameNumbers('finish-flag-out', {start: 0, end: 25}),
+            frameRate: 25,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'finish-flag-idle',
+            frames: this.anims.generateFrameNumbers('finish-flag-idle', {start: 0, end: 9}),
+            frameRate: 25,
+            repeat: -1
+        });
+    }
 }
