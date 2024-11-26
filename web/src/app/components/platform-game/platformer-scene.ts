@@ -4,6 +4,7 @@ import Spiker from "./Classes/spiker";
 import { Fruit } from "./Classes/fruit";
 import { Spikes } from "./Classes/spikes";
 import { Finish } from "./Classes/finish";
+import { Saw } from "./Classes/saw";
 
 export default class platformerScene extends Phaser.Scene {
 
@@ -17,6 +18,7 @@ export default class platformerScene extends Phaser.Scene {
 
     private fruits?: Phaser.Physics.Arcade.StaticGroup;
     private finishes?: Phaser.Physics.Arcade.StaticGroup;
+    private saws?: Phaser.Physics.Arcade.StaticGroup;
 
     private currentLevel?: number;
 
@@ -38,8 +40,9 @@ export default class platformerScene extends Phaser.Scene {
         this.load.tilemapTiledJSON('map2', 'assets/games/platformer/levels/mapa-2.json');
         this.load.tilemapTiledJSON('map3', 'assets/games/platformer/levels/mapa-3.json');
 
-        this.load.image('tileset', 'assets/games/platformer/tilesets/Terrain (16x16).png');
+        this.load.image('tileset', 'assets/games/platformer/tilesets/Terrain.png');
         this.load.image('spikes', 'assets/games/platformer/tilesets/Spikes.png');
+        this.load.spritesheet('saw', 'assets/games/platformer/tilesets/On (38x38).png', {frameWidth: 38, frameHeight: 38});
 
         this.load.image('pink-bg', 'assets/games/platformer/backgrounds/Pink.png');
         this.load.image('brown-bg', 'assets/games/platformer/backgrounds/Brown.png');
@@ -72,7 +75,7 @@ export default class platformerScene extends Phaser.Scene {
     create() {
         this.createAnimations();
 
-        this.currentLevel = 1;
+        this.currentLevel = 3;
         this.loadLevel(this.currentLevel);
     }
 
@@ -117,6 +120,7 @@ export default class platformerScene extends Phaser.Scene {
         this.fruits = this.physics.add.staticGroup();
         this.spikes = this.physics.add.staticGroup();
         this.finishes = this.physics.add.staticGroup();
+        this.saws = this.physics.add.staticGroup();
 
         const playerStartingPosX = this.map.getObjectLayer('Player')?.objects[0].x;
         const playerStartingPosY = this.map.getObjectLayer('Player')?.objects[0].y;
@@ -124,6 +128,7 @@ export default class platformerScene extends Phaser.Scene {
         const fruitObjects = this.map.getObjectLayer('Collectibles')?.objects;
         const spikeObjects = this.map.getObjectLayer('Spikes')?.objects;
         const finishObjects = this.map.getObjectLayer('Finish')?.objects;
+        const sawObjects = this.map.getObjectLayer('Saws')?.objects;
 
         fruitObjects?.forEach(fruitObject => {
             if (fruitObject.name === 'fruit') {
@@ -154,6 +159,16 @@ export default class platformerScene extends Phaser.Scene {
             }
         });
 
+        sawObjects?.forEach(sawObject => {
+            if (sawObject.x && sawObject.y) {
+                const saw = new Saw(this, 2*sawObject.x, 2*sawObject.y, '');
+                saw.setScale(2);
+                saw.setOrigin(0, 1);
+                saw.setDepth(-1);
+                this.saws?.add(saw);
+            }
+        })
+
         if (playerStartingPosX && playerStartingPosY) {
             this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, 'frog-idle');
             this.player.setScale(2);
@@ -163,7 +178,7 @@ export default class platformerScene extends Phaser.Scene {
             this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
             this.background = this.add.tileSprite(0, 0, this.cameras.main.width, this.cameras.main.height, 'pink-bg');
             this.background.setOrigin(0, 0);
-            this.background.setDepth(-1);
+            this.background.setDepth(-2);
             this.cameras.main.startFollow(this.player);
             this.cameras.main.setRoundPixels(true);
         }
@@ -172,6 +187,13 @@ export default class platformerScene extends Phaser.Scene {
             this.physics.add.overlap(this.player, this.fruits, (player, fruit) => {
                 const fruitObject = fruit as Fruit;
                 fruitObject.collect();
+            });
+
+            this.physics.add.overlap(this.player, this.saws, (player, saw) => {
+                this.player?.kill().then(() => {
+                    if (playerStartingPosX && playerStartingPosY)
+                    this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY)
+                })
             });
 
             this.physics.add.collider(this.player, this.spikes, () => {
@@ -278,6 +300,13 @@ export default class platformerScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('disappear', { start: 0, end: 4 }),
             frameRate: 25,
             repeat: 0
+        });
+
+        this.anims.create({
+            key: 'saw',
+            frames: this.anims.generateFrameNumbers('saw', { start: 0, end: 7}),
+            frameRate: 25,
+            repeat: -1
         });
     }
 }

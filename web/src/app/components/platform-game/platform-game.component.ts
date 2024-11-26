@@ -32,7 +32,7 @@ export class PlatformGameComponent {
       physics: {
         default: 'arcade',
         arcade: {
-          debug: true,
+          debug: false,
           gravity: { x: 0, y: 1200},
           tileBias: 64
         }
