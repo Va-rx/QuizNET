@@ -31,7 +31,7 @@ export default class platformerScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.tilemapTiledJSON('mapa', 'assets/games/platformer/mapa7.json');
+        this.load.tilemapTiledJSON('mapa', 'assets/games/platformer/mapa-3.json'); //7
         this.load.image('tileset', 'assets/games/platformer/Terrain (16x16).png');
         this.load.image('spikes', 'assets/games/platformer/Spikes.png');
         this.load.spritesheet('fruit-collect', 'assets/games/platformer/Collected.png', {frameWidth: 32, frameHeight: 32});
@@ -57,6 +57,12 @@ export default class platformerScene extends Phaser.Scene {
 
 
         this.load.image('pink-bg', 'assets/games/platformer/Pink.png');
+        this.load.image('brown-bg', 'assets/games/platformer/Brown.png');
+        this.load.image('gray-bg', 'assets/games/platformer/Gray.png');
+        this.load.image('green-bg', 'assets/games/platformer/Green.png');
+        this.load.image('blue-bg', 'assets/games/platformer/Blue.png');
+        this.load.image('purple-bg', 'assets/games/platformer/Purple.png');
+        this.load.image('yellow-bg', 'assets/games/platformer/Yellow.png');
 
         this.load.image('finish-not-yet', 'assets/games/platformer/Checkpoint (No Flag).png');
         this.load.spritesheet('finish-flag-out', 'assets/games/platformer/Checkpoint (Flag Out) (64x64).png', {frameWidth: 64, frameHeight: 64});
