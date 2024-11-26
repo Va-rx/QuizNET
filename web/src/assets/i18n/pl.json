@@ -33,6 +33,7 @@
   },
   "BARTLE_TAXONOMY": {
     "TITLE": "Taksonomia Bartle'a gracza",
+    "TITLE_PLURAL": "Taksonomia Bartle'a graczy",
     "ACHIEVER": "Zdobywca",
     "EXPLORER": "Odkrywca",
     "KILLER": "Zabójca",

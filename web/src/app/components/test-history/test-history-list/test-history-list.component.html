@@ -59,5 +59,30 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr class="result-row" mat-row (click)="goToDetails(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+        <div class="personality-container">
+        <div class="bartle-metrics" *ngIf="averagePersonalityResults">
+          <p class="bartle-label">{{'BARTLE_TAXONOMY.TITLE_PLURAL' | translate}}</p>
+          <div class="metric" *ngIf="averagePersonalityResults.explorer>=0">
+            <span>{{'BARTLE_TAXONOMY.EXPLORER' | translate}}:</span>
+            <div class="progress-bar" [ngStyle]="{'width': averagePersonalityResults.explorer + '%'}"></div>
+            <span>{{averagePersonalityResults.explorer}}%</span>
+          </div>
+          <div class="metric" *ngIf="averagePersonalityResults.socializer>=0">
+            <span>{{'BARTLE_TAXONOMY.SOCIALIZER' | translate}}:</span>
+            <div class="progress-bar" [ngStyle]="{'width': averagePersonalityResults.socializer + '%'}"></div>
+            <span>{{averagePersonalityResults.socializer}}%</span>
+          </div>
+          <div class="metric" *ngIf="averagePersonalityResults.achiever>=0">
+            <span>{{'BARTLE_TAXONOMY.ACHIEVER' | translate}}:</span>
+            <div class="progress-bar" [ngStyle]="{'width': averagePersonalityResults.achiever + '%'}"></div>
+            <span>{{averagePersonalityResults.achiever}}%</span>
+          </div>
+          <div class="metric" *ngIf="averagePersonalityResults.killer>=0">
+            <span>{{'BARTLE_TAXONOMY.KILLER' | translate}}:</span>
+            <div class="progress-bar" [ngStyle]="{'width': averagePersonalityResults.killer + '%'}"></div>
+            <span>{{averagePersonalityResults.killer}}%</span>
+          </div>
+        </div>
+        </div>
       </div></div>
 </div>

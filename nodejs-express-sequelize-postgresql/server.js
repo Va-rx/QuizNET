@@ -61,6 +61,7 @@ const questionRouter = require("./routes/question-routes");
 const answerRouter = require("./routes/answer-routes");
 const testHistoryRouter = require("./routes/test-history-routes");
 const userResultsRouter = require("./routes/user-results-routes");
+const userPersonalityResults = require("./routes/user-personality-results-routes");
 const {createTestHistory} = require("./database/database-queries/test-history-queries");
 const {generateQuizXML} = require("./XMLhandler");
 const {getNumberOfQuestions} = require("./database/database-queries/test-queries");
@@ -72,6 +73,7 @@ app.use("/api/questions", questionRouter);
 app.use("/api/answers", answerRouter);
 app.use("/api/test-history", testHistoryRouter);
 app.use("/api/user-results", userResultsRouter);
+app.use("/api/user-personality-results", userPersonalityResults)
 
 const PORT = process.env.PORT || 8080;
 
