@@ -111,25 +111,27 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     public respawn(x: number, y: number) {
+        console.log('resp');
         this.setCollideWorldBounds(true);
         this.setVisible(true);
         this.x = x;
         this.y = y;
-        this.setOrigin(0,0);
+        // this.setOrigin(0,0);
+        this.canControl = true;
 
 
 
         // this.anims.play('appear', true);
         // this.setOrigin(0.5, 0.5);
-        this.body?.setSize(32, 32);
-        this.body?.setOffset(32, 32);
+        // this.body?.setSize(32, 32);
+        // this.body?.setOffset(32, 32);
         // this.setOrigin(0.5, 1);
         this.refreshBody();
 
         this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
             if (anim.key === 'appear') {
                 this.setVelocityY(0);
-                this.body?.setOffset(0,0);
+                this.body?.setOffset(16,16);
                 this.anims.play('idle', true);
             }
         });
@@ -137,18 +139,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     public kill(): Promise<void> {
         return new Promise((resolve) => {
+            if (this.anims.currentAnim?.key !== 'disappear') {
             this.canControl = false;
             this.setVelocityX(0);
             this.setVelocityY(300);
 
-        this.body?.setOffset(32, 32);
             this.anims.play('disappear', true);
             this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
                 if (anim.key === 'disappear') {
                     resolve();
                 }
-            })
-        });
+            });
+        }});
     }
 
     public override update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
@@ -162,10 +164,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.body?.blocked.down) {
             this.jumpInRowCount = 0;
         }
-
-        // console.log('x:', this.x)
-        // console.log(this.y);
-    }
+        }
     }
 
     private loadAnimations() {

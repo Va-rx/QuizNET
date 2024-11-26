@@ -2,8 +2,12 @@ import Phaser from "phaser";
 import { Player } from "./Classes/player";
 import Spiker from "./Classes/spiker";
 import { Fruit } from "./Classes/fruit";
+import { Spikes } from "./Classes/spikes";
+import { Finish } from "./Classes/finish";
 
 export default class platformerScene extends Phaser.Scene {
+
+    private map?: Phaser.Tilemaps.Tilemap
 
     private player?: Player;
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -13,6 +17,7 @@ export default class platformerScene extends Phaser.Scene {
     private background?: Phaser.GameObjects.TileSprite;
 
     private fruits?: Phaser.Physics.Arcade.StaticGroup;
+    private finishes?: Phaser.Physics.Arcade.StaticGroup;
 
 
     private enemies!: Phaser.Physics.Arcade.Group;
@@ -53,19 +58,20 @@ export default class platformerScene extends Phaser.Scene {
 
         this.load.image('pink-bg', 'assets/games/platformer/Pink.png');
 
-        
+        this.load.image('finish-not-yet', 'assets/games/platformer/Checkpoint (No Flag).png');
+        this.load.spritesheet('finish-flag-out', 'assets/games/platformer/Checkpoint (Flag Out) (64x64).png', {frameWidth: 64, frameHeight: 64});
+        this.load.spritesheet('finish-flag-idle', 'assets/games/platformer/Checkpoint (Flag Idle)(64x64).png', {frameWidth: 64, frameHeight: 64});
     };
 
     create() {
         this.fruits = this.physics.add.staticGroup();
+        this.spikes = this.physics.add.staticGroup();
+        this.finishes = this.physics.add.staticGroup();
 
         const map = this.make.tilemap({ key: 'mapa' });
         const tileset = map.addTilesetImage('adv_map_tiles', 'tileset');
         const tileset2 = map.addTilesetImage('Spikes', 'spikes');
         if (map && map !== null) {
-        // const spikeObjects = map.getObjectLayer('Spikes').objects;}
-        
-
 
         if (tileset && tileset2) {
         const layer = map.createLayer('Tile Layer 1', [tileset, tileset2], 0, 0);
@@ -76,6 +82,9 @@ export default class platformerScene extends Phaser.Scene {
         const playerObjY = map.getObjectLayer('Player')?.objects[0].y;
 
         const fruitObjects = map.getObjectLayer('Collectibles')?.objects;
+        const spikeObjects = map.getObjectLayer('Spikes')?.objects;
+        const finishObjects = map.getObjectLayer('Finish')?.objects;
+
 
         this.anims.create({
             key: 'cherry',
@@ -91,6 +100,20 @@ export default class platformerScene extends Phaser.Scene {
             repeat: 0
         });
 
+        this.anims.create({
+            key: 'finish-flag-out',
+            frames: this.anims.generateFrameNumbers('finish-flag-out', {start: 0, end: 25}),
+            frameRate: 25,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'finish-flag-idle',
+            frames: this.anims.generateFrameNumbers('finish-flag-idle', {start: 0, end: 9}),
+            frameRate: 25,
+            repeat: -1
+        });
+        
 
         fruitObjects?.forEach(fruitObject => {
             if (fruitObject.name === 'fruit') {
@@ -100,15 +123,32 @@ export default class platformerScene extends Phaser.Scene {
                 fruit.setScale(2);
                 }
             }
-        })
+        });
+
+        spikeObjects?.forEach(spikeObject => {
+            if (spikeObject.x && spikeObject.y) {
+                const spike = new Spikes(this, 2*spikeObject.x + 16, 2*spikeObject.y - 16, 'spikes');
+                this.spikes?.add(spike);
+                spike.setScale(2);
+                spike.body?.setOffset(0, 8);
+            }
+        });
+
+        finishObjects?.forEach(finishObject => {
+            if (finishObject.x && finishObject.y) {
+                const finish = new Finish(this, 2*finishObject.x, 2*finishObject.y, 'finish-not-yet');
+                finish.setScale(2);
+                this.finishes?.add(finish);
+                finish.setOrigin(0, 0);
+                finish.body?.setOffset(64, 64);
+            }
+        });
 
 
-        console.log(playerObjX, playerObjY);
 
-        // console.log(playerObj);
+
         if (playerObjX && playerObjY) {
         this.player = new Player(this, 2*playerObjX, 2*playerObjY, 'frog-idle');
-        // this.player = new Player(this, 100, 450, 'frog-idle');
         this.player.setScale(2);
         if (layer)
         this.physics.add.collider(this.player, layer);
@@ -118,93 +158,28 @@ export default class platformerScene extends Phaser.Scene {
         this.background.setOrigin(0, 0);
         this.background.setDepth(-1);
         this.cameras.main.startFollow(this.player);
-        // this.background.setTint(0xFF00FF);
         this.cameras.main.setRoundPixels(true);
-
-        // const spikeObjects = map.objects["Spikes"][0];
-        // let spikes = this.physics.add.group();
-
-
-        // spikeObjects.forEach(spikeObject => {
-        //     const spike = spikes.create(spikeObject.x, spikeObject.y, 'spikeTexture');
-        // })
         }
-        // Włącz animację przesuwania tła
-        } // Przesuwanie w poziomie}
-        // this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        // this.cameras.main.backgroundColor.setTo(0, 0, 0, 255);
-
-        // const tileset = map.addTilesetImage('adv_map_tiles', 'tileset');
-    
-        // if (tileset) {
-        // const layer = map.createLayer('Tile Layer 1', tileset, 0, 0);
-    
-        // layer?.setCollisionByExclusion([-1]); 
-        // }
-        // this.add.image(400, 300, 'sky');
-
-        //this.platforms = this.physics.add.staticGroup();
-        //this.spikes = this.physics.add.staticGroup();
-
-        // this.enemies = this.physics.add.group();
-
-        // this.spikerr = new Spiker(this, 100, 100, 'spiker-idle', this.platforms);
-        // this.spikerr.setScale(2);
-
-        // this.enemies.add(this.spikerr);
-
-        //const ground = this.platforms.create(400, 568, 'ground') as Phaser.Physics.Arcade.Sprite;
-        // const spike = this.spikes.create(400, 520, 'spikes') as Phaser.Physics.Arcade.Sprite;
-
-        // spike
-        // .setScale(2).refreshBody();
-        // // spike.setSize(48, 20);
-        // // spike.setOffset(0, 30);
-        // spike.setSize(32, 16);
-        // spike.setOffset(0, 16);
-        // // spike.setOffset(0, 12);
-
-        // this.spikes.create(433, 520, 'spikes');
-
-
-
-
-        // ground
-        //     .setScale(2)
-        //     .refreshBody();
-
-        // this.platforms.create(600, 400, 'ground');
-        // this.platforms.create(50, 250, 'ground');
-        // this.platforms.create(750, 220, 'ground');
-
-        // // this.enemy = new Enemy(this, 300, 450, 'dude');
-
-        // this.physics.add.collider(this.spikerr, this.platforms);
-        // this.physics.add.collider(this.player, this.platforms);
-
-        // this.physics.add.collider(this.player, this.enemies);
-        // this.physics.add.collider(this.enemies, this.platforms);
-
-        // this.physics.add.collider(this.player?, spikeObjects, async () => {
-        //     await this.player?.kill();
-        //     this.player?.respawn(100, 450);
-        // });
+         
         if (this.player) {
             this.physics.add.overlap(this.player, this.fruits, (player, fruit) => {
                 const fruitObject = fruit as Fruit;
                 fruitObject.collect();
             });
-        }
 
-        // if (this.player) {
-        // this.physics.add.collider(this.player, this.fruits, async () => {
-        //     await this.player?.kill();
-        //     this.player?.respawn(100, 450);
-        // });}
+            this.physics.add.collider(this.player, this.spikes, () => {
+                // if (playerObjX && playerObjY)
+                // this.player?.respawn(2*playerObjX, 2*playerObjY)
+
+                this.player?.kill().then(() => {
+                    if (playerObjX && playerObjY)
+                    this.player?.respawn(2*playerObjX, 2*playerObjY)
+                })
+            });
 
 
-        this.cursors = this.input.keyboard?.createCursorKeys();
-    };}
+            this.cursors = this.input.keyboard?.createCursorKeys();
+        }};}}
 
     override update() {
         if (this.background) {
@@ -214,6 +189,16 @@ export default class platformerScene extends Phaser.Scene {
         if (this.cursors) {
             this.player?.update(this.cursors);
         }
+
+        // console.log(this.fruits?.children.size);
+
+        if (this.fruits?.children.size === 0) {
+            this.finishes?.children.entries.forEach((finish) => {
+                if (finish instanceof Finish && !finish.getCanFinish()) {
+                finish.enableFinish();
+                }
+            })
+        } 
         // this.spikerr?.updatex();
     };
 }
