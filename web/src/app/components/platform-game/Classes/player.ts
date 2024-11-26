@@ -18,7 +18,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, texture);
         // this.setOrigin(0,0);
 
-        this.loadAnimations();
         scene.physics.world.enable(this);
 
         this.setBounce(0.2);  
@@ -165,49 +164,5 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             this.jumpInRowCount = 0;
         }
         }
-    }
-
-    private loadAnimations() {
-        this.scene.anims.create({
-            key: 'appear',
-            frames: this.scene.anims.generateFrameNumbers('appear', { start: 0, end: 6 }),
-            frameRate: 25,
-            repeat: 0
-        });
-
-        this.scene.anims.create({
-            key: 'idle',
-            frames: this.scene.anims.generateFrameNumbers('frog-idle', { start: 0, end: 10 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.scene.anims.create({
-            key: 'run',
-            frames: this.scene.anims.generateFrameNumbers('frog-move', { start: 0, end: 11 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.scene.anims.create({
-            key: 'jump',
-            frames: this.scene.anims.generateFrameNumbers('frog-jump', { start: 0, end: 0 }),
-            frameRate: 1,
-            repeat: -1
-        });
-
-        this.scene.anims.create({
-            key: 'jump-midair',
-            frames: this.scene.anims.generateFrameNumbers('frog-jump-midair', { start: 0, end: 4 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.scene.anims.create({
-            key: 'disappear',
-            frames: this.scene.anims.generateFrameNumbers('disappear', { start: 0, end: 4 }),
-            frameRate: 25,
-            repeat: 0
-        });
     }
 }

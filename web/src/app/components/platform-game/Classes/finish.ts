@@ -1,5 +1,5 @@
 export class Finish extends Phaser.Physics.Arcade.Sprite {
-    private canFinish: boolean = true;
+    private canFinish: boolean = false;
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture);

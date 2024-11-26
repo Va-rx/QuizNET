@@ -98,6 +98,8 @@ export default class platformerScene extends Phaser.Scene {
     }
 
     loadLevel(level: number) {
+        this.currentLevel = level;
+
         this.map = this.make.tilemap({ key: `map${level}` });
         const tileset1 = this.map.addTilesetImage('adv_map_tiles', 'tileset');
         const tileset2 = this.map.addTilesetImage('Spikes', 'spikes');
@@ -180,6 +182,9 @@ export default class platformerScene extends Phaser.Scene {
             });
 
             this.physics.add.overlap(this.player, this.finishes, (player, finish) => {
+                const finishObject = finish as Finish;
+                if (finishObject.getCanFinish()) {
+
                 this.map?.destroy();
                 this.player?.destroy();
                 this.layer?.destroy();
@@ -189,6 +194,7 @@ export default class platformerScene extends Phaser.Scene {
                 let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite);
                 allSprites.forEach(x => x.destroy());
                 this.nextLevel();
+                }
             });
 
             this.cursors = this.input.keyboard?.createCursorKeys();
@@ -230,6 +236,48 @@ export default class platformerScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('finish-flag-idle', {start: 0, end: 9}),
             frameRate: 25,
             repeat: -1
+        });
+
+        this.anims.create({
+            key: 'appear',
+            frames: this.anims.generateFrameNumbers('appear', { start: 0, end: 6 }),
+            frameRate: 25,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('frog-idle', { start: 0, end: 10 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'run',
+            frames: this.anims.generateFrameNumbers('frog-move', { start: 0, end: 11 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jump',
+            frames: this.anims.generateFrameNumbers('frog-jump', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jump-midair',
+            frames: this.anims.generateFrameNumbers('frog-jump-midair', { start: 0, end: 4 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'disappear',
+            frames: this.anims.generateFrameNumbers('disappear', { start: 0, end: 4 }),
+            frameRate: 25,
+            repeat: 0
         });
     }
 }
