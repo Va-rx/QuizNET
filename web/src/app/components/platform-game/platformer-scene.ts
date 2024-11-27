@@ -5,13 +5,13 @@ import { Fruit } from "./Classes/fruit";
 import { Spikes } from "./Classes/spikes";
 import { Finish } from "./Classes/finish";
 import { Saw } from "./Classes/saw";
+import { Platform } from "./Classes/platform"
 
 export default class platformerScene extends Phaser.Scene {
 
 
     private player?: Player;
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
-    private platforms?: Phaser.Physics.Arcade.StaticGroup;
     private spikes?: Phaser.Physics.Arcade.StaticGroup;
     private enemy?: Phaser.Physics.Arcade.Sprite;
     private background?: Phaser.GameObjects.TileSprite;
@@ -19,6 +19,7 @@ export default class platformerScene extends Phaser.Scene {
     private fruits?: Phaser.Physics.Arcade.StaticGroup;
     private finishes?: Phaser.Physics.Arcade.StaticGroup;
     private saws?: Phaser.Physics.Arcade.StaticGroup;
+    private platforms?: Phaser.Physics.Arcade.Group;
 
     private currentLevel?: number;
 
@@ -43,6 +44,8 @@ export default class platformerScene extends Phaser.Scene {
         this.load.image('tileset', 'assets/games/platformer/tilesets/Terrain.png');
         this.load.image('spikes', 'assets/games/platformer/tilesets/Spikes.png');
         this.load.spritesheet('saw', 'assets/games/platformer/tilesets/On (38x38).png', {frameWidth: 38, frameHeight: 38});
+        this.load.image('platform-off', 'assets/games/platformer/tilesets/platforms/Off.png')
+        this.load.spritesheet('platform-on', 'assets/games/platformer/tilesets/platforms/On.png', {frameWidth: 32, frameHeight: 10});
 
         this.load.image('pink-bg', 'assets/games/platformer/backgrounds/Pink.png');
         this.load.image('brown-bg', 'assets/games/platformer/backgrounds/Brown.png');
@@ -121,6 +124,11 @@ export default class platformerScene extends Phaser.Scene {
         this.spikes = this.physics.add.staticGroup();
         this.finishes = this.physics.add.staticGroup();
         this.saws = this.physics.add.staticGroup();
+        this.platforms = this.physics.add.group({
+            immovable: true,
+            allowGravity: false,
+            bounceY: 100,
+        });
 
         const playerStartingPosX = this.map.getObjectLayer('Player')?.objects[0].x;
         const playerStartingPosY = this.map.getObjectLayer('Player')?.objects[0].y;
@@ -129,6 +137,8 @@ export default class platformerScene extends Phaser.Scene {
         const spikeObjects = this.map.getObjectLayer('Spikes')?.objects;
         const finishObjects = this.map.getObjectLayer('Finish')?.objects;
         const sawObjects = this.map.getObjectLayer('Saws')?.objects;
+        const platformObjects = this.map.getObjectLayer('Platforms')?.objects;
+
 
         fruitObjects?.forEach(fruitObject => {
             if (fruitObject.name === 'fruit') {
@@ -167,7 +177,16 @@ export default class platformerScene extends Phaser.Scene {
                 saw.setDepth(-1);
                 this.saws?.add(saw);
             }
-        })
+        });
+
+        platformObjects?.forEach(platformObject => {
+            if (platformObject.x && platformObject.y) {
+                const platform = new Platform(this, 2*platformObject.x, 2*platformObject.y, 'platform-off');
+                platform.setScale(2);
+                platform.setOrigin(0, 1);
+                this.platforms?.add(platform);
+            }
+        });
 
         if (playerStartingPosX && playerStartingPosY) {
             this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, 'frog-idle');
@@ -192,7 +211,7 @@ export default class platformerScene extends Phaser.Scene {
             this.physics.add.overlap(this.player, this.saws, (player, saw) => {
                 this.player?.kill().then(() => {
                     if (playerStartingPosX && playerStartingPosY)
-                    this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY)
+                    this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY);
                 })
             });
 
@@ -201,6 +220,12 @@ export default class platformerScene extends Phaser.Scene {
                     if (playerStartingPosX && playerStartingPosY)
                     this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY)
                 })
+            });
+
+            if (this.platforms)
+            this.physics.add.collider(this.player, this.platforms, (player, platform) => {
+                const platformObject = platform as Platform;
+                platformObject.steppedOn();
             });
 
             this.physics.add.overlap(this.player, this.finishes, (player, finish) => {
@@ -305,6 +330,13 @@ export default class platformerScene extends Phaser.Scene {
         this.anims.create({
             key: 'saw',
             frames: this.anims.generateFrameNumbers('saw', { start: 0, end: 7}),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'platform-on',
+            frames: this.anims.generateFrameNumbers('platform-on', { start: 0, end: 3}),
             frameRate: 25,
             repeat: -1
         });

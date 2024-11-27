@@ -38,6 +38,41 @@
          "y":0
         }, 
         {
+         "draworder":"topdown",
+         "id":7,
+         "name":"Platforms",
+         "objects":[
+                {
+                 "gid":245,
+                 "height":10,
+                 "id":42,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":352,
+                 "y":348
+                }, 
+                {
+                 "gid":245,
+                 "height":10,
+                 "id":43,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":224,
+                 "y":332
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
          "data":[4, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 5, 4, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 5,
             25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 25, 194, 196, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23,
             25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23,
@@ -564,8 +599,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":7,
- "nextobjectid":42,
+ "nextlayerid":8,
+ "nextobjectid":44,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.0",
@@ -611,6 +646,20 @@
          "tilecount":1,
          "tileheight":38,
          "tilewidth":38,
+         "transparentcolor":"#ff00ff"
+        }, 
+        {
+         "columns":1,
+         "firstgid":245,
+         "image":"..\/Downloads\/Pixel Adventure 1\/Free\/Traps\/Falling Platforms\/Off.png",
+         "imageheight":10,
+         "imagewidth":32,
+         "margin":0,
+         "name":"platforms",
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":10,
+         "tilewidth":32,
          "transparentcolor":"#ff00ff"
         }],
  "tilewidth":16,
