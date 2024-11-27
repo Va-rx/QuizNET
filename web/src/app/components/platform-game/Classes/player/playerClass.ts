@@ -1,4 +1,4 @@
-export enum CharacterClass {
+export enum PlayerClass {
     FROG = 'frog',
     MASKER = 'masker',
     PINKER = 'pinker',

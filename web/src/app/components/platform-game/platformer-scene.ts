@@ -1,11 +1,13 @@
 import Phaser from "phaser";
-import { Player } from "./Classes/player";
-import { Fruit } from "./Classes/fruit";
-import { Spikes } from "./Classes/spikes";
-import { Finish } from "./Classes/finish";
-import { Saw } from "./Classes/saw";
-import { Platform } from "./Classes/platform"
-import { CharacterClass } from "./Classes/characterClass";
+import { Player } from "./Classes/player/player";
+import { Fruit } from "./Classes/fruit/fruit";
+import { Spikes } from "./Classes/obstacles/spikes";
+import { Finish } from "./Classes/finish/finish";
+import { Saw } from "./Classes/obstacles/saw";
+import { Platform } from "./Classes/obstacles/platform"
+import { PlayerClass } from "./Classes/player/playerClass";
+import { AssetLoader } from "./Classes/assetLoader";
+import { AnimationManager } from "./Classes/animationManager";
 
 export default class platformerScene extends Phaser.Scene {
 
@@ -33,66 +35,17 @@ export default class platformerScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.tilemapTiledJSON('map1', 'assets/games/platformer/levels/mapa-1.json');
-        this.load.tilemapTiledJSON('map2', 'assets/games/platformer/levels/mapa-2.json');
-        this.load.tilemapTiledJSON('map3', 'assets/games/platformer/levels/mapa-3.json');
-
-        this.load.image('tileset', 'assets/games/platformer/tilesets/Terrain.png');
-        this.load.image('spikes', 'assets/games/platformer/tilesets/Spikes.png');
-        this.load.spritesheet('saw', 'assets/games/platformer/tilesets/On (38x38).png', {frameWidth: 38, frameHeight: 38});
-        this.load.image('platform-off', 'assets/games/platformer/tilesets/platforms/Off.png')
-        this.load.spritesheet('platform-on', 'assets/games/platformer/tilesets/platforms/On.png', {frameWidth: 32, frameHeight: 10});
-
-        this.load.image('pink-bg', 'assets/games/platformer/backgrounds/Pink.png');
-        this.load.image('brown-bg', 'assets/games/platformer/backgrounds/Brown.png');
-        this.load.image('gray-bg', 'assets/games/platformer/backgrounds/Gray.png');
-        this.load.image('green-bg', 'assets/games/platformer/backgrounds/Green.png');
-        this.load.image('blue-bg', 'assets/games/platformer/backgrounds/Blue.png');
-        this.load.image('purple-bg', 'assets/games/platformer/backgrounds/Purple.png');
-        this.load.image('yellow-bg', 'assets/games/platformer/backgrounds/Yellow.png');
-
-        this.load.spritesheet('appear', 'assets/games/platformer/characters/basics/Appearing.png', {frameWidth: 96, frameHeight: 96});
-        this.load.spritesheet('disappear', 'assets/games/platformer/characters/basics/Disappearing.png', {frameWidth: 96, frameHeight: 96});
-
-        this.load.spritesheet('frog-idle', 'assets/games/platformer/characters/frog/Idle.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('frog-move', 'assets/games/platformer/characters/frog/Run.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('frog-jump', 'assets/games/platformer/characters/frog/Jump.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('frog-jump-midair', 'assets/games/platformer/characters/frog/Double Jump.png', {frameWidth: 32, frameHeight: 32});
-
-        this.load.spritesheet('masker-idle', 'assets/games/platformer/characters/masker/Idle.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('masker-move', 'assets/games/platformer/characters/masker/Run.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('masker-jump', 'assets/games/platformer/characters/masker/Jump.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('masker-jump-midair', 'assets/games/platformer/characters/masker/Double Jump.png', {frameWidth: 32, frameHeight: 32});
-
-        this.load.spritesheet('pinker-idle', 'assets/games/platformer/characters/pinker/Idle.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('pinker-move', 'assets/games/platformer/characters/pinker/Run.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('pinker-jump', 'assets/games/platformer/characters/pinker/Jump.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('pinker-jump-midair', 'assets/games/platformer/characters/pinker/Double Jump.png', {frameWidth: 32, frameHeight: 32});
-
-        this.load.spritesheet('virtual-idle', 'assets/games/platformer/characters/virtual/Idle.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('virtual-move', 'assets/games/platformer/characters/virtual/Run.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('virtual-jump', 'assets/games/platformer/characters/virtual/Jump.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('virtual-jump-midair', 'assets/games/platformer/characters/virtual/Double Jump.png', {frameWidth: 32, frameHeight: 32});
-
-        this.load.spritesheet('cherry', 'assets/games/platformer/fruits/Cherries.png', {frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('fruit-collect', 'assets/games/platformer/fruits/Collected.png', {frameWidth: 32, frameHeight: 32});
-
-
-        // this.load.image('spiker-idle', 'assets/games/platformer/spiker/Idle.png');
-        // this.load.spritesheet('spiker-blink', 'assets/games/platformer/spiker/Blink (54x52).png', {frameWidth: 54, frameHeight: 52});
-
-        this.load.image('finish-not-yet', 'assets/games/platformer/finishes/Finish (No Flag).png');
-        this.load.spritesheet('finish-flag-out', 'assets/games/platformer/finishes/Finish (Flag Out).png', {frameWidth: 64, frameHeight: 64});
-        this.load.spritesheet('finish-flag-idle', 'assets/games/platformer/finishes/Finish (Flag Idle).png', {frameWidth: 64, frameHeight: 64});
+        const assetLoader = new AssetLoader(this);
+        assetLoader.loadAllAssets();
     }
 
     create() {
-        this.createAnimations();
+        const animationManager = new AnimationManager(this);
+        animationManager.createAllAnimations();
 
-        const classes = Object.values(CharacterClass);
+        const classes = Object.values(PlayerClass);
         const randomIndex = Math.floor(Math.random() * classes.length);
         this.chc = classes[randomIndex];
-
 
         this.currentLevel = 3;
         this.loadLevel(this.currentLevel);
@@ -103,13 +56,9 @@ export default class platformerScene extends Phaser.Scene {
             this.background.tilePositionX -= 0.5;
         }
 
-        if (this.cursors) {
-            this.player?.update(this.cursors);
+        if (this.player && this.cursors) {
+            this.player.update(this.cursors);
         }
-
-        console.log(this.platforms?.children.size);
-
-        // console.log(this.fruits?.children.size);
 
         if (this.fruits?.children.size === 0) {
             this.finishes?.children.entries.forEach((finish) => {
@@ -118,7 +67,6 @@ export default class platformerScene extends Phaser.Scene {
                 }
             })
         } 
-        // this.spikerr?.updatex();
     }
 
     loadLevel(level: number) {
@@ -296,175 +244,5 @@ export default class platformerScene extends Phaser.Scene {
                 this.platforms?.add(platform);
             }
         })};
-    }
-
-    createAnimations() {
-        this.anims.create({
-            key: 'cherry',
-            frames: this.anims.generateFrameNumbers('cherry', { start: 0, end: 16 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'fruit-collect',
-            frames: this.anims.generateFrameNumbers('fruit-collect', { start: 0, end: 5 }),
-            frameRate: 25,
-            repeat: 0
-        });
-
-        this.anims.create({
-            key: 'finish-flag-out',
-            frames: this.anims.generateFrameNumbers('finish-flag-out', {start: 0, end: 25}),
-            frameRate: 25,
-            repeat: 0
-        });
-
-        this.anims.create({
-            key: 'finish-flag-idle',
-            frames: this.anims.generateFrameNumbers('finish-flag-idle', {start: 0, end: 9}),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'appear',
-            frames: this.anims.generateFrameNumbers('appear', { start: 0, end: 6 }),
-            frameRate: 25,
-            repeat: 0
-        });
-
-        this.anims.create({
-            key: 'masker-idle',
-            frames: this.anims.generateFrameNumbers('masker-idle', { start: 0, end: 10 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'masker-run',
-            frames: this.anims.generateFrameNumbers('masker-move', { start: 0, end: 11 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'masker-jump',
-            frames: this.anims.generateFrameNumbers('masker-jump', { start: 0, end: 0 }),
-            frameRate: 1,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'masker-jump-midair',
-            frames: this.anims.generateFrameNumbers('masker-jump-midair', { start: 0, end: 4 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'pinker-idle',
-            frames: this.anims.generateFrameNumbers('pinker-idle', { start: 0, end: 10 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'pinker-run',
-            frames: this.anims.generateFrameNumbers('pinker-move', { start: 0, end: 11 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'pinker-jump',
-            frames: this.anims.generateFrameNumbers('pinker-jump', { start: 0, end: 0 }),
-            frameRate: 1,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'pinker-jump-midair',
-            frames: this.anims.generateFrameNumbers('pinker-jump-midair', { start: 0, end: 4 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'virtual-idle',
-            frames: this.anims.generateFrameNumbers('virtual-idle', { start: 0, end: 10 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'virtual-run',
-            frames: this.anims.generateFrameNumbers('virtual-move', { start: 0, end: 11 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'virtual-jump',
-            frames: this.anims.generateFrameNumbers('virtual-jump', { start: 0, end: 0 }),
-            frameRate: 1,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'virtual-jump-midair',
-            frames: this.anims.generateFrameNumbers('virtual-jump-midair', { start: 0, end: 4 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'frog-idle',
-            frames: this.anims.generateFrameNumbers('frog-idle', { start: 0, end: 10 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'frog-run',
-            frames: this.anims.generateFrameNumbers('frog-move', { start: 0, end: 11 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'frog-jump',
-            frames: this.anims.generateFrameNumbers('frog-jump', { start: 0, end: 0 }),
-            frameRate: 1,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'frog-jump-midair',
-            frames: this.anims.generateFrameNumbers('frog-jump-midair', { start: 0, end: 4 }),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'disappear',
-            frames: this.anims.generateFrameNumbers('disappear', { start: 0, end: 4 }),
-            frameRate: 25,
-            repeat: 0
-        });
-
-        this.anims.create({
-            key: 'saw',
-            frames: this.anims.generateFrameNumbers('saw', { start: 0, end: 7}),
-            frameRate: 25,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'platform-on',
-            frames: this.anims.generateFrameNumbers('platform-on', { start: 0, end: 3}),
-            frameRate: 25,
-            repeat: -1
-        });
     }
 }
