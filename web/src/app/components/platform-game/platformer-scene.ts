@@ -252,6 +252,8 @@ export default class platformerScene extends Phaser.Scene {
             if (this.platforms)
             this.physics.add.collider(this.player, this.platforms, (player, platform) => {
                 const platformObject = platform as Platform;
+                const player2 = player as Player;
+                if (player2 && player2.body && platformObject && platformObject.body && player2.body.bottom <= platformObject.body.top + 5)
                 platformObject.steppedOn();
             });
 
