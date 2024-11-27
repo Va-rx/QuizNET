@@ -1,36 +1,32 @@
 import Phaser from "phaser";
 import { Player } from "./Classes/player";
-import Spiker from "./Classes/spiker";
 import { Fruit } from "./Classes/fruit";
 import { Spikes } from "./Classes/spikes";
 import { Finish } from "./Classes/finish";
 import { Saw } from "./Classes/saw";
 import { Platform } from "./Classes/platform"
+import { CharacterClass } from "./Classes/characterClass";
 
 export default class platformerScene extends Phaser.Scene {
-
-
-    private player?: Player;
-    private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
-    private spikes?: Phaser.Physics.Arcade.StaticGroup;
-    private enemy?: Phaser.Physics.Arcade.Sprite;
-    private background?: Phaser.GameObjects.TileSprite;
-
-    private fruits?: Phaser.Physics.Arcade.StaticGroup;
-    private finishes?: Phaser.Physics.Arcade.StaticGroup;
-    private saws?: Phaser.Physics.Arcade.StaticGroup;
-    private platforms?: Phaser.Physics.Arcade.Group;
-
-    private currentLevel?: number;
-
-
-    private enemies!: Phaser.Physics.Arcade.Group;
-
-    private spikerr?: Spiker;
 
     private map?: Phaser.Tilemaps.Tilemap
     private tilesets?: Phaser.Tilemaps.Tileset[];
     private layer?: Phaser.Tilemaps.TilemapLayer;
+
+    private chc!: string;
+
+    private background?: Phaser.GameObjects.TileSprite;
+
+    private player?: Player;
+    private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
+
+    private fruits?: Phaser.Physics.Arcade.StaticGroup;
+    private spikes?: Phaser.Physics.Arcade.StaticGroup;
+    private saws?: Phaser.Physics.Arcade.StaticGroup;
+    private platforms?: Phaser.Physics.Arcade.Group;
+    private finishes?: Phaser.Physics.Arcade.StaticGroup;
+
+    private currentLevel?: number;
 
     constructor(config: Phaser.Types.Scenes.SettingsConfig) {
         super(config);
@@ -63,6 +59,21 @@ export default class platformerScene extends Phaser.Scene {
         this.load.spritesheet('frog-jump', 'assets/games/platformer/characters/frog/Jump.png', {frameWidth: 32, frameHeight: 32});
         this.load.spritesheet('frog-jump-midair', 'assets/games/platformer/characters/frog/Double Jump.png', {frameWidth: 32, frameHeight: 32});
 
+        this.load.spritesheet('masker-idle', 'assets/games/platformer/characters/masker/Idle.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('masker-move', 'assets/games/platformer/characters/masker/Run.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('masker-jump', 'assets/games/platformer/characters/masker/Jump.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('masker-jump-midair', 'assets/games/platformer/characters/masker/Double Jump.png', {frameWidth: 32, frameHeight: 32});
+
+        this.load.spritesheet('pinker-idle', 'assets/games/platformer/characters/pinker/Idle.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('pinker-move', 'assets/games/platformer/characters/pinker/Run.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('pinker-jump', 'assets/games/platformer/characters/pinker/Jump.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('pinker-jump-midair', 'assets/games/platformer/characters/pinker/Double Jump.png', {frameWidth: 32, frameHeight: 32});
+
+        this.load.spritesheet('virtual-idle', 'assets/games/platformer/characters/virtual/Idle.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('virtual-move', 'assets/games/platformer/characters/virtual/Run.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('virtual-jump', 'assets/games/platformer/characters/virtual/Jump.png', {frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('virtual-jump-midair', 'assets/games/platformer/characters/virtual/Double Jump.png', {frameWidth: 32, frameHeight: 32});
+
         this.load.spritesheet('cherry', 'assets/games/platformer/fruits/Cherries.png', {frameWidth: 32, frameHeight: 32});
         this.load.spritesheet('fruit-collect', 'assets/games/platformer/fruits/Collected.png', {frameWidth: 32, frameHeight: 32});
 
@@ -78,6 +89,11 @@ export default class platformerScene extends Phaser.Scene {
     create() {
         this.createAnimations();
 
+        const classes = Object.values(CharacterClass);
+        const randomIndex = Math.floor(Math.random() * classes.length);
+        this.chc = classes[randomIndex];
+
+
         this.currentLevel = 3;
         this.loadLevel(this.currentLevel);
     }
@@ -90,6 +106,8 @@ export default class platformerScene extends Phaser.Scene {
         if (this.cursors) {
             this.player?.update(this.cursors);
         }
+
+        console.log(this.platforms?.children.size);
 
         // console.log(this.fruits?.children.size);
 
@@ -144,6 +162,11 @@ export default class platformerScene extends Phaser.Scene {
             if (fruitObject.name === 'fruit') {
                 if (fruitObject.x && fruitObject.y) {
                 const fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, '');
+                
+                // const glowCircle = this.add.graphics();
+                // glowCircle.fillStyle(0xFFD700, 0.3);
+                // glowCircle.fillCircle(fruit.x, fruit.y, 32);
+
                 this.fruits?.add(fruit);
                 fruit.setScale(2);
                 }
@@ -189,7 +212,7 @@ export default class platformerScene extends Phaser.Scene {
         });
 
         if (playerStartingPosX && playerStartingPosY) {
-            this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, 'frog-idle');
+            this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, this.chc);
             this.player.setScale(2);
 
             this.physics.add.collider(this.player, this.layer);
@@ -210,15 +233,19 @@ export default class platformerScene extends Phaser.Scene {
 
             this.physics.add.overlap(this.player, this.saws, (player, saw) => {
                 this.player?.kill().then(() => {
-                    if (playerStartingPosX && playerStartingPosY)
+                    if (playerStartingPosX && playerStartingPosY) {
+                    this.platforms?.clear(true, true);
                     this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY);
+                    this.renegeratePlatforms();}
                 })
             });
 
             this.physics.add.collider(this.player, this.spikes, () => {
                 this.player?.kill().then(() => {
-                    if (playerStartingPosX && playerStartingPosY)
-                    this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY)
+                    if (playerStartingPosX && playerStartingPosY) {
+                    this.platforms?.clear(true, true);
+                    this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY)}
+                    this.renegeratePlatforms();
                 })
             });
 
@@ -254,6 +281,19 @@ export default class platformerScene extends Phaser.Scene {
         } else {
             this.loadLevel(1);
         }
+    }
+
+    renegeratePlatforms() {
+        if(this.map){
+        const platformObjects = this.map.getObjectLayer('Platforms')?.objects;
+        platformObjects?.forEach(platformObject => {
+            if (platformObject.x && platformObject.y) {
+                const platform = new Platform(this, 2*platformObject.x, 2*platformObject.y, 'platform-off');
+                platform.setScale(2);
+                platform.setOrigin(0, 1);
+                this.platforms?.add(platform);
+            }
+        })};
     }
 
     createAnimations() {
@@ -293,28 +333,112 @@ export default class platformerScene extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'idle',
+            key: 'masker-idle',
+            frames: this.anims.generateFrameNumbers('masker-idle', { start: 0, end: 10 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'masker-run',
+            frames: this.anims.generateFrameNumbers('masker-move', { start: 0, end: 11 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'masker-jump',
+            frames: this.anims.generateFrameNumbers('masker-jump', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'masker-jump-midair',
+            frames: this.anims.generateFrameNumbers('masker-jump-midair', { start: 0, end: 4 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'pinker-idle',
+            frames: this.anims.generateFrameNumbers('pinker-idle', { start: 0, end: 10 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'pinker-run',
+            frames: this.anims.generateFrameNumbers('pinker-move', { start: 0, end: 11 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'pinker-jump',
+            frames: this.anims.generateFrameNumbers('pinker-jump', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'pinker-jump-midair',
+            frames: this.anims.generateFrameNumbers('pinker-jump-midair', { start: 0, end: 4 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'virtual-idle',
+            frames: this.anims.generateFrameNumbers('virtual-idle', { start: 0, end: 10 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'virtual-run',
+            frames: this.anims.generateFrameNumbers('virtual-move', { start: 0, end: 11 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'virtual-jump',
+            frames: this.anims.generateFrameNumbers('virtual-jump', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'virtual-jump-midair',
+            frames: this.anims.generateFrameNumbers('virtual-jump-midair', { start: 0, end: 4 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'frog-idle',
             frames: this.anims.generateFrameNumbers('frog-idle', { start: 0, end: 10 }),
             frameRate: 25,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'run',
+            key: 'frog-run',
             frames: this.anims.generateFrameNumbers('frog-move', { start: 0, end: 11 }),
             frameRate: 25,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'jump',
+            key: 'frog-jump',
             frames: this.anims.generateFrameNumbers('frog-jump', { start: 0, end: 0 }),
             frameRate: 1,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'jump-midair',
+            key: 'frog-jump-midair',
             frames: this.anims.generateFrameNumbers('frog-jump-midair', { start: 0, end: 4 }),
             frameRate: 25,
             repeat: -1

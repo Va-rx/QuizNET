@@ -1,7 +1,5 @@
-import { Direction } from "./direction";
-
 export class Player extends Phaser.Physics.Arcade.Sprite {
-    private direction: Direction = Direction.RIGHT;
+    private character: string;
 
     private jumpVelocity: number = -500;
     private moveVelocity: number = -240
@@ -19,6 +17,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         // this.setOrigin(0,0);
 
         scene.physics.world.enable(this);
+        this.character = texture;
 
         this.setBounce(0.2);  
         this.body?.setSize(28, 28);    
@@ -39,7 +38,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             if (anim.key === 'appear') {
                 this.canControl = true;
                 this.body?.setOffset(2,4);
-                this.anims.play('idle', true);
+                this.anims.play(`${this.character}-idle`, true);
             }
         });
     }
@@ -66,7 +65,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.jumpInRowCount++;
         this.jumpButtonReleased = false;
 
-        this.anims.play(animationKey, true);
+        this.anims.play(`${this.character}-${animationKey}`, true);
     }
 
     public moveRight() {
@@ -74,7 +73,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.flipX = false;
         if (this.body?.blocked.down) {
-            this.anims.play('run', true);
+            this.anims.play(`${this.character}-run`, true);
         }
     }
 
@@ -83,7 +82,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.flipX = true;  // Enables animation rotation
         if (this.body?.blocked.down) {
-            this.anims.play('run', true);
+            this.anims.play(`${this.character}-run`, true);
         }
     }
 
@@ -91,7 +90,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX(0);
 
         if (this.body?.blocked.down) {
-            this.anims.play('idle', true);
+            this.anims.play(`${this.character}-idle`, true);
         }
     }
 
@@ -131,7 +130,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             if (anim.key === 'appear') {
                 this.setVelocityY(0);
                 this.body?.setOffset(16,16);
-                this.anims.play('idle', true);
+                this.anims.play(`${this.character}-idle`, true);
             }
         });
     }
