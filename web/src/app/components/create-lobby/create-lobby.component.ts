@@ -49,7 +49,6 @@ export class CreateLobbyComponent implements OnInit {
     }
 
     );
-
   }
 
   // Method to handle form submission

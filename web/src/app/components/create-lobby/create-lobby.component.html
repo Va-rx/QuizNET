@@ -26,7 +26,7 @@
   </div>
 
   <div *ngIf="userList.length > 0" class="col-md-4 user-list-container">
-    <h4 style="color: white;">{{'LOBBY.GAME_PLAYERS' | translate}}:</h4>
+    <h4 style="color: white;">{{'LOBBY.PLAYERS' | translate}}:</h4>
     <ul class="user-list">
       <li *ngFor="let user of userList" class="user-list-item" >
         <span>{{ user }}</span>

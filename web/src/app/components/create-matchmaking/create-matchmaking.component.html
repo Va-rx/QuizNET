@@ -34,7 +34,7 @@
     <div class="col-md-4" *ngFor="let game of games">
       <div class="card mb-4" [class.border-primary]="game === selectedGame" (click)="selectGame(game)">
         <div class="card-body">
-          <h5 class="card-title">{{ game.game_name }}</h5>
+          <h5 class="card-title">{{ game.name }}</h5>
           <p class="card-text">{{ game.description }}</p>
           <button class="btn btn-primary" (click)="selectGame(game); $event.stopPropagation()">{{ 'CREATE_MATCHMAKING.CHOOSE' | translate }}</button>
         </div>

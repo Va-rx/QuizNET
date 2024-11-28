@@ -33,7 +33,7 @@ export class CreateMatchmakingComponent implements OnInit {
   }
 
   loadGames(): void {
-    this.gameService.get().subscribe((data: any[]) => {
+    this.gameService.getAllGames().subscribe((data: any[]) => {
       this.games = data;
     });
   }

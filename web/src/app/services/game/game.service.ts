@@ -9,9 +9,12 @@ const baseUrl = 'http://localhost:8080/api/games';
 export class GamesService {
 
   constructor(private http: HttpClient) { }
-  get(): Observable<any> {
+
+  getAllGames(): Observable<any> {
     return this.http.get(`${baseUrl}`);
   }
 
-
+  getGameDetails(id: number): Observable<any> {
+    return this.http.get(`${baseUrl}/${id}`);
+  }
 }
