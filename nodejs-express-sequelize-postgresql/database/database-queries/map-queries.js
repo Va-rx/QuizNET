@@ -2,7 +2,7 @@ const db = require('../database-connection');
 
 const createMap = (gameId, map) => {
     try {
-        return db.query(`INSERT INTO maps (game_id, name, difficulty, time, map) VALUES ($1, $2, $3, $4) RETURNING map_id as id, game_id as "gameId", name, difficulty, map`, [gameId, map.name, map.difficulty, map.time, map.json]);
+        return db.query(`INSERT INTO maps (game_id, name, difficulty, time, map) VALUES ($1, $2, $3, $4) RETURNING map_id as id, game_id as "gameId", name, difficulty, map`, [gameId, map.name, map.difficulty, map.time, map.map]);
     } catch (err) {
         console.error('db query create map error: ', err);
     }
