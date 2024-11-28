@@ -16,16 +16,16 @@ const getGame = (id) => {
     }
 }
 
-const getMapsLabelsToGame = (id) => {
+const getLevelsLabelsToGame = (id) => {
     try {
-        return db.query(`SELECT map_id as id, name, difficulty, time FROM maps WHERE game_id = $1`, [id]);
+        return db.query(`SELECT level_id as id, name, difficulty, time FROM levels WHERE game_id = $1`, [id]);
     } catch (err) {
-        console.error('db query get maps label to game error: ', err);
+        console.error('db query get levels labels to game error: ', err);
     }
 }
 
 module.exports = {
     getGames,
     getGame,
-    getMapsLabelsToGame
+    getLevelsLabelsToGame
 }

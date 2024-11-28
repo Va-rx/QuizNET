@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const { getMap, deleteMap, createMap } = require('../database/database-queries/map-queries');
+const { getLevel, deleteLevel, createLevel } = require('../database/database-queries/level-queries');
 
 router.get("/:id", async (req, res) => {
     const id = req.params.id;
     try {
-        const result = await getMap(id);
+        const result = await getLevel(id);
         res.status(200).send(result.rows[0]);
     } catch (error) {
         console.error(error);
@@ -17,7 +17,7 @@ router.get("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     const id = req.params.id;
     try {
-        const result = await deleteMap(id);
+        const result = await deleteLevel(id);
 
         res.status(204);
     } catch (error) {
@@ -28,9 +28,9 @@ router.delete("/:id", async (req, res) => {
 
 router.post("/games/:idg", async (req, res) => {
     const gameId = req.params.idg;
-    const map = req.params.body;
+    const level = req.params.body;
     try {
-        const result = createMap(gameId, map);
+        const result = createLevel(gameId, level);
 
         res.status(201).send(result.rows[0]);
     } catch (error) {

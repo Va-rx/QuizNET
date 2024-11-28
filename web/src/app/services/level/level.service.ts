@@ -2,23 +2,23 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 
-const baseUrl = 'http://localhost:8080/api/maps';
+const baseUrl = 'http://localhost:8080/api/levels';
 @Injectable({
   providedIn: 'root'
 })
-export class MapService {
+export class LevelService {
 
   constructor(private http: HttpClient) { }
 
-  getMap(id: number): Observable<any> {
+  getLevel(id: number): Observable<any> {
     return this.http.get(`${baseUrl}/${id}`);
   }
 
-  deleteMap(id: number): Observable<any> {
+  deleteLevel(id: number): Observable<any> {
     return this.http.delete(`${baseUrl}/${id}`);
   }
 
-  createMap(gameId: number, map: any) {
-    return this.http.post(`${baseUrl}/${gameId}`, map);
+  createLevel(gameId: number, level: any) {
+    return this.http.post(`${baseUrl}/${gameId}`, level);
   }
 }
