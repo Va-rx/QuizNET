@@ -43,6 +43,10 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   socializerScore = 0;
   players;
 
+  timer: number = 900; //IN SECONDS
+  timerEnded:boolean=false;
+  timerStarted:boolean=false;
+
   constructor(private socketService:SocketServiceService,
               private dialog: MatDialog,
               private testService: TestService,
@@ -59,6 +63,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.historyTestId = history.state.data.testHistoryId;
     this.players = history.state.data.multiplayerPlayers;
     this.maxQuestions = history.state.data.maxQuestions;
+    this.timer=history.state.data.timer;
 
     Object.keys(this.players).forEach((key) => {
       this.killBoardMap.set(this.players[key].id, [this.players[key].nickname,0]);
@@ -92,6 +97,11 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     };
     this.phaserGame = new Phaser.Game(this.config);
     await this.loadTestDetails()
+
+    if(!this.timerStarted){
+      this.phaserGame.events.emit("getTimer", this.timer,this.maxQuestions);
+      this.timerStarted=true;
+    }
 
     const roleDialogRef = this.dialog.open(RoleDialogComponent, {
       data: { roles: this.roles, maxQuestions: this.maxQuestions },
@@ -134,6 +144,11 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
       this.finishGame();
     });
 
+  }
+
+  onTimerEnded(){
+    this.timerEnded=true;
+    this.finishGame();
   }
 
   ngOnDestroy(): void {
@@ -203,5 +218,6 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
 
     this.phaserGame.destroy(true);
     this.gameFinished = true;
+    this.timerEnded=true;
   }
 }

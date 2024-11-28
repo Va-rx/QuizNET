@@ -40,6 +40,11 @@ router.get("/:id/:userId", async (req, res) => {
     if (parsedResult === null) {
         return res.status(500).send({ hasError: "Error parsing XML" });
     }
+
+    if (!parsedAnswers.answers.question) {
+        parsedAnswers.answers = { question: [] };
+    }
+
     const answerIds = parsedAnswers.answers.question.flatMap(q => q.answer ? q.answer.map(a => parseInt(a)) : []);
     const userTest = {
         createdAt: test.createdAt,
