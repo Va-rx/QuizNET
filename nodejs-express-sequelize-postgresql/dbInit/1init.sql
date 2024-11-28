@@ -79,6 +79,30 @@ CREATE TABLE user_personality_results (
     CONSTRAINT user_personality_results_pk  PRIMARY KEY (id)
 );
 
+CREATE TABLE games (
+    game_id int  NOT NULL,
+    name varchar(50)  NOT NULL,
+    description varchar(300)  NOT NULL,
+    CONSTRAINT games_pk PRIMARY KEY (game_id)
+);
+
+CREATE TABLE levels (
+    level_id int  NOT NULL,
+    game_id int  NOT NULL,
+    name varchar(50) NOT NULL,
+    difficulty varchar(20) NOT NULL,
+    time int NOT NULL,
+    map json  NOT NULL,
+    CONSTRAINT levels_pk PRIMARY KEY (level_id)
+);
+
+ALTER TABLE levels ADD CONSTRAINT levels_games
+    FOREIGN KEY (game_id)
+    REFERENCES games (game_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
 ALTER TABLE answers ADD CONSTRAINT answers_questions
     FOREIGN KEY (question_id)
     REFERENCES questions (question_id)
@@ -144,6 +168,12 @@ ALTER TABLE user_results ALTER COLUMN id SET DEFAULT nextval('user_results_id_se
 
 CREATE SEQUENCE user_personality_results_id_seq;
 ALTER TABLE user_personality_results ALTER COLUMN id SET DEFAULT nextval('user_personality_results_id_seq');
+
+CREATE SEQUENCE games_id_seq;
+ALTER TABLE games ALTER COLUMN game_id SET DEFAULT nextval('games_id_seq');
+
+CREATE SEQUENCE levels_id_seq;
+ALTER TABLE levels ALTER COLUMN level_id SET DEFAULT nextval('levels_id_seq');
 
 ALTER TABLE questions
 ALTER COLUMN question_id SET DATA TYPE INTEGER,

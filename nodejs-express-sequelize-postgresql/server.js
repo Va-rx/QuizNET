@@ -61,7 +61,8 @@ const questionRouter = require("./routes/question-routes");
 const answerRouter = require("./routes/answer-routes");
 const testHistoryRouter = require("./routes/test-history-routes");
 const userResultsRouter = require("./routes/user-results-routes");
-const userPersonalityResults = require("./routes/user-personality-results-routes");
+const userPersonalityResultsRouter = require("./routes/user-personality-results-routes");
+const levelRouter = require("./routes/level-routes");
 const {createTestHistory} = require("./database/database-queries/test-history-queries");
 const {generateQuizXML} = require("./XMLhandler");
 const {getNumberOfQuestions} = require("./database/database-queries/test-queries");
@@ -73,7 +74,8 @@ app.use("/api/questions", questionRouter);
 app.use("/api/answers", answerRouter);
 app.use("/api/test-history", testHistoryRouter);
 app.use("/api/user-results", userResultsRouter);
-app.use("/api/user-personality-results", userPersonalityResults)
+app.use("/api/user-personality-results", userPersonalityResultsRouter);
+app.use("/api/levels", levelRouter);
 
 const PORT = process.env.PORT || 8080;
 
@@ -277,7 +279,7 @@ io.on("connection", (socket) => {
         questionsAnswered: 0, attackDamage: 10, attackRange: 60, maxHealth: maxHealth, speed: 2.2, playersKilled: 0, nickname: userName
       };
       const sesInfo= codeToSessionInfo.get(joinCode);
-      socket.emit("receive_Data",sesInfo.date,sesInfo.test.name,sesInfo.test.description,sesInfo.game.game_name);
+      socket.emit("receive_Data",sesInfo.date,sesInfo.test.name,sesInfo.test.description,sesInfo.game.name);
       broadcastUserList(session);
     } else {
       console.log("Invalid join code");
@@ -288,7 +290,7 @@ io.on("connection", (socket) => {
   socket.on("startGame", (date, time, game_route, test_id,timer) => {
     console.log(`Game will start at ${time} on ${date}`);
 
-    codeToSessionInfo.set(getJoinCodeBySession(getSessionBySocket(socket)),{ date: `Game will start at ${time} on ${date}`, test: test_id, game:game_route})
+    codeToSessionInfo.set(getJoinCodeBySession(getSessionBySocket(socket)),{ date: `${time}, ${date}`, test: test_id, game:game_route})
 
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');

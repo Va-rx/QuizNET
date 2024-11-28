@@ -1,12 +1,48 @@
 const express = require('express');
 const router = express.Router();
 
-router.get("/", (req, res) => {
-    res.json([
-        {"game_name": "tanks", "description": "tankgame","route": "/tank-game"},
-        {"game_name": "jumpking", "description": "jumpking game descrpitoino","route": "/game"},
-        {"game_name": "Deathmatch", "description": "Collect stars and fight with other players","route": "/deathmatch"},
-    ]);
+const { getGames, getGame, getLevelsLabelsToGame } = require('../database/database-queries/game-queries');
+
+router.get("/", async (req, res) => {
+    try {
+        const result = (await getGames()).rows;
+        const resultWithRoutes = result.map(game => ({
+            ...game,
+            route: mapGameRoute(game.id)
+        }));
+
+        res.status(200).send(resultWithRoutes);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Internal server error' });
+    }
 });
+
+router.get("/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const game = (await getGame(id)).rows[0];
+        const levels = (await getLevelsLabelsToGame(id)).rows;
+
+        const resultWithRoutes = {
+            ...game,
+            route: mapGameRoute(game.id),
+            levels: levels
+        };
+        res.status(200).send(resultWithRoutes);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Internal server error' });
+    }
+});
+
+function mapGameRoute(id) {
+    const map = {
+      1: '/tank-game',
+      2: '/deathmatch',
+      3: '/platformer',
+    };
+    return map[id];
+}
 
 module.exports = router;
