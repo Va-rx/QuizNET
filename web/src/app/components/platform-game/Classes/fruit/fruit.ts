@@ -8,7 +8,7 @@ export class Fruit extends Phaser.Physics.Arcade.Sprite {
 
         this.body?.setSize(16, 16);
 
-        this.anims.play('cherry', true);
+        this.anims.play(texture, true);
     }
 
     public collect() {

@@ -10,6 +10,7 @@ export class PlayerAnimations {
         this.createFrogAnimations();
         this.createMaskerAnimations();
         this.createPinkerAnimations();
+        this.createVirtualAnimations();
     }
 
     private createGeneralAnimations() {
@@ -115,5 +116,35 @@ export class PlayerAnimations {
             frameRate: 25,
             repeat: -1
         });
-    }   
+    }
+
+    private createVirtualAnimations() {
+        this.scene.anims.create({
+            key: 'virtual-idle',
+            frames: this.scene.anims.generateFrameNumbers('virtual-idle', { start: 0, end: 10 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'virtual-run',
+            frames: this.scene.anims.generateFrameNumbers('virtual-move', { start: 0, end: 11 }),
+            frameRate: 25,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'virtual-jump',
+            frames: this.scene.anims.generateFrameNumbers('virtual-jump', { start: 0, end: 0 }),
+            frameRate: 1,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'virtual-jump-midair',
+            frames: this.scene.anims.generateFrameNumbers('virtual-jump-midair', { start: 0, end: 4 }),
+            frameRate: 25,
+            repeat: -1
+        });
+    }
 }

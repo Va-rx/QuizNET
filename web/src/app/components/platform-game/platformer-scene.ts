@@ -43,17 +43,17 @@ export default class platformerScene extends Phaser.Scene {
         const animationManager = new AnimationManager(this);
         animationManager.createAllAnimations();
 
-        const classes = Object.values(PlayerClass);
-        const randomIndex = Math.floor(Math.random() * classes.length);
-        this.chc = classes[randomIndex];
+        // const classes = Object.values(PlayerClass);
+        // const randomIndex = Math.floor(Math.random() * classes.length);
+        // this.chc = classes[randomIndex];
 
-        this.currentLevel = 3;
+        this.currentLevel = 2;
         this.loadLevel(this.currentLevel);
     }
 
     override update() {
         if (this.background) {
-            this.background.tilePositionX -= 0.5;
+            this.background.tilePositionX += 0.2;
         }
 
         if (this.player && this.cursors) {
@@ -72,6 +72,10 @@ export default class platformerScene extends Phaser.Scene {
     loadLevel(level: number) {
         this.currentLevel = level;
 
+        const classes = Object.values(PlayerClass);
+        const randomIndex = Math.floor(Math.random() * classes.length);
+        const character = classes[randomIndex];
+
         this.map = this.make.tilemap({ key: `map${level}` });
         const tileset1 = this.map.addTilesetImage('adv_map_tiles', 'tileset');
         const tileset2 = this.map.addTilesetImage('Spikes', 'spikes');
@@ -85,6 +89,7 @@ export default class platformerScene extends Phaser.Scene {
         this.layer = this.map.createLayer('Tile Layer 1', this.tilesets, 0, 0)!;
         this.layer.setScale(2);
         this.layer.setCollisionByExclusion([-1]);
+        console.log(this.layer.layer.properties);
 
         this.fruits = this.physics.add.staticGroup();
         this.spikes = this.physics.add.staticGroup();
@@ -107,9 +112,8 @@ export default class platformerScene extends Phaser.Scene {
 
 
         fruitObjects?.forEach(fruitObject => {
-            if (fruitObject.name === 'fruit') {
-                if (fruitObject.x && fruitObject.y) {
-                const fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, '');
+            if (fruitObject.x && fruitObject.y) {
+                const fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, fruitObject.name);
                 
                 // const glowCircle = this.add.graphics();
                 // glowCircle.fillStyle(0xFFD700, 0.3);
@@ -117,7 +121,6 @@ export default class platformerScene extends Phaser.Scene {
 
                 this.fruits?.add(fruit);
                 fruit.setScale(2);
-                }
             }
         });
 
@@ -160,15 +163,23 @@ export default class platformerScene extends Phaser.Scene {
         });
 
         if (playerStartingPosX && playerStartingPosY) {
-            this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, this.chc);
+            this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, character);
             this.player.setScale(2);
 
             this.physics.add.collider(this.player, this.layer);
-    
             this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-            this.background = this.add.tileSprite(0, 0, this.cameras.main.width, this.cameras.main.height, 'pink-bg');
+
+            const properties = this.layer.layer.properties as { name: string; value: any }[];
+            const background = properties.find(prop => prop.name === 'background')?.value;
+            if (background) {
+                this.background = this.add.tileSprite(0, 0, this.cameras.main.width, this.cameras.main.height, `${background}-bg`);
+            } else {
+                this.background = this.add.tileSprite(0, 0, this.cameras.main.width, this.cameras.main.height, 'green-bg');
+
+            }
             this.background.setOrigin(0, 0);
             this.background.setDepth(-2);
+            this.background.setScale(2.5);
             this.cameras.main.startFollow(this.player);
             this.cameras.main.setRoundPixels(true);
         }
