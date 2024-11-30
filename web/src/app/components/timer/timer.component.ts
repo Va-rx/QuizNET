@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
 
 @Component({
   selector: 'app-timer',
@@ -28,9 +29,22 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   displayTime!: string;
   private subscription!: Subscription;
+  private socket: any;
+  constructor(private socketService: SocketServiceService){
+
+  }
 
   ngOnInit() {
-    this.startTimer(this.seconds);
+    this.displayTime = this.formatTime(this.seconds);//new
+    this.socket = this.socketService.getSocket();
+    //this.startTimer(this.seconds); LEGACY TIMER
+    this.socket.on("timer-update",(timeValue)=>{
+      this.displayTime = this.formatTime(timeValue);
+      if(timeValue == 0){
+        this.displayTime = '00:00';
+        this.timerEnded.emit();
+      }
+    });
   }
 
   ngOnDestroy() {
