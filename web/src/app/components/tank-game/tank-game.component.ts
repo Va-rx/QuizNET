@@ -133,7 +133,7 @@ export class TankGameComponent implements OnInit {
     this.phaserGame.scene.game.events.on('shareHealth', () => {
       console.log("SHARING HEALTH WITH OTHER USER")
       console.log(this.nickname)
-      this.socket.emit('shareHealth', this.nickname)
+      this.socket.emit('shareHealth', this.nickname,this.socketService.getJoinCode())
     })
 
     this.socket.on('receiveHealth', (userName) => {
