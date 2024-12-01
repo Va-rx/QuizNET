@@ -23,8 +23,6 @@ export class ScoreboardComponent implements OnChanges {
   timeLeft: number = 12.37 // current player left time for the test
   everyUserTime: number = 21.3; // array, map of every users time spent on solving test
 
-  constructor() {
-  }
   ngOnChanges(changes: SimpleChanges): void {
     this.calculateScores();
   }

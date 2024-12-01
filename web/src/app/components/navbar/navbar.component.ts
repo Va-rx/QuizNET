@@ -21,7 +21,7 @@ export class NavbarComponent {
   constructor(private authService: AuthService, private router: Router, private translate: TranslateService) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this.showNavbar = !['/tank-game'].includes(event.urlAfterRedirects);
+        this.showNavbar = !['/tank-game'].includes(event.urlAfterRedirects) || !['/platformer'].includes(event.urlAfterRedirects);
       }
     });
   }

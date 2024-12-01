@@ -1,3 +1,5 @@
+import { PlayerClass } from "./playerClass";
+
 export class Player extends Phaser.Physics.Arcade.Sprite {
     private character: string;
 
@@ -14,7 +16,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture);
-        // this.setOrigin(0,0);
 
         scene.physics.world.enable(this);
         this.character = texture;
@@ -149,6 +150,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
                 }
             });
         }});
+    }
+
+    public setRandomCharacter() {
+        const classes = Object.values(PlayerClass);
+        const randomIndex = Math.floor(Math.random() * classes.length);
+        this.character = classes[randomIndex];
     }
 
     public override update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {

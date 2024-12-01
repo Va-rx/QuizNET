@@ -9,6 +9,9 @@ import { SocketServiceService } from 'src/app/services/socket/socket-service.ser
 import { Socket } from 'socket.io-client';
 import { UserAnswersService } from 'src/app/services/user-answers/user-answers.service';
 import { UserResultsService } from 'src/app/services/user-results/user-results.service';
+import { PersonalityResults } from 'src/app/models/user-personality-results';
+import { UserPersonalityResultsService } from 'src/app/services/user-personality-results/user-personality-results.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-platform-game',
@@ -22,7 +25,8 @@ export class PlatformGameComponent {
   score: number = 0;
   socket: any;
   historyTestId!: number;
-
+  gameFinished = false;
+  nickname!: string;
 
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   scoreBoard: any[] = [];
@@ -31,26 +35,20 @@ export class PlatformGameComponent {
               private dialog: MatDialog, 
               private socketService: SocketServiceService,
               private userAnswersService: UserAnswersService,
-              private userResultsService: UserResultsService) {}
+              private userResultsService: UserResultsService,
+              private userPersonalityResultsService: UserPersonalityResultsService,
+              private auth: AuthService) {}
 
-  ngOnInit() {
-    this.historyTestId = history.state.data.testHistoryId;
-    this.socket = this.socketService.getSocket();
+  ngAfterViewInit() {
     this.config = {
       type: Phaser.AUTO,
-      // antialias: false,
       height: 960,
       width: 1632,
-      // width: window.innerWidth * 0.8,
-      // height: window.innerHeight * 0.8,
-      // height: window.innerHeight / 2,
-      // width: window.innerWidth / 2,
       backgroundColor: 'red',
       parent: 'phaser-game',
       pixelArt: true,
       scale: {
         mode: Phaser.Scale.FIT,
-        // autoCenter: Phaser.Scale.CENTER_BOTH
     },
       transparent: true,
       physics: {
@@ -63,32 +61,37 @@ export class PlatformGameComponent {
       },
       scene: new platformerScene({key: 'platformerScene'}),
     };
+
+    this.nickname = this.auth.getNickname();
+    this.historyTestId = history.state.data.testHistoryId;
+    this.socket = this.socketService.getSocket();
     this.phaserGame = new Phaser.Game(this.config);
     this.loadTestDetails();
 
     this.phaserGame.scene.game.events.on('finishLevel', (level) => {
       this.phaserGame.pause();
-      if (level < this.test.questions.length) {
-        const dialogRef = this.dialog.open(QuestionViewComponent, {
-          data: { id: this.test.questions[level-1].id },
-          disableClose: true
-        });
 
-        dialogRef.afterClosed().subscribe(result => {
-          this.score += result;
-          this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.score, this.socketService.getJoinCode())
-          this.phaserGame.resume();
-        });
-      } else {
+      const dialogRef = this.dialog.open(QuestionViewComponent, {
+        data: { id: this.test.questions[level-1].id },
+        disableClose: true
+      });
 
-      }
+      dialogRef.afterClosed().subscribe(result => {
+        this.score += result;
+        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.score, this.socketService.getJoinCode());
+        if (level >= this.test.questions.length) {
+          this.finishGame();
+        }
+
+        this.phaserGame.resume();
+        this.phaserGame.events.emit("nextLevel");
+      });
     });
 
     this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
       this.scoreBoardMap = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
       this.scoreBoard = Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({ username, score }));
     });
-
   };
 
   ngOnDestroy(): void {
@@ -98,11 +101,9 @@ export class PlatformGameComponent {
   async loadTestDetails() {
     const testId = history.state.data.testId;
     const res = await this.testService.getTestDetails(testId).toPromise();
-    console.log(res);
     this.test.questions = res.questions;
     this.test.maxPoints = res.maxPoints;
     this.test.name = res.name;
-    console.log(this.test);
   }
 
   async finishGame() {
@@ -112,15 +113,15 @@ export class PlatformGameComponent {
 
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.score, this.socketService.getJoinCode());
 
-      //     let personalityResults: PersonalityResults = {
-      //   userResultsId: createdResults.id,
-      //   explorer: 0,
-      //   socializer: this.socializerScore,
-      //   killer: this.killerScore,
-      //   achiever: 0
-      // };
-      // await this.userPersonalityResultsService.create(personalityResults).toPromise();
-    
+    let personalityResults: PersonalityResults = {
+      userResultsId: createdResults.id,
+      explorer: 0,
+      socializer: 0,
+      killer: 0,
+      achiever: 0
+    };
+    await this.userPersonalityResultsService.create(personalityResults).toPromise();
+    this.gameFinished = true;
   }
 }
 

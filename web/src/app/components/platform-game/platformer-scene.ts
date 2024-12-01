@@ -5,18 +5,14 @@ import { Spikes } from "./Classes/obstacles/spikes";
 import { Finish } from "./Classes/finish/finish";
 import { Saw } from "./Classes/obstacles/saw";
 import { Platform } from "./Classes/obstacles/platform"
-import { PlayerClass } from "./Classes/player/playerClass";
 import { AssetLoader } from "./Classes/assetLoader";
 import { AnimationManager } from "./Classes/animationManager";
-import { TestService } from "src/app/services/test/test.service";
 
 export default class platformerScene extends Phaser.Scene {
 
     private map?: Phaser.Tilemaps.Tilemap
     private tilesets?: Phaser.Tilemaps.Tileset[];
     private layer?: Phaser.Tilemaps.TilemapLayer;
-
-    private chc!: string;
 
     private background?: Phaser.GameObjects.TileSprite;
 
@@ -30,6 +26,8 @@ export default class platformerScene extends Phaser.Scene {
     private finishes?: Phaser.Physics.Arcade.StaticGroup;
 
     private currentLevel?: number;
+    private levelSpawnX?: number;
+    private levelSpawnY?: number;
 
     constructor(config: Phaser.Types.Scenes.SettingsConfig) {
         super(config);
@@ -44,10 +42,6 @@ export default class platformerScene extends Phaser.Scene {
         const animationManager = new AnimationManager(this);
         animationManager.createAllAnimations();
 
-        const classes = Object.values(PlayerClass);
-        const randomIndex = Math.floor(Math.random() * classes.length);
-        this.chc = classes[randomIndex];
-
         this.currentLevel = 1;
         this.loadLevel(this.currentLevel);
     }
@@ -61,19 +55,64 @@ export default class platformerScene extends Phaser.Scene {
             this.player.update(this.cursors);
         }
 
-        if (this.fruits?.children.size === 0) {
-            this.finishes?.children.entries.forEach((finish) => {
-                if (finish instanceof Finish && !finish.getCanFinish()) {
-                finish.enableFinish();
-                }
-            })
-        } 
+        this.checkEnableFinish();
     }
 
     loadLevel(level: number) {
         this.currentLevel = level;
 
-        this.map = this.make.tilemap({ key: `map${level}` });
+        this.createLayer();
+        this.initializeObjects();
+        this.createObjects();
+
+        if (this.layer && this.map) {
+            this.levelSpawnX = this.map.getObjectLayer('Player')?.objects[0].x;
+            this.levelSpawnY = this.map.getObjectLayer('Player')?.objects[0].y;
+        }
+       
+        this.createPlayer();
+        this.playerColliders();
+        this.createBackground();
+        this.setCamera();
+        this.setEvents();
+
+        this.cursors = this.input.keyboard?.createCursorKeys();
+    }
+
+    nextLevel() {
+        if (this.currentLevel) {
+            this.loadLevel(this.currentLevel+1);
+        } else {
+            this.loadLevel(1);
+        }
+    }
+
+    regenerateFallingPlatforms() {
+        if(this.map){
+            const platformObjects = this.map.getObjectLayer('Platforms')?.objects;
+            platformObjects?.forEach(platformObject => {
+                if (platformObject.x && platformObject.y) {
+                    const platform = new Platform(this, 2*platformObject.x, 2*platformObject.y, 'platform-off');
+                    platform.setScale(2);
+                    platform.setOrigin(0, 1);
+                    this.platforms?.add(platform);
+                }
+            });
+        };
+    }
+
+    checkEnableFinish() {
+        if (this.fruits?.children.size === 0) {
+            this.finishes?.children.entries.forEach((finish) => {
+                if (finish instanceof Finish && !finish.getCanFinish()) {
+                    finish.enableFinish();
+                }
+            });
+        } 
+    }
+
+    createLayer() {
+        this.map = this.make.tilemap({ key: `map${this.currentLevel}` });
         const tileset1 = this.map.addTilesetImage('adv_map_tiles', 'tileset');
         const tileset2 = this.map.addTilesetImage('Spikes', 'spikes');
         if (tileset1 && tileset2) {
@@ -86,8 +125,9 @@ export default class platformerScene extends Phaser.Scene {
         this.layer = this.map.createLayer('Tile Layer 1', this.tilesets, 0, 0)!;
         this.layer.setScale(2);
         this.layer.setCollisionByExclusion([-1]);
-        console.log(this.layer.layer.properties);
+    }
 
+    initializeObjects() {
         this.fruits = this.physics.add.staticGroup();
         this.spikes = this.physics.add.staticGroup();
         this.finishes = this.physics.add.staticGroup();
@@ -97,75 +137,141 @@ export default class platformerScene extends Phaser.Scene {
             allowGravity: false,
             bounceY: 100,
         });
+    }
 
-        const playerStartingPosX = this.map.getObjectLayer('Player')?.objects[0].x;
-        const playerStartingPosY = this.map.getObjectLayer('Player')?.objects[0].y;
+    createObjects() {
+        if (this.map) {
+            const fruitObjects = this.map.getObjectLayer('Collectibles')?.objects;
+            const spikeObjects = this.map.getObjectLayer('Spikes')?.objects;
+            const finishObjects = this.map.getObjectLayer('Finish')?.objects;
+            const sawObjects = this.map.getObjectLayer('Saws')?.objects;
+            const platformObjects = this.map.getObjectLayer('Platforms')?.objects;
+    
+            fruitObjects?.forEach(fruitObject => {
+                if (fruitObject.x && fruitObject.y) {
+                    let fruit;
+                    if (fruitObject.name) {
+                        fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, fruitObject.name);
+                    } else {
+                        fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, this.randomFruit());
+                    }
+    
+                    if (fruitObject.name.substring(0, 2) === 's-') {
+                        const glowCircle = this.add.graphics();
+                        glowCircle.fillStyle(0xFFD700, 0.3);
+                        glowCircle.fillCircle(fruit.x, fruit.y, 32);
+                    }
+    
+                    this.fruits?.add(fruit);
+                    fruit.setScale(2);
+                }
+            });
+    
+            spikeObjects?.forEach(spikeObject => {
+                if (spikeObject.x && spikeObject.y) {
+                    const spike = new Spikes(this, 2*spikeObject.x + 16, 2*spikeObject.y - 16, 'spikes');
+                    this.spikes?.add(spike);
+                    spike.setScale(2);
+                    spike.body?.setOffset(0, 8);
+                }
+            });
+    
+            finishObjects?.forEach(finishObject => {
+                if (finishObject.x && finishObject.y) {
+                    const finish = new Finish(this, 2*finishObject.x, 2*finishObject.y, 'finish-not-yet');
+                    finish.setScale(2);
+                    this.finishes?.add(finish);
+                    finish.setOrigin(0, 0);
+                    finish.body?.setOffset(64, 64);
+                }
+            });
+    
+            sawObjects?.forEach(sawObject => {
+                if (sawObject.x && sawObject.y) {
+                    const saw = new Saw(this, 2*sawObject.x, 2*sawObject.y, '');
+                    saw.setScale(2);
+                    saw.setOrigin(0, 1);
+                    saw.setDepth(-1);
+                    this.saws?.add(saw);
+                }
+            });
+    
+            platformObjects?.forEach(platformObject => {
+                if (platformObject.x && platformObject.y) {
+                    const platform = new Platform(this, 2*platformObject.x, 2*platformObject.y, 'platform-off');
+                    platform.setScale(2);
+                    platform.setOrigin(0, 1);
+                    this.platforms?.add(platform);
+                }
+            });
+        }
+    }
 
-        const fruitObjects = this.map.getObjectLayer('Collectibles')?.objects;
-        const spikeObjects = this.map.getObjectLayer('Spikes')?.objects;
-        const finishObjects = this.map.getObjectLayer('Finish')?.objects;
-        const sawObjects = this.map.getObjectLayer('Saws')?.objects;
-        const platformObjects = this.map.getObjectLayer('Platforms')?.objects;
-
-
-        fruitObjects?.forEach(fruitObject => {
-            if (fruitObject.x && fruitObject.y) {
-                const fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, fruitObject.name);
-                
-                // const glowCircle = this.add.graphics();
-                // glowCircle.fillStyle(0xFFD700, 0.3);
-                // glowCircle.fillCircle(fruit.x, fruit.y, 32);
-
-                this.fruits?.add(fruit);
-                fruit.setScale(2);
-            }
-        });
-
-        spikeObjects?.forEach(spikeObject => {
-            if (spikeObject.x && spikeObject.y) {
-                const spike = new Spikes(this, 2*spikeObject.x + 16, 2*spikeObject.y - 16, 'spikes');
-                this.spikes?.add(spike);
-                spike.setScale(2);
-                spike.body?.setOffset(0, 8);
-            }
-        });
-
-        finishObjects?.forEach(finishObject => {
-            if (finishObject.x && finishObject.y) {
-                const finish = new Finish(this, 2*finishObject.x, 2*finishObject.y, 'finish-not-yet');
-                finish.setScale(2);
-                this.finishes?.add(finish);
-                finish.setOrigin(0, 0);
-                finish.body?.setOffset(64, 64);
-            }
-        });
-
-        sawObjects?.forEach(sawObject => {
-            if (sawObject.x && sawObject.y) {
-                const saw = new Saw(this, 2*sawObject.x, 2*sawObject.y, '');
-                saw.setScale(2);
-                saw.setOrigin(0, 1);
-                saw.setDepth(-1);
-                this.saws?.add(saw);
-            }
-        });
-
-        platformObjects?.forEach(platformObject => {
-            if (platformObject.x && platformObject.y) {
-                const platform = new Platform(this, 2*platformObject.x, 2*platformObject.y, 'platform-off');
-                platform.setScale(2);
-                platform.setOrigin(0, 1);
-                this.platforms?.add(platform);
-            }
-        });
-
-        if (playerStartingPosX && playerStartingPosY) {
-            this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, this.chc);
+    createPlayer() {
+        if (this.levelSpawnX && this.levelSpawnY) {
+            this.player = new Player(this, 2*this.levelSpawnX, 2*this.levelSpawnY, '');
+            this.player.setRandomCharacter();
             this.player.setScale(2);
+        }
+    }
 
-            this.physics.add.collider(this.player, this.layer);
-            this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+    playerColliders() {
+        if (this.player) {
+            if (this.layer) {
+                this.physics.add.collider(this.player, this.layer);
+            }
 
+            if (this.fruits) {
+                this.physics.add.overlap(this.player, this.fruits, (player, fruit) => {
+                    const fruitObject = fruit as Fruit;
+                    fruitObject.collect();
+                });
+            }
+
+            if (this.saws) {
+                this.physics.add.overlap(this.player, this.saws, (player, saw) => {
+                    this.player?.kill().then(() => {
+                        if (this.levelSpawnX && this.levelSpawnY) {
+                        this.platforms?.clear(true, true);
+                        this.player?.respawn(2*this.levelSpawnX, 2*this.levelSpawnY);
+                        this.regenerateFallingPlatforms();}
+                    })
+                });
+            }
+
+            if (this.spikes) {
+                this.physics.add.collider(this.player, this.spikes, () => {
+                    this.player?.kill().then(() => {
+                        if (this.levelSpawnX && this.levelSpawnY) {
+                        this.platforms?.clear(true, true);
+                        this.player?.respawn(2*this.levelSpawnX, 2*this.levelSpawnY)}
+                        this.regenerateFallingPlatforms();
+                    })
+                });
+            }
+
+            if (this.platforms) {
+                this.physics.add.collider(this.player, this.platforms, (player, platform) => {
+                    const platformObject = platform as Platform;
+                    const player2 = player as Player;
+                    if (player2 && player2.body && platformObject && platformObject.body && player2.body.bottom <= platformObject.body.top + 5)
+                    platformObject.steppedOn();
+                });
+            }
+
+            if (this.finishes) {
+                this.physics.add.overlap(this.player, this.finishes, (player, finish) => {
+                    const finishObject = finish as Finish;
+                    if (finishObject.getCanFinish()) {
+                    this.game.events.emit('finishLevel', this.currentLevel);
+                    }
+                });
+            }
+        }
+    }
+
+    createBackground() {
+        if (this.layer) {
             const properties = this.layer.layer.properties as { name: string; value: any }[];
             const background = properties.find(prop => prop.name === 'background')?.value;
             if (background) {
@@ -177,87 +283,41 @@ export default class platformerScene extends Phaser.Scene {
             this.background.setOrigin(0, 0);
             this.background.setDepth(-2);
             this.background.setScale(3);
-            this.cameras.main.startFollow(this.player);
-            this.cameras.main.setRoundPixels(true);
         }
-
-        if (this.player) {
-            this.physics.add.overlap(this.player, this.fruits, (player, fruit) => {
-                const fruitObject = fruit as Fruit;
-                fruitObject.collect();
-            });
-
-            this.physics.add.overlap(this.player, this.saws, (player, saw) => {
-                this.player?.kill().then(() => {
-                    if (playerStartingPosX && playerStartingPosY) {
-                    this.platforms?.clear(true, true);
-                    this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY);
-                    this.renegeratePlatforms();}
-                })
-            });
-
-            this.physics.add.collider(this.player, this.spikes, () => {
-                this.player?.kill().then(() => {
-                    if (playerStartingPosX && playerStartingPosY) {
-                    this.platforms?.clear(true, true);
-                    this.player?.respawn(2*playerStartingPosX, 2*playerStartingPosY)}
-                    this.renegeratePlatforms();
-                })
-            });
-
-            if (this.platforms)
-            this.physics.add.collider(this.player, this.platforms, (player, platform) => {
-                const platformObject = platform as Platform;
-                const player2 = player as Player;
-                if (player2 && player2.body && platformObject && platformObject.body && player2.body.bottom <= platformObject.body.top + 5)
-                platformObject.steppedOn();
-            });
-
-            this.physics.add.overlap(this.player, this.finishes, (player, finish) => {
-                const finishObject = finish as Finish;
-                if (finishObject.getCanFinish()) {
-                this.game.events.emit('finishLevel', this.currentLevel);
-                this.map?.destroy();
-                this.player?.destroy();
-                this.layer?.destroy();
-                this.fruits?.clear();
-                this.finishes?.clear();
-                this.spikes?.clear();
-                this.background?.destroy();
-                let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite);
-                allSprites.forEach(x => x.destroy());
-                this.nextLevel();
-                }
-            });
-
-            this.cursors = this.input.keyboard?.createCursorKeys();
-        }
-    }
-
-    nextLevel() {
-        if (this.currentLevel) {
-            this.loadLevel(this.currentLevel+1);
-        } else {
-            this.loadLevel(1);
-        }
-    }
-
-    renegeratePlatforms() {
-        if(this.map){
-        const platformObjects = this.map.getObjectLayer('Platforms')?.objects;
-        platformObjects?.forEach(platformObject => {
-            if (platformObject.x && platformObject.y) {
-                const platform = new Platform(this, 2*platformObject.x, 2*platformObject.y, 'platform-off');
-                platform.setScale(2);
-                platform.setOrigin(0, 1);
-                this.platforms?.add(platform);
-            }
-        })};
     }
 
     randomBackground() {
         const backgrounds = ['blue', 'brown', 'gray', 'green', 'pink', 'purple', 'yellow'];
         const randomIndex = Math.floor(Math.random() * backgrounds.length);
         return backgrounds[randomIndex];
+    }
+
+    randomFruit() {
+        const fruits = ['apple', 'banana', 'cherry', 'kiwi', 'melon', 'orange', 'pineapple', 'strawberry'];
+        const randomIndex = Math.floor(Math.random() * fruits.length);
+        return fruits[randomIndex];
+    }
+
+    setCamera() {
+        if (this.map && this.player) {
+            this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+            this.cameras.main.startFollow(this.player);
+            this.cameras.main.setRoundPixels(true);
+        }
+    }
+
+    setEvents() {
+        this.game.events.on("nextLevel", () => {
+            this.map?.destroy();
+            this.player?.destroy();
+            this.layer?.destroy();
+            this.fruits?.clear();
+            this.finishes?.clear();
+            this.spikes?.clear();
+            this.background?.destroy();
+            let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite);
+            allSprites.forEach(x => x.destroy());
+            this.nextLevel();
+        });
     }
 }
