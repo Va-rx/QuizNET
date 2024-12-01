@@ -41,7 +41,7 @@ export class UserAnswersService {
       }
       this.remove();
 
-      return result;
+      return  JSON.stringify(result);
   }
 
   private get storageKey(): string {

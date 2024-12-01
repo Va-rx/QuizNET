@@ -8,6 +8,7 @@ import { Platform } from "./Classes/obstacles/platform"
 import { PlayerClass } from "./Classes/player/playerClass";
 import { AssetLoader } from "./Classes/assetLoader";
 import { AnimationManager } from "./Classes/animationManager";
+import { TestService } from "src/app/services/test/test.service";
 
 export default class platformerScene extends Phaser.Scene {
 
@@ -43,17 +44,17 @@ export default class platformerScene extends Phaser.Scene {
         const animationManager = new AnimationManager(this);
         animationManager.createAllAnimations();
 
-        // const classes = Object.values(PlayerClass);
-        // const randomIndex = Math.floor(Math.random() * classes.length);
-        // this.chc = classes[randomIndex];
+        const classes = Object.values(PlayerClass);
+        const randomIndex = Math.floor(Math.random() * classes.length);
+        this.chc = classes[randomIndex];
 
-        this.currentLevel = 2;
+        this.currentLevel = 1;
         this.loadLevel(this.currentLevel);
     }
 
     override update() {
         if (this.background) {
-            this.background.tilePositionX += 0.2;
+            this.background.tilePositionY -= 0.1;
         }
 
         if (this.player && this.cursors) {
@@ -71,10 +72,6 @@ export default class platformerScene extends Phaser.Scene {
 
     loadLevel(level: number) {
         this.currentLevel = level;
-
-        const classes = Object.values(PlayerClass);
-        const randomIndex = Math.floor(Math.random() * classes.length);
-        const character = classes[randomIndex];
 
         this.map = this.make.tilemap({ key: `map${level}` });
         const tileset1 = this.map.addTilesetImage('adv_map_tiles', 'tileset');
@@ -163,7 +160,7 @@ export default class platformerScene extends Phaser.Scene {
         });
 
         if (playerStartingPosX && playerStartingPosY) {
-            this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, character);
+            this.player = new Player(this, 2*playerStartingPosX, 2*playerStartingPosY, this.chc);
             this.player.setScale(2);
 
             this.physics.add.collider(this.player, this.layer);
@@ -174,12 +171,12 @@ export default class platformerScene extends Phaser.Scene {
             if (background) {
                 this.background = this.add.tileSprite(0, 0, this.cameras.main.width, this.cameras.main.height, `${background}-bg`);
             } else {
-                this.background = this.add.tileSprite(0, 0, this.cameras.main.width, this.cameras.main.height, 'green-bg');
+                this.background = this.add.tileSprite(0, 0, this.cameras.main.width, this.cameras.main.height, `${this.randomBackground()}-bg`);
 
             }
             this.background.setOrigin(0, 0);
             this.background.setDepth(-2);
-            this.background.setScale(2.5);
+            this.background.setScale(3);
             this.cameras.main.startFollow(this.player);
             this.cameras.main.setRoundPixels(true);
         }
@@ -219,13 +216,14 @@ export default class platformerScene extends Phaser.Scene {
             this.physics.add.overlap(this.player, this.finishes, (player, finish) => {
                 const finishObject = finish as Finish;
                 if (finishObject.getCanFinish()) {
-
+                this.game.events.emit('finishLevel', this.currentLevel);
                 this.map?.destroy();
                 this.player?.destroy();
                 this.layer?.destroy();
                 this.fruits?.clear();
                 this.finishes?.clear();
                 this.spikes?.clear();
+                this.background?.destroy();
                 let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite);
                 allSprites.forEach(x => x.destroy());
                 this.nextLevel();
@@ -255,5 +253,11 @@ export default class platformerScene extends Phaser.Scene {
                 this.platforms?.add(platform);
             }
         })};
+    }
+
+    randomBackground() {
+        const backgrounds = ['blue', 'brown', 'gray', 'green', 'pink', 'purple', 'yellow'];
+        const randomIndex = Math.floor(Math.random() * backgrounds.length);
+        return backgrounds[randomIndex];
     }
 }
