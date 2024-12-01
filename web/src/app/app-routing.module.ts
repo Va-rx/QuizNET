@@ -12,7 +12,7 @@ import {LoginComponent} from "./components/login/login.component";
 import {authGuard} from "./guards/auth.guard";
 import {HomeComponent} from "./components/home/home.component";
 import {RoleGuard} from "./guards/role.guard";
-import { ScoreboardComponent } from './scoreboard/scoreboard.component';
+import { ScoreboardComponent } from './components/scoreboard/scoreboard.component';
 import {TestHistoryComponent} from "./components/test-history/test-history.component";
 import { PlatformGameComponent } from './components/platform-game/platform-game.component';
 import {
@@ -20,6 +20,7 @@ import {
 } from "./components/test-history/test-history-details/test-history-details.component";
 import {TestHistoryListComponent} from "./components/test-history/test-history-list/test-history-list.component";
 import {TestHistoryGuard} from "./guards/test-history.guard";
+import {MultiplayerGameComponent} from "./components/multiplayer-game/multiplayer-game.component";
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [authGuard] },
   { path: 'create-lobby', component: CreateLobbyComponent, canActivate: [authGuard, RoleGuard]},
@@ -36,7 +37,8 @@ const routes: Routes = [
   { path: 'test-history', component: TestHistoryComponent, canActivate: [authGuard]},
   { path: 'test-history/:id/:userId', component: TestHistoryDetailsComponent, canActivate: [authGuard, TestHistoryGuard]},
   { path: 'test-history/:id', component: TestHistoryListComponent, canActivate: [authGuard, RoleGuard] },
-  { path: 'platformer', component: PlatformGameComponent}
+  { path: 'platformer', component: PlatformGameComponent},
+  { path: 'deathmatch', component: MultiplayerGameComponent, canActivate: [authGuard]}
 ];
 
 @NgModule({

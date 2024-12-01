@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/database-connection');
 const e = require('express');
+const upload = require('../upload');
 
 const { getQuestion, getAnswersToQuestion, deleteQuestion, updateQuestion, createQuestion, getQuestionMaxPoints } = require("../database/database-queries/question-queries");
 
@@ -16,7 +17,11 @@ router.get("/:id", async (req, res) => {
 
         const answers = (await getAnswersToQuestion(id)).rows;
         const max_points = await getQuestionMaxPoints(id);
-        
+
+        if (question[0].image_link) {
+            question[0].image_link = question[0].image_link.toString('base64');
+        }
+
         const result = {
             ...question[0],
             maxPoints: max_points,
@@ -45,10 +50,13 @@ router.delete("/:id", async (req, res) => {
     }
 })
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", upload.single('image_link'), async (req, res) => {
     try {
         const id = req.params.id;
         const question = req.body;
+        if (req.file && req.file.buffer) {
+            question.image_link = req.file.buffer;
+        }
 
         const result = (await updateQuestion(id, question));
         res.status(200).send(result);

@@ -13,8 +13,41 @@ const io = socketIo(server, {
   },
 });
 var corsOptions = {
-  // Origin: "http://localhost:8081" bez tego działa
+  // Origin: "http://72.145.1.108:8081" bez tego działa
 };
+
+// #region MultiplayerVariables
+const players = {};
+var stars = [];
+var maxNumberOfStars;
+var starsCounter = 0;
+var maxHealth = 30;
+var maxQuestions = 2;
+let countdown;
+let countdownInterval;
+const playerSpeed = 2.2;
+let MAX_HEIGHT = 1280;
+let MAX_WIDTH = 720;
+var readyClients = 0;
+let spawnInterval;
+var boundariesSet = false;
+
+const MultiplayerRoles = Object.freeze({
+  OFFENSIVE: 0,
+  DEFENSIVE: 1,
+  NONE: 2
+});
+
+const ShareHealthAnswer = Object.freeze({
+  NO: 0,
+  YES: 1,
+  SPLIT: 2
+});
+
+offensivePowerUps = ['damage', 'attackRange'];
+defensivePowerUps = ['health', 'speed'];
+
+// #endregion
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -28,8 +61,11 @@ const questionRouter = require("./routes/question-routes");
 const answerRouter = require("./routes/answer-routes");
 const testHistoryRouter = require("./routes/test-history-routes");
 const userResultsRouter = require("./routes/user-results-routes");
+const userPersonalityResultsRouter = require("./routes/user-personality-results-routes");
+const levelRouter = require("./routes/level-routes");
 const {createTestHistory} = require("./database/database-queries/test-history-queries");
 const {generateQuizXML} = require("./XMLhandler");
+const {getNumberOfQuestions} = require("./database/database-queries/test-queries");
 
 app.use("/api/tests", testRouter);
 app.use("/api/games", gameRouter);
@@ -38,17 +74,157 @@ app.use("/api/questions", questionRouter);
 app.use("/api/answers", answerRouter);
 app.use("/api/test-history", testHistoryRouter);
 app.use("/api/user-results", userResultsRouter);
+app.use("/api/user-personality-results", userPersonalityResultsRouter);
+app.use("/api/levels", levelRouter);
 
 const PORT = process.env.PORT || 8080;
 
+const codeToSessionInfo = new Map();
 const sessions = new Map();
 const userToSocket = new Map();
 const socketToUser = new Map();
 io.on("connection", (socket) => {
   console.log("A user connected" + socket.id);
+
+  // #region MultiplayerSockets
+  socket.on('requestCurrentPlayers', () => {
+    socket.emit('currentPlayers', players);
+  });
+
+  socket.on('requestCurrentStars', () => {
+    socket.emit('currentStars', stars);
+  });
+
+  socket.on('mapBoundaries', (boundaries) => {
+
+    MAX_WIDTH = boundaries.width;
+    MAX_HEIGHT = boundaries.height
+    if (!boundariesSet) {
+      boundariesSet = true;
+      Object.values(players).forEach(player => {
+        player.x = Math.floor(Math.random() * MAX_WIDTH);
+        player.y = Math.floor(Math.random() * MAX_HEIGHT);
+        io.emit('randomPlacePlayers', { id: player.id, x: player.x, y: player.y});
+      });
+    }
+  })
+
+  socket.on('playerMovement', (movementData, direction, boundaries) => {
+    const player = players[socket.id];
+    if (!player) return;
+
+    player.x = movementData.x;
+    player.y = movementData.y;
+    io.emit('playerMoved', {id: socket.id, x: player.x, y: player.y, direction: direction});
+  });
+
+
+  socket.on('requestAttackAnimation', (playerId) => {
+    io.emit('attackAnimation', playerId);
+  });
+
+  socket.on('playerAttack', ({attackerId, targetId}) => {
+    if (players[attackerId] && players[targetId]) {
+      const player = players[targetId];
+      player.hp -= players[attackerId].attackDamage;
+      io.emit('playerAttacked', {id: targetId, hp: player.hp});
+      if (player.hp <= 0) {
+        player.x = Math.floor(Math.random() * MAX_WIDTH);
+        player.y = Math.floor(Math.random() * MAX_HEIGHT);
+        player.hp = player.maxHealth;
+        const attacker = players[attackerId];
+        attacker.playersKilled++;
+        io.emit('playerKilled', {
+          id: targetId,
+          hp: player.hp,
+          x: player.x,
+          y: player.y,
+          killerId: attackerId,
+          killerKills: attacker.playersKilled
+        });
+      }
+    }
+  });
+
+  socket.on('collectStar', (star, playerId) => {
+    const player = players[playerId];
+    if (!player) return;
+
+    stars = stars.filter(s => s.x !== star.x && s.y !== star.y);
+    player.visible = false;
+
+    io.emit('playerStarCollected', star, playerId);
+  });
+  socket.on('playerRandomBuff', (id, attackDamage) => {
+    const player = players[id];
+    if (!player) return;
+
+    player.attackDamage = attackDamage;
+    io.emit('playerBuffed', id, attackDamage);
+  })
+
+  socket.on('playerQuestionAnswered', (playerId) => {
+    const player = players[playerId];
+    if (!player) return;
+
+    player.questionsAnswered++;
+    if (player.questionsAnswered >= maxQuestions) {
+      io.emit('gameFinished', playerId);
+    }
+    io.emit('playerQuestionAnswered', playerId, player.questionsAnswered);
+  })
+
+  socket.on("clientReady", () => {
+    readyClients++;
+    if (readyClients === Object.keys(players).length) {
+      setTimeout(() => {
+        spawnStar();
+      }, 50000)
+    }
+  });
+
+  socket.on('MULTIPLAYER_shareHealth', (playerId, shareType) => {
+    const filteredPlayers = Object.values(players).filter(player => (player.id !== playerId && player.questionsAnswered < maxQuestions));
+    if (filteredPlayers && filteredPlayers.length > 0) {
+      switch (shareType) {
+        case ShareHealthAnswer.YES:
+          const randomPlayer = filteredPlayers[Math.floor(Math.random() * filteredPlayers.length)];
+          players[randomPlayer.id].hp = Math.min(players[randomPlayer.id].hp + players[playerId].hp, players[randomPlayer.id].maxHealth); // Adjust the health value as needed
+          io.emit('healthShared', [{ id: randomPlayer.id, hp: players[randomPlayer.id].hp }]);
+          break
+        case ShareHealthAnswer.SPLIT:
+          const healthToShare = Math.floor(players[playerId].hp / filteredPlayers.length);
+          filteredPlayers.forEach(player => {
+            players[player.id].hp = Math.min(players[player.id].hp + healthToShare, players[player.id].maxHealth);
+          });
+          io.emit('healthShared', filteredPlayers.map(player => ({ id: player.id, hp: players[player.id].hp })));
+          break
+      }
+    }
+
+
+  });
+
+  socket.on('start_multiplayer', () => {
+    if (!countdown) {
+      startCountdown();
+    }
+  });
+
+  socket.on("roleChosen", (role, id) => {
+    const player = players[id];
+    if (!player) return;
+    if (player.role !== MultiplayerRoles.NONE) return;
+
+    player.role = role;
+    const powerUp = generateRandomPowerUp(player);
+    io.emit("playerRoleChosen", role, id, powerUp);
+  })
+
+  // #endregion
   //Handle Health sharing
-  socket.on("shareHealth",(userName)=>{
-    const session = getSessionBySocket(socket);
+  socket.on("shareHealth",(userName,join_code)=>{
+    const session = sessions.get(join_code);
     const filteredUsers = session.users
     .map((socket) => socketToUser.get(socket))
     .filter((user) => user !== userName && user !== 'Creator');
@@ -95,9 +271,17 @@ io.on("connection", (socket) => {
     if (session) {
       userToSocket.set(userName, { user: [socket] }); // TODO: dodac usuwanie z tego mappingu po disconnect
       socketToUser.set(socket, userName); // TODO: dodac usuwanie z tego mappingu po disconnect
-      session.users.push(socket);
+      if(!session.users.includes(socket)){ // FIX tego jak ktoś spróbuje dołączyć kilka razy na ten sam kod
+        session.users.push(socket);
+      }
       console.log("Event participant joined the event");
       socket.emit("joinedConfirmation");
+      players[socket.id] = {
+        x: 100, y: 450, id: socket.id, hp: maxHealth, visible: true, role: MultiplayerRoles.NONE, isTargetable: true,
+        questionsAnswered: 0, attackDamage: 10, attackRange: 60, maxHealth: maxHealth, speed: 2.2, playersKilled: 0, nickname: userName
+      };
+      const sesInfo= codeToSessionInfo.get(joinCode);
+      socket.emit("receive_Data",sesInfo.date,sesInfo.test.name,sesInfo.test.description,sesInfo.game.name);
       broadcastUserList(session);
     } else {
       console.log("Invalid join code");
@@ -105,22 +289,47 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("startGame", (date, time, game_route, test_id) => {
-    const session = getSessionBySocket(socket);
+  socket.on("startGame", (join_code,date, time, game_route, test_id,timer) => {
     console.log(`Game will start at ${time} on ${date}`);
-  
+    codeToSessionInfo.set(join_code,{ date: `${time}, ${date}`, test: test_id, game:game_route})
+
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
   
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
+      const session = sessions.get(join_code);
       const xml = await generateQuizXML(test_id);
+      maxQuestions = parseInt((await getNumberOfQuestions(1)).rows[0].count);
+      maxNumberOfStars = maxQuestions * Object.keys(players).length + 2;
       const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
       if (session) {
+        starsCounter = 0;
+        stars = [];
+        readyClients = 0;
+
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions);
           }
         });
+
+        ////TIMER///
+        let timerValue = timer;
+        let timerInterval;
+        
+        timerInterval = setInterval(() => {
+          if (timerValue > 0) {
+              timerValue--;
+              session.users.forEach((participantSocket) => {
+                  if (participantSocket !== socket) {
+                      participantSocket.emit('timer-update', timerValue);
+                  }
+              });
+          } else {
+              clearInterval(timerInterval);
+              timerInterval = null;
+          }
+      }, 1000);
       }
     });
   });
@@ -138,6 +347,8 @@ io.on("connection", (socket) => {
   // Handle disconnection
   socket.on("disconnect", () => {
     console.log("User disconnected");
+    delete players[socket.id];
+    io.emit('playerDisconnected', socket.id);
     sessions.forEach((session, _) => {
       const index = session.users.indexOf(socket);
       if (index !== -1) {
@@ -165,15 +376,7 @@ io.on("connection", (socket) => {
       );
     });
   }
-
-  function getSessionBySocket(socket) {
-    for (const session of sessions.values()) {
-      if (session.users.includes(socket)) {
-        return session;
-      }
-    }
-    return null;
-  }
+  
 });
 
 // Start the HTTP server
@@ -194,3 +397,64 @@ function generateJoinCode() {
   }
   return joinCode;
 }
+
+
+// #region MultiplayerFunctions
+function spawnStar() {
+  spawnInterval = setInterval(() => {
+    if (starsCounter >= maxNumberOfStars) {
+      clearInterval(spawnInterval)
+      return;
+    }
+    const x = Math.floor(Math.random() * MAX_WIDTH);
+    const y = Math.floor(Math.random() * MAX_HEIGHT);
+    const star = {x, y};
+    stars.push(star);
+    io.emit("spawnStar", star);
+    starsCounter++;
+  }, 5000);
+}
+
+function startCountdown() {
+  countdown = 50;
+  io.emit('countdownUpdate', countdown);
+
+  countdownInterval = setInterval(() => {
+    countdown--;
+    io.emit('countdownUpdate', countdown);
+
+    if (countdown <= 0) {
+      clearInterval(countdownInterval);
+      io.emit('countdownEnd');
+    }
+  }, 1000);
+}
+
+
+function generateRandomPowerUp(player){
+  if (player.role === MultiplayerRoles.OFFENSIVE) {
+    return addPowerUp(player, offensivePowerUps[Math.floor(Math.random() * offensivePowerUps.length)]);
+  }
+  return addPowerUp(player, defensivePowerUps[Math.floor(Math.random() * defensivePowerUps.length)]);
+}
+
+function addPowerUp(player, powerUp){
+  switch (powerUp) {
+    case 'attackRange':
+      player.attackRange += 30;
+      break;
+    case 'damage':
+      player.attackDamage += 5;
+      break;
+    case 'health':
+      player.maxHealth = 45;
+      player.hp += 15;
+      break;
+    case 'speed':
+      player.speed += 0.8;
+      break;
+  }
+
+  return powerUp;
+}
+// #endregion

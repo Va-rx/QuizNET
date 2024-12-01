@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
 import { GameComponent } from './components/game/game.component';
@@ -29,7 +29,7 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { TestDetailsComponent } from './components/test-details/test-details.component';
-import { ScoreboardComponent } from './scoreboard/scoreboard.component';
+import { ScoreboardComponent } from './components/scoreboard/scoreboard.component';
 import { TestHistoryComponent } from './components/test-history/test-history.component';
 import { TestHistoryDetailsComponent } from './components/test-history/test-history-details/test-history-details.component';
 import {MatListModule} from "@angular/material/list";
@@ -38,6 +38,17 @@ import {MatTableModule} from "@angular/material/table";
 import {MatSortModule} from "@angular/material/sort";
 import { TimerComponent } from './components/timer/timer.component';
 import { PlatformGameComponent } from './components/platform-game/platform-game.component';
+import { LiveScoreBoardComponent } from './components/live-score-board/live-score-board.component';
+import { MultiplayerGameComponent } from './components/multiplayer-game/multiplayer-game.component';
+import { RoleDialogComponent } from './components/multiplayer-game/role-dialog/role-dialog.component';
+import { ShareHealthComponent } from './components/multiplayer-game/share-health/share-health.component';
+import {MatTabsModule} from "@angular/material/tabs";
+import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
+import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -60,7 +71,11 @@ import { PlatformGameComponent } from './components/platform-game/platform-game.
     TestHistoryDetailsComponent,
     TimerComponent,
     TestHistoryListComponent,
-    PlatformGameComponent
+    PlatformGameComponent,
+    LiveScoreBoardComponent,
+    MultiplayerGameComponent,
+    RoleDialogComponent,
+    ShareHealthComponent,
   ],
     imports: [
         BrowserModule,
@@ -79,7 +94,15 @@ import { PlatformGameComponent } from './components/platform-game/platform-game.
         MatSnackBarModule,
         MatListModule,
         MatTableModule,
-        MatSortModule
+        MatSortModule,
+        MatTabsModule,
+        TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+        }
+      })
     ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]

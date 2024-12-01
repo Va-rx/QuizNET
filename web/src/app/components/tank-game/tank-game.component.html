@@ -1,28 +1,9 @@
 <div class="main_container" *ngIf="!gameFinished">
-<div class="container">
-  <h2>Scoreboard</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Score</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let player of scoreBoard">
-        <td>{{ player.username }}</td>
-        <td>{{ player.score }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<app-live-score-board [scoreboard]="scoreBoardMap"></app-live-score-board>
 </div>
 <app-scoreboard *ngIf="gameFinished" [testName]="testName" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [bonusScore]="playerScoreBonus" [totalScore]="testMaxPoints"
-[BARTLE_stars_picked]="starsPicked"
-[BARTLE_medkits_shared]="medkitsShared"
-[BARTLE_turrets_destroyed]="turretsDestroyed"
-[totalStars]="totalStars"
-[allTurrets]="totalTurrets"
-[totalHealth]="totalHealth">
+[achieverScore]="achieverScore"
+[socializerScore]="socializerScore"
+[explorerScore]="explorerScore"
 ></app-scoreboard>
 <app-timer *ngIf="!timerEnded" [seconds]="timer" (timerEnded)="onTimerEnded()"></app-timer>

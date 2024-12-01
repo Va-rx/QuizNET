@@ -1,23 +1,31 @@
-<nav class="navbar navbar-expand" *ngIf="role !== roles.NONE">
+<nav class="navbar navbar-expand" *ngIf="role !== roles.NONE && showNavbar">
     <a routerLink="" class="navbar-brand" routerLinkActive="active">QuizNET</a>
     <div class="navbar-nav mr-auto">
         <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
-            <a routerLink="tests" class="nav-link">Tests</a>
+            <a routerLink="tests" class="nav-link">{{'NAVIGATION.TESTS' | translate}}</a>
         </li>
         <li class="nav-item border-right" *ngIf="role === roles.USER" routerLinkActive="active">
-            <a routerLink="join-lobby" class="nav-link">Join Lobby</a>
+            <a routerLink="join-lobby" class="nav-link">{{'NAVIGATION.JOIN_LOBBY' | translate}}</a>
         </li>
         <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
-            <a routerLink="create-matchmaking" class="nav-link">Schedule a test</a>
-        </li>
-        <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
-            <a routerLink="create-matchmaking" class="nav-link">Results</a>
+            <a routerLink="create-matchmaking" class="nav-link">{{'NAVIGATION.CREATE_LOBBY' | translate}}</a>
         </li>
       <li class="nav-item border-right" routerLinkActive="active">
-        <a routerLink="test-history" class="nav-link">Test History</a>
+        <a routerLink="test-history" class="nav-link">{{'NAVIGATION.TESTS_HISTORY' | translate}}</a>
       </li>
         <li class="nav-item" (click)="logout()">
-            <a routerLink="login" class="nav-link">Log out</a>
+            <a routerLink="login" class="nav-link">{{'NAVIGATION.LOG_OUT' | translate}}</a>
         </li>
     </div>
+
+  <div *ngIf="getCurrentLang() !== 'pl'; else english" (click)="switchLanguage('pl')">
+    <img src="assets/poland.svg" alt="Poland Flag" width="40" height="20">
+  </div>
+
+  <ng-template #english>
+    <div (click)="switchLanguage('en')">
+      <img src="assets/united-kingdom.svg" alt="United Kingdom Flag" width="40" height="20">
+    </div>
+  </ng-template>
+
 </nav>

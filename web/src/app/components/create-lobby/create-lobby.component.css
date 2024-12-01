@@ -1,5 +1,6 @@
 .card {
     background-color: #333f4a;
+
 }
 
 .card-header {
@@ -28,7 +29,7 @@
     background-color: #505d69;
     color: #d9dcde;
 }
-  
+
 .form-control:active {
     border-color: rgb(150, 98, 210, 0.6);
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgb(150, 98, 210, 0.6);
@@ -46,7 +47,7 @@
     transition: 0.3s;
     color: #d9dcde;
 }
-  
+
 .button:hover {
     background-color: #9662d2;
 }
@@ -64,3 +65,97 @@
     color: #d9dcde;
 
 }
+
+::ng-deep app-live-score-board .bottom-right-table-container{
+  width: 45vh !important;
+  position: unset !important;
+}
+
+.user-list-container {
+  background-color: #3e4b58;
+  padding: 1em;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.user-list {
+  background-color: #333f4a;
+  color: #d9dcde;
+  padding: 1em;
+  border-radius: 8px;
+  list-style: none;
+  font-size: 1.2em;
+}
+
+.user-list-item {
+  background-color: #505d69;
+  margin: 0.5em 0;
+  padding: 0.75em 1em;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: 0.3s;
+}
+
+.user-list-item:hover {
+  background-color: #695497;
+  color: #d9dcde;
+}
+
+.user-list-item span {
+  font-weight: 500;
+}
+
+.user-list-item i {
+  font-size: 1.5em;
+  color: #9662d2;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.user-list-item i:hover {
+  color: #d9dcde;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.lobby-card,
+.user-list-container,
+.scoreboard-container {
+  flex: 1 1 30%;
+  min-width: 250px;
+}
+
+
+.user-list-container{
+  background-color: #333f4a;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .lobby-card,
+  .user-list-container,
+  .scoreboard-container {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+.lobby-card{
+  max-width: 50%;
+}
+
+

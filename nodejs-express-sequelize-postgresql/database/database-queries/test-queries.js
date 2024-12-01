@@ -29,6 +29,14 @@ const getTest = (id) => {
     }
 }
 
+const getNumberOfQuestions = (id) => {
+    try {
+        return db.query(`SELECT COUNT(*) FROM sets WHERE test_id = $1`, [id]);
+    } catch (err) {
+        console.error('db query get number of questions for test error: ', err);
+    }
+}
+
 const updateTest = (test) => {
     try {
         return db.query(`UPDATE tests SET name = $1, description = $2 WHERE test_id = $3 RETURNING test_id as id, name, description, created_date, modified_date`, [test.name, test.description, test.id]);
@@ -132,5 +140,6 @@ module.exports = {
     getTestDetails,
     addQuestionToTest,
     getTestWithAnswers,
-    getTestMaxPoints
+    getTestMaxPoints,
+    getNumberOfQuestions
 }

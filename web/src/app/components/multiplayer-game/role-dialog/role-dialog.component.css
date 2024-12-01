@@ -1,0 +1,51 @@
+.container {
+  color: #d4d6d9;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  padding: 0;
+}
+
+
+.role-container {
+  background-color: #3e4b58;
+  color: #d4d6d9;
+  text-align: center;
+  border: solid 3px #695497;
+  padding: 6px 16px;
+  border-radius: 10px;
+}
+
+
+.answer {
+  width: 90%;
+  flex: 1;
+  margin-top: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  background-color: rgba(36, 36, 44, 0.8);
+  transform: scale(1.05);
+  border: solid #695497 3px;
+  border-radius: 10px;
+  color: #d4d6d9;
+
+}
+
+
+.answer-selected {
+  border: solid 3px #74c674 !important;
+  box-shadow: 0 0 10px 2px rgba(0, 255, 0, 0.5) !important;
+  color: rgba(116, 198, 116, 1) !important;
+}
+
+.time-left{
+  margin-top: 7px;
+}
+
+::ng-deep .mat-divider {
+  border-top-width: 5px !important;
+  margin-top: 15px !important;
+}
+
+.title {
+  color: #695497;
+}

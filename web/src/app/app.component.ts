@@ -1,4 +1,5 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 })
 export class AppComponent {
   title = 'web';
+  constructor(private translate: TranslateService) {
+    this.translate.setDefaultLang('pl');
+    this.translate.use('pl');
+  }
 }

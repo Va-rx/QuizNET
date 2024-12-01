@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ElementRef,ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { GamesService } from 'src/app/services/game/game.service';
 import { TestService } from 'src/app/services/test/test.service';
@@ -13,8 +13,10 @@ export class CreateMatchmakingComponent implements OnInit {
   selectedTest: any;
   dateControl = new FormControl(new Date());
   timeControl = new FormControl(new Date());
+  timerControl = new FormControl(1);
   selectedGame: any;
-  isSubmitted = false;
+  isSubmitted = false;// DEBUG: TRUE return to false in PROD env
+  @ViewChild('targetSection') targetSection!: ElementRef;
 
 
   constructor(private testsService: TestService,private gameService: GamesService) { }
@@ -31,7 +33,7 @@ export class CreateMatchmakingComponent implements OnInit {
   }
 
   loadGames(): void {
-    this.gameService.get().subscribe((data: any[]) => {
+    this.gameService.getAllGames().subscribe((data: any[]) => {
       this.games = data;
     });
   }
@@ -42,6 +44,7 @@ export class CreateMatchmakingComponent implements OnInit {
   }
 
   selectGame(game: any): void {
+    this.scrollToSection();
     this.selectedGame = game;
     console.log(this.selectedGame);
   }
@@ -51,13 +54,15 @@ export class CreateMatchmakingComponent implements OnInit {
     const selectedTime = this.timeControl.value;
     const selectedTest = this.selectedTest;
     const selectedGame = this.selectedGame;
-
+    const timerInMinutes = this.timerControl.value ?? 15;
+    const timerInSeconds = timerInMinutes * 60;
     if (selectedTest && selectedGame && selectedDate && selectedTime) {
       const data = {
         test: selectedTest,
         game: selectedGame,
         date: selectedDate,
-        time: selectedTime
+        time: selectedTime,
+        timerInSeconds: timerInSeconds
       };
 
       console.log('Submitting:', data);
@@ -65,5 +70,15 @@ export class CreateMatchmakingComponent implements OnInit {
     } else {
       console.log('Please select all required fields.');
     }
+  }
+
+  scrollToSection() {
+    this.targetSection?.nativeElement.scrollIntoView({
+      behavior: 'smooth'
+    });
+  }
+
+  get timerInSeconds(): number {
+    return (this.timerControl.value ?? 15) * 60;
   }
 }

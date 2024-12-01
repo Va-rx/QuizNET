@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth/auth.service';
 import { Role } from '../../models/user.model';
+import { Router, NavigationEnd } from '@angular/router';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-navbar',
@@ -11,10 +13,18 @@ import { Role } from '../../models/user.model';
 export class NavbarComponent {
   roles = Role;
   role = Role.NONE;
+  showNavbar = true;
+
 
   private subscription!: Subscription;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router, private translate: TranslateService) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.showNavbar = !['/tank-game'].includes(event.urlAfterRedirects);
+      }
+    });
+  }
 
   logout(): void {
     this.authService.logout();
@@ -31,4 +41,13 @@ export class NavbarComponent {
       this.subscription.unsubscribe();
     }
   }
+
+  getCurrentLang(): string {
+    return this.translate.currentLang;
+  }
+
+  switchLanguage(lang: string): void {
+    this.translate.use(lang);
+  }
+
 }

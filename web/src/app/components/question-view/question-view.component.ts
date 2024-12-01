@@ -72,5 +72,14 @@ export class QuestionViewComponent implements OnInit{
     const result = this.result;
     this.dialogRef.close(result);
   }
+
+  getImageUrl(imageData: any): string {
+    if (typeof imageData === 'string') {
+      return `data:image/jpeg;base64,${imageData}`;
+    } else if (imageData instanceof Blob) {
+      return URL.createObjectURL(imageData);
+    }
+    return '';
+  }
 }
 

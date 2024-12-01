@@ -8,7 +8,7 @@ router.post("/", async (req, res) => {
     const { testId, userId, answers, score} = req.body;
     const answerMap = new Map(answers);
     let answerXML = await generateAnswerXML(answerMap);
-    createUserResults({ userId, testHistoryId: testId, answers: answerXML, score: score}).then(result => {
+    createUserResults({ userId: userId, testHistoryId: testId, answers: answerXML, score: score}).then(result => {
         res.send(result);
     }).catch(
         err => {
@@ -40,7 +40,12 @@ router.get("/:id/:userId", async (req, res) => {
     if (parsedResult === null) {
         return res.status(500).send({ hasError: "Error parsing XML" });
     }
-    const answerIds = parsedAnswers.answers.question.flatMap(q => q.answer.map(a => parseInt(a)));
+
+    if (!parsedAnswers.answers.question) {
+        parsedAnswers.answers = { question: [] };
+    }
+
+    const answerIds = parsedAnswers.answers.question.flatMap(q => q.answer ? q.answer.map(a => parseInt(a)) : []);
     const userTest = {
         createdAt: test.createdAt,
         testName: parsedResult.test.$.name,
@@ -50,6 +55,7 @@ router.get("/:id/:userId", async (req, res) => {
         questions: parsedResult.test.questions.map((q) => ({
             question: q.$.question,
             id:  parseInt(q.$.id),
+            image_link: q.$.image_link,
             answers: q.answers.map((a) => ({
                 id: parseInt(a.$.id),
                 points: parseInt(a.$.points),

@@ -1,57 +1,40 @@
-<!-- create-lobby.component.html -->
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card mt-5">
-        <div class="card-header bg-primary text-white">
-          <h4>Create Lobby</h4>
-        </div>
-        <div class="card-body">
-          <form>
-            <div class="form-group">
-              <input type="text" class="form-control" id="lobbyName" placeholder="Enter lobby name" [(ngModel)]="lobbyName" [ngModelOptions]="{standalone: true}">
-              <!-- <label for="userName">User Name</label>
-              <input type="text" class="form-control" id="userName" placeholder="Enter user name" [(ngModel)]="userName" [ngModelOptions]="{standalone: true}"> -->
-            </div>
-            <button type="submit" *ngIf="!created" (click)="onSubmit()" class="btn btn-block button">Create Lobby</button>
-            <button type="submit" *ngIf="created &&!scheduled" (click)="onStartGame()" class="btn btn-block button">Schedule game start</button>
-            <div *ngIf="scheduled" class="scheduled-game">
-              <h4>Game Scheduled</h4>
-              <p>Game will start at {{date}} {{time}}</p>
-            </div>
-          </form>
-        </div>
-        <div class="card-body code-section">
-          <div *ngIf="joinCode != ''">
-            <h4>Join Code</h4>
-            <p>{{joinCode}}</p>
+<div class="container d-flex flex-wrap justify-content-around align-items-start mt-5">
+  <div class="col-md-4 lobby-card">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h4>{{'LOBBY.CREATE_LOBBY' | translate}}</h4>
+      </div>
+      <div class="card-body">
+        <form>
+          <div class="form-group">
+            <input type="text" class="form-control" id="lobbyName" placeholder="{{'LOBBY.ENTER_NAME' | translate}}" [(ngModel)]="lobbyName" [ngModelOptions]="{standalone: true}">
           </div>
+          <button type="submit" *ngIf="!created" (click)="onSubmit()" class="btn btn-block button">{{'LOBBY.CREATE_LOBBY' | translate}}</button>
+          <div *ngIf="scheduled" class="scheduled-game">
+            <h4>{{'LOBBY.GAME_SCHEDULED' | translate}}</h4>
+            <p>{{'LOBBY.START_TIME' | translate}} {{date}} {{time}}</p>
+          </div>
+        </form>
+      </div>
+      <div class="card-body code-section">
+        <div *ngIf="joinCode != ''">
+          <h4>{{'LOBBY.CODE' | translate}}</h4>
+          <p>{{joinCode}}</p>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div *ngIf="userList.length > 0" class="container mt-4">
-  <h4>User List</h4>
-  <ul>
-    <li *ngFor="let user of userList">{{ user }}</li>
-  </ul>
-</div>
-<div class="main_container" *ngIf="scheduled">
-  <div class="container">
-    <h2>Scoreboard</h2>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Username</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let player of scoreBoard">
-          <td>{{ player.username }}</td>
-          <td>{{ player.score }}</td>
-        </tr>
-      </tbody>
-    </table>
+
+  <div *ngIf="userList.length > 0" class="col-md-4 user-list-container">
+    <h4 style="color: white;">{{'LOBBY.PLAYERS' | translate}}:</h4>
+    <ul class="user-list">
+      <li *ngFor="let user of userList" class="user-list-item" >
+        <span>{{ user }}</span>
+      </li>
+    </ul>
   </div>
+
+  <div *ngIf="scheduled" class="col-md-4 scoreboard-container">
+    <app-live-score-board [scoreboard]="scoreBoard"></app-live-score-board>
   </div>
+</div>

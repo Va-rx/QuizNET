@@ -3,22 +3,25 @@
         <div class="question-container">
             <div class="question">
                 <h2>{{question.question}}</h2>
+              <div *ngIf="question.image_link">
+                <img style="width: 100%" [src]="getImageUrl(question.image_link)" alt="Selected Image"/>
+              </div>
                 <div class="answers">
                     <div class="answer" *ngFor="let answer of question.answers">
                         <app-answer-view (answers)="chooseAnswer($event)" [answer]="answer" [isChosen]="checkAnswer(answer)" [questionType]="question.type"></app-answer-view>
                     </div>
                 </div>
             </div>
-            <button (click)="submitAnswer()" class="submit-btn">Zatwierdź</button>
+            <button (click)="submitAnswer()" class="submit-btn">{{ 'QUESTION_VIEW.CONFIRM' | translate}}</button>
         </div>
     </ng-template>
 
     <ng-template #submitted>
         <div class="icon-container">
             <i *ngIf="(result / max_points_sum) === 1" class="bi bi-check-circle green-icon"></i>
-          
+
             <i *ngIf="(result / max_points_sum) > 0 && (result / max_points_sum) < 1" class="bi bi-question-circle yellow-icon"></i>
-          
+
             <i *ngIf="(result / max_points_sum) === 0" class="bi bi-x-circle red-icon"></i>
           </div>
     </ng-template>

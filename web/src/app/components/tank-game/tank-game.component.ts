@@ -10,6 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserResultsService } from "../../services/user-results/user-results.service";
 import { UserAnswersService } from "../../services/user-answers/user-answers.service";
+import {UserPersonalityResultsService} from "../../services/user-personality-results/user-personality-results.service";
+import {PersonalityResults} from "../../models/user-personality-results";
 
 @Component({
   selector: 'app-tank-game',
@@ -42,13 +44,18 @@ export class TankGameComponent implements OnInit {
   timerStarted:boolean=false;
   totalStars:number=0;
   totalHealth:number=0;
+  //BARTLE SCOREBOARD//
+  explorerScore:number=0;
+  socializerScore:number=0;
+  achieverScore:number=0;
+
   constructor(private dialog: MatDialog,
     private TestsService: TestService,
     private socketService: SocketServiceService,
     private route: ActivatedRoute,
     private auth: AuthService,
     private userAnswersService: UserAnswersService,
-    private userResultsService: UserResultsService) {
+    private userResultsService: UserResultsService, private userPersonalityResultsService: UserPersonalityResultsService ) {
     this.config = {
       type: Phaser.AUTO,
       //height as window
@@ -81,6 +88,7 @@ export class TankGameComponent implements OnInit {
     this.testID=history.state.data.testId;
     //this.testID=1;
     this.historyTestId = history.state.data.testHistoryId;
+    this.timer=history.state.data.timer;
     this.phaserGame = new Phaser.Game(this.config);
 
     //Sometime there is problem with loading it at scene start, this fixes it
@@ -125,13 +133,15 @@ export class TankGameComponent implements OnInit {
     this.phaserGame.scene.game.events.on('shareHealth', () => {
       console.log("SHARING HEALTH WITH OTHER USER")
       console.log(this.nickname)
-      this.socket.emit('shareHealth', this.nickname)
+      this.socket.emit('shareHealth', this.nickname,this.socketService.getJoinCode())
     })
 
     this.socket.on('receiveHealth', (userName) => {
       console.log("You received apteczka from user: " + userName);
       this.phaserGame.events.emit("receiveHealth_inPhaser", userName)
     })
+
+
 
   }
 
@@ -157,13 +167,10 @@ export class TankGameComponent implements OnInit {
     this.finishGame();
   }
 
-  finishGame(){
+  async finishGame(){
     console.log("Game Over");
     this.timerEnded=true;
-    let results = this.userAnswersService.getWrappedResult(this.historyTestId);
-    this.userResultsService.create(results).subscribe(data => {
-      console.log(data);
-    });
+    let results = JSON.parse(this.userAnswersService.getWrappedResult(this.historyTestId));
 
     this.playerScore += this.phaserGame.scene.getScene("default")["bonus"];
     this.playerScoreBonus=this.phaserGame.scene.getScene("default")["bonus"];
@@ -176,9 +183,42 @@ export class TankGameComponent implements OnInit {
     this.totalTurrets = this.phaserGame.scene.getScene("default")["allTurrets"];
     ///////////////////////////////////////
     this.playerScore = Math.round(this.playerScore * 100) / 100;
+    results.score=this.playerScore;
+    let createdResults = await this.userResultsService.create(results).toPromise();
+
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
     this.phaserGame.destroy(true);
+    this.calculateScores();
+
+    let personalityResults: PersonalityResults = {
+      userResultsId: createdResults.id,
+      explorer: this.explorerScore,
+      socializer: this.socializerScore,
+      killer: 0,
+      achiever: this.achieverScore
+    };
+    await this.userPersonalityResultsService.create(personalityResults).toPromise();
+
     this.gameFinished = true;
+
+
+  }
+
+  calculateScores() {
+    const cappedMedkitsShared = Math.min(this.medkitsShared, 10); // Max 10 for Socializer
+    if(this.totalStars==0){
+      this.explorerScore=0;
+    }else{
+      this.explorerScore = (this.starsPicked / this.totalStars) * 100; // Max 4 points
+    }
+
+    if(this.totalHealth>10){
+      this.socializerScore = (cappedMedkitsShared / 10) * 100;
+    }
+    else{
+      this.socializerScore = (this.medkitsShared / this.totalHealth) * 100;
+    }
+    this.achieverScore = (this.turretsDestroyed / this.totalTurrets) * 100; // Normalized by total turrets
   }
 
   ngOnDestroy() {

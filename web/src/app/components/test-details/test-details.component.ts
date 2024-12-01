@@ -25,6 +25,9 @@ export class TestDetailsComponent implements OnInit {
   isEditingTestLabel = false;
   isEditingTestDescription = false;
   isEditingTestQuestion = false;
+  file!: File;
+  imageUrl: string | null = null;
+  imageChanged: boolean = false;
 
   @ViewChild('inputElement', { static: false }) inputElement!: ElementRef;
 
@@ -39,7 +42,7 @@ export class TestDetailsComponent implements OnInit {
               this.test = test;
               this.editedTest = JSON.parse(JSON.stringify(this.test)); // deep copy
               this.showTestDetails();
-      
+
               for (let i = 0; i < this.test.questions.length; i++) {
                 this.questionService.getQuestion(this.test.questions[i].id).subscribe({
                   next: (question) => {
@@ -63,7 +66,7 @@ export class TestDetailsComponent implements OnInit {
     this.chosenView = 'question';
   }
 
-  
+
   editTestLabel() {
     this.isEditingTestLabel = true;
     setTimeout(() => this.inputElement.nativeElement.focus());
@@ -73,22 +76,22 @@ export class TestDetailsComponent implements OnInit {
     this.isEditingTestLabel = false;
     this.editedTest.name = this.test.name;
   }
-  
+
   saveTestLabelChange() {
     this.isEditingTestLabel = false;
   }
-  
+
 
   editTestDescription() {
     this.isEditingTestDescription = true;
     setTimeout(() => this.inputElement.nativeElement.focus());
   }
-  
+
   cancelTestDescriptionChange() {
     this.isEditingTestDescription = false;
     this.editedTest.description = this.test.description;
   }
-  
+
   saveTestDescriptionChange() {
     this.isEditingTestDescription = false;
   }
@@ -125,6 +128,7 @@ export class TestDetailsComponent implements OnInit {
 
   selectQuestion(question_index_arr: number) {
     this.selectedQuestion = this.editedTest.questions[question_index_arr];
+    this.imageUrl = this.getImageUrl(this.selectedQuestion.image_link);
     this.showQuestion();
   }
 
@@ -134,13 +138,13 @@ export class TestDetailsComponent implements OnInit {
     setTimeout(() => this.inputElement.nativeElement.focus());
   }
 
-  saveTestQuestionChange() { 
+  saveTestQuestionChange() {
     this.isEditingTestQuestion = false;
   }
 
-  cancelTestQuestionChange() { 
+  cancelTestQuestionChange() {
     this.isEditingTestQuestion = false;
-    
+
     for (let i = 0; i < this.test.questions.length; i++) {
       if (this.test.questions[i].id === this.selectedQuestion.id) {
         this.selectedQuestion.question = this.test.questions[i].question;
@@ -173,8 +177,9 @@ export class TestDetailsComponent implements OnInit {
   areNewQuestionChanges() {
     for (const question of this.test.questions) {
       if (question.id === this.selectedQuestion.id) {
-        return this.selectedQuestion.question !== question.question || 
+        return this.selectedQuestion.question !== question.question ||
                 this.selectedQuestion.type !== question.type ||
+                this.imageChanged ||
                 !areArraysEqual(this.selectedQuestion.answers, question.answers);
       }
     }
@@ -195,6 +200,8 @@ export class TestDetailsComponent implements OnInit {
       this.answerService.deleteAnswer(answer_id).subscribe();
     });
 
+    this.imageChanged = false;
+
     this.selectedQuestion.answers.forEach(answer => {
       if (answer.id) {
         this.answerService.updateAnswer(answer.id, answer).subscribe((res) => {
@@ -204,23 +211,31 @@ export class TestDetailsComponent implements OnInit {
         })
       }
     })
-
     this.questionService.updateQuestion(this.selectedQuestion.id, this.selectedQuestion).subscribe({
       next: (updatedQuestion) => {
         const index = this.test.questions.findIndex(question => question.id === this.selectedQuestion.id);
-
         this.selectedQuestion.question = updatedQuestion.question;
         this.selectedQuestion.type = updatedQuestion.type;
-        this.selectedQuestion.imageLink = updatedQuestion.image_link;
-
+        if (this.file) {
+          const reader = new FileReader();
+          reader.readAsArrayBuffer(this.file);
+          reader.onload = () => {
+            const blob = new Blob([reader.result as ArrayBuffer], { type: this.file.type });
+            this.selectedQuestion.image_link = blob;
+          };
+        }
         this.test.questions[index] = JSON.parse(JSON.stringify(this.selectedQuestion));
         this.test.questions = [...this.test.questions];
-
       },
       error: (err) => {
         console.log('Something went wrong with question update: ', err);
       }
     })
+  }
+
+  triggerFileInput() {
+    const fileInput = document.getElementById('fileInput') as HTMLElement;
+    fileInput.click();
   }
 
   addQuestion() {
@@ -233,16 +248,11 @@ export class TestDetailsComponent implements OnInit {
               answers: [],
               position: response.position
             };
-            
-            console.log('dodalem pytanie!: ', question);
 
             this.test.questions.push(question);
             this.editedTest.questions.push(JSON.parse(JSON.stringify(question)));
 
-            console.log(this.test);
-            console.log(this.editedTest);
-
-            this.selectQuestion(this.test.questions.length-1);                  
+            this.selectQuestion(this.test.questions.length-1);
           }
         })
       }
@@ -252,12 +262,8 @@ export class TestDetailsComponent implements OnInit {
   deleteQuestion() {
     this.questionService.deleteQuestion(this.selectedQuestion.id).subscribe({
       next: () => {
-        console.log(this.test.questions);
-        console.log(this.selectedQuestion);
         for (let i = 0; i < this.test.questions.length; i++) {
           if (this.test.questions[i].id === this.selectedQuestion.id) {
-            console.log(i);
-
             this.test.questions.splice(i, 1);
             this.editedTest.questions.splice(i, 1);
             this.showTestDetails();
@@ -296,6 +302,26 @@ export class TestDetailsComponent implements OnInit {
     })
     return res;
   }
+
+  onFileChange(event: any) {
+    this.selectedQuestion.image_link = event.target.files[0]
+    this.imageUrl = this.getImageUrl(this.selectedQuestion.image_link);
+    this.imageChanged = true;
+  }
+
+  getImageUrl(imageData: any): string {
+    if (imageData && imageData.type === 'Buffer') {
+      const blob = new Blob([new Uint8Array(imageData.data)], {type: 'image/jpeg'});
+      return URL.createObjectURL(blob);
+    }
+
+    if (typeof imageData === 'string') {
+      return `data:image/jpeg;base64,${imageData}`;
+    } else if (imageData instanceof Blob) {
+      return URL.createObjectURL(imageData);
+    }
+    return '';
+  }
 }
 
 function areArraysEqual(arr1: any[], arr2: any[]): boolean {
@@ -308,3 +334,4 @@ function areArraysEqual(arr1: any[], arr2: any[]): boolean {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   });
 }
+  
