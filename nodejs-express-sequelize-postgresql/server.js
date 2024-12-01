@@ -306,11 +306,30 @@ io.on("connection", (socket) => {
         starsCounter = 0;
         stars = [];
         readyClients = 0;
+
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
             participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions);
           }
         });
+
+        ////TIMER///
+        let timerValue = timer;
+        let timerInterval;
+        
+        timerInterval = setInterval(() => {
+          if (timerValue > 0) {
+              timerValue--;
+              session.users.forEach((participantSocket) => {
+                  if (participantSocket !== socket) {
+                      participantSocket.emit('timer-update', timerValue);
+                  }
+              });
+          } else {
+              clearInterval(timerInterval);
+              timerInterval = null;
+          }
+      }, 1000);
       }
     });
   });
