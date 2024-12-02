@@ -1,11 +1,13 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges,OnInit } from '@angular/core';
+import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
+import { NavbarService } from '../../services/navbar/navbar.service';
 
 @Component({
   selector: 'app-scoreboard',
   templateUrl: './scoreboard.component.html',
   styleUrls: ['./scoreboard.component.css']
 })
-export class ScoreboardComponent implements OnChanges {
+export class ScoreboardComponent implements OnChanges,OnInit {
   @Input() scoreboard: Map<string, number> = new Map<string, number>();
   @Input() currentPlayer: string = '';
   @Input() totalScore: number = 0;//max amount of points
@@ -18,10 +20,22 @@ export class ScoreboardComponent implements OnChanges {
   @Input() socializerScore: number = -1;
   @Input() achieverScore: number = -1;
   @Input() killerScore: number = -1;
+  private socket: any;
 
   //newOnes, need to calculate them!
-  timeLeft: number = 12.37 // current player left time for the test
-  everyUserTime: number = 21.3; // array, map of every users time spent on solving test
+  timeLeft: number = 0 // current player left time for the test
+  everyUserTime: number = 0; // array, map of every users time spent on solving test
+
+  constructor(private socketService: SocketServiceService,private navbarService: NavbarService) {
+  }
+  ngOnInit(){
+    this.navbarService.showNavbar();
+    this.socket = this.socketService.getSocket();
+    this.socket.on("timer-update",(timeValue)=>{
+      this.everyUserTime=timeValue;
+      this.timeLeft=timeValue;
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.calculateScores();

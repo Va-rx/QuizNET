@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { Role } from '../../models/user.model';
 import { Router, NavigationEnd } from '@angular/router';
 import {TranslateService} from "@ngx-translate/core";
+import { NavbarService } from '../../services/navbar/navbar.service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,10 +19,13 @@ export class NavbarComponent {
 
   private subscription!: Subscription;
 
-  constructor(private authService: AuthService, private router: Router, private translate: TranslateService) {
+  constructor(private authService: AuthService, private router: Router, private translate: TranslateService,private navbarService: NavbarService) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
+<<<<<<< HEAD
         this.showNavbar = !['/tank-game'].includes(event.urlAfterRedirects) || !['/platformer'].includes(event.urlAfterRedirects);
+=======
+>>>>>>> origin/main
       }
     });
   }
@@ -33,6 +37,9 @@ export class NavbarComponent {
   ngOnInit(): void {
     this.subscription = this.authService.getUserRole().subscribe(role => {
       this.role = role;
+    });
+    this.navbarService.navbarVisibility$.subscribe((isVisible) => {
+      this.showNavbar = isVisible;
     });
   }
 
