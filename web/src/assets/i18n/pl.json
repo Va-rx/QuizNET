@@ -1,10 +1,15 @@
 {
+  "GENERAL": {
+    "SUBMIT": "Zatwierdź",
+    "CLOSE": "Zamknij"
+  },
   "NAVIGATION": {
     "TESTS": "Testy",
     "JOIN_LOBBY": "Dołącz do poczekalni",
     "CREATE_LOBBY": "Zaplanuj test",
     "TESTS_HISTORY": "Historia testów",
-    "LOG_OUT": "Wyloguj"
+    "LOG_OUT": "Wyloguj",
+    "MAP_EDITOR": "Edytor map"
   },
   "LOBBY": {
     "CREATE_LOBBY": "Utwórz poczekalnię",
@@ -59,7 +64,11 @@
     "SET_DURATION": "Ustaw czas trwania (w minutach)",
     "ENTER_DURATION": "Wprowadź czas w minutach",
     "CHOOSE_GAME": "Wybierz grę",
-    "SCHEDULE": "Zaplanuj"
+    "SCHEDULE": "Zaplanuj",
+    "CHOOSE_MAP": "Wybierz mapę",
+    "MAP_NAME": "Nazwa mapy",
+    "SUGGESTED_TIME": "Sugerowany czas gry",
+     "ADD_MAP": "Dodaj mapę"
   },
   "LIVE_SCOREBOARD": {
     "SCORE": "Wynik",
@@ -75,5 +84,30 @@
     "TO_ACHIEVE": "do zdobycia",
     "POINTS": "Pkt.",
     "DOWNLOAD_RESULTS": "Pobierz wyniki"
+  },
+  "DIFFICULTY": {
+    "DIFFICULTY": "Poziom trudności",
+    "EASY": "Łatwy",
+    "MEDIUM": "Średni",
+    "HARD": "Trudny"
+  },
+  "MAP_EDITOR": {
+    "TITLE": "Stwórz nową mapę",
+    "GAME": "Gra",
+    "GAME_LABEL": "Wybierz grę do której chcesz dodać mapę",
+    "CHOOSE_GAME": "Wybierz grę",
+    "MAP_LABEL": "Wybierz nazwę mapy",
+    "CHOOSE_MAP": "Wybierz mapę",
+    "TIME_LABEL": "Sugerowany czas gry",
+    "CHOOSE_TIME": "Wybierz czas w minutach",
+    "CHOOSE_DIFFICULTY": "Wybierz poziom trudności",
+    "ADD_MAP": "Dodaj gotowy plik mapy (plik .json)",
+    "NO_MAPS": "Brak dostępnych map",
+    "LEVEL_CREATED": "Poziom utworzony pomyślnie",
+    "GAME_REQUIRED": "Gra jest wymagana",
+    "MAP_REQUIRED": "Mapa jest wymagana",
+    "TIME_REQUIRED": "Czas jest wymagany",
+    "NAME_REQUIRED": "Nazwa jest wymagana",
+    "DIFFICULTY_REQUIRED": "Poziom trudności jest wymagany"
   }
 }

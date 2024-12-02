@@ -66,6 +66,7 @@ const levelRouter = require("./routes/level-routes");
 const {createTestHistory} = require("./database/database-queries/test-history-queries");
 const {generateQuizXML} = require("./XMLhandler");
 const {getNumberOfQuestions} = require("./database/database-queries/test-queries");
+const { getLevel } = require("./database/database-queries/level-queries");
 
 app.use("/api/tests", testRouter);
 app.use("/api/games", gameRouter);
@@ -287,15 +288,18 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("startGame", (date, time, game_route, test_id,timer) => {
+  socket.on("startGame", (date, time, game_route, test_id,timer, level) => {
     console.log(`Game will start at ${time} on ${date}`);
 
     codeToSessionInfo.set(getJoinCodeBySession(getSessionBySocket(socket)),{ date: `${time}, ${date}`, test: test_id, game:game_route})
 
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
-  
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
+      const levelData = (await getLevel(level.id)).rows[0].map;
+      const buffer = Buffer.from(levelData.buffer.data);
+      const jsonString = buffer.toString('utf-8');
+      const levelMap = JSON.parse(jsonString);
       const session = getSessionBySocket(socket);
       const xml = await generateQuizXML(test_id);
       maxQuestions = parseInt((await getNumberOfQuestions(1)).rows[0].count);
@@ -307,7 +311,7 @@ io.on("connection", (socket) => {
         readyClients = 0;
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelMap);
           }
         });
       }

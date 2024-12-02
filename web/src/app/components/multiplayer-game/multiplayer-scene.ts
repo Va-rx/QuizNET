@@ -19,20 +19,22 @@ export default class multiplayerScene extends Phaser.Scene {
   bonusText!: Phaser.GameObjects.Text;
   questionsLeftText!: Phaser.GameObjects.Text;
   maxQuestions: number = 0;
+  map;
 
   private socket: Socket;
 
-  constructor(config: Phaser.Types.Scenes.SettingsConfig, socket: Socket, startingPlayers: any, maxQuestions: number) {
+  constructor(config: Phaser.Types.Scenes.SettingsConfig, socket: Socket, startingPlayers: any, maxQuestions: number, map: any) {
     super(config);
     this.socket = socket;
     this.startingPlayers = startingPlayers;
     this.maxQuestions = maxQuestions;
+    this.map = map;
   }
 
   preload() {
     this.load.spritesheet('dude', 'assets/games/multiplayergame/Player/player.png', {frameWidth: 48, frameHeight: 48});
     this.load.image('star', 'assets/games/firstgame/assets/star.png');
-    this.load.tilemapTiledJSON('map', 'assets/games/multiplayergame/Map/multiplayerMap.json');
+    this.load.tilemapTiledJSON('map', this.map);
     this.load.image('plains', 'assets/games/multiplayergame/Map/plains.png');
     this.load.image('grass', 'assets/games/multiplayergame/Map/grass.png');
     this.load.image('fences', 'assets/games/multiplayergame/Map/fences.png');

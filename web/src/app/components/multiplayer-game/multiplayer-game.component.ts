@@ -42,6 +42,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   killerScore = 0;
   socializerScore = 0;
   players;
+  levelMap: any;
 
   timer: number = 900; //IN SECONDS
   timerEnded:boolean=false;
@@ -63,6 +64,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.historyTestId = history.state.data.testHistoryId;
     this.players = history.state.data.multiplayerPlayers;
     this.maxQuestions = history.state.data.maxQuestions;
+    this.levelMap = history.state.data.levelMap;
     this.timer=history.state.data.timer;
 
     Object.keys(this.players).forEach((key) => {
@@ -78,7 +80,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
-      scene: new multiplayerScene({key: 'multiplayerScene'}, this.socket, this.players, this.maxQuestions),
+      scene: new multiplayerScene({key: 'multiplayerScene'}, this.socket, this.players, this.maxQuestions, this.levelMap),
       parent: 'gameContainer',
       physics: {
         default: 'matter',

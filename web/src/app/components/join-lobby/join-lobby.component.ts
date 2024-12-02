@@ -47,7 +47,7 @@ export class JoinLobbyComponent {
         this.game_name=game_name;
     })
 
-    this.socket.on('gameStarted', (game_route,test, testHistoryId,timer, players, maxQuestions) => {
+    this.socket.on('gameStarted', (game_route,test, testHistoryId,timer, players, maxQuestions, levelMap) => {
       //router to game
       console.log(game_route);
       console.log('Game started'+game_route+test.id);
@@ -56,7 +56,8 @@ export class JoinLobbyComponent {
         testHistoryId: testHistoryId,
         timer: timer,
         multiplayerPlayers: players,
-        maxQuestions: maxQuestions
+        maxQuestions: maxQuestions,
+        levelMap: levelMap
       };
       this.router.navigate([game_route.route],{state:{data}});//test.id
     });

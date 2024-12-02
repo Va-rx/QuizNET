@@ -1,0 +1,143 @@
+.form-control {
+    text-align: center;
+    background-color: #3e4b58;
+    border: solid #695497 1px;
+    color: #d9dcde;
+    transition: 0.3s;
+}
+
+.main-card {
+    background-color: #333f4a;
+  }
+
+.btn:focus, .btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.btn-submit {
+    background-color: #695497;
+    border: 0;
+    transition: 0.3s;
+    color: #d9dcde;
+}
+
+.btn-submit:hover {
+    background-color: #9662d2;
+}
+
+
+.card {
+    background-color: #333f4a;
+}
+
+.card-header {
+    background-color: transparent !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-header h4 {
+    font-size: 2em;
+}
+
+
+
+.form-control:focus {
+    border-color: rgb(150, 98, 210, 0.6);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgb(150, 98, 210, 0.6);
+    outline: 0;
+    background-color: #505d69;
+    color: #d9dcde;
+}
+
+.form-control:active {
+    border-color: rgb(150, 98, 210, 0.6);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgb(150, 98, 210, 0.6);
+    outline: 0 none;
+}
+
+::ng-deep mat-label {
+    color: white;
+}
+
+.level-game-container{
+    margin: 0.3rem;
+  }
+
+  .card-header {
+    background-color: transparent !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-bottom: 1px solid #695497;
+  }
+
+  .card-header h4 {
+    font-size: 1.75em;
+    color: #b0b3b8;
+  }
+
+  .card-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #b0b3b8;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-text {
+    color: #c9ccd1;
+    font-size: 1em;
+  }
+
+  .card {
+    background-color: #333f4a;
+    border: 1px solid transparent;
+    color: #d9dcde;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+
+h2 {
+    color: #b0b3b8;
+    margin-bottom: 1rem;
+    font-size: 1.5em;
+  }
+
+  .btn {
+    background-color: #695497;
+    color: #d9dcde;
+    border: none;
+
+    transition: all 0.3s ease;
+    border-radius: 4px;
+  }
+
+  .btn:hover {
+    transform: scale(1.03);
+  }
+
+.delete-btn {
+    background-color: rgb(225, 111, 111);
+
+}
+
+.no-maps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: white;
+}
+
+.alert-danger {
+  background-color: transparent;
+  color: rgb(225, 111, 111);
+  padding: 0;
+  margin: 0 !important;
+}

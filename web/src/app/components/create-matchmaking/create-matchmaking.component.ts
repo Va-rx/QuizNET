@@ -2,6 +2,9 @@ import { Component, OnInit,ElementRef,ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { GamesService } from 'src/app/services/game/game.service';
 import { TestService } from 'src/app/services/test/test.service';
+import { Level } from 'src/app/models/level.model';
+import { LevelService } from 'src/app/services/level/level.service';
+
 @Component({
   selector: 'app-create-matchmaking',
   templateUrl: './create-matchmaking.component.html',
@@ -10,20 +13,41 @@ import { TestService } from 'src/app/services/test/test.service';
 export class CreateMatchmakingComponent implements OnInit {
   testSets: any[] = [];
   games: any[] = [];
+  groupedLevels: { [key: string]: Level[] } = {};
   selectedTest: any;
   dateControl = new FormControl(new Date());
   timeControl = new FormControl(new Date());
   timerControl = new FormControl(1);
   selectedGame: any;
+  selectedLevel?: Level;
   isSubmitted = false;// DEBUG: TRUE return to false in PROD env
   @ViewChild('targetSection') targetSection!: ElementRef;
+  responsiveOptions;
 
-
-  constructor(private testsService: TestService,private gameService: GamesService) { }
+  constructor(private testsService: TestService,private gameService: GamesService, private levelService: LevelService) {
+    this.responsiveOptions = [
+      {
+        breakpoint: '1024px',
+        numVisible: 1,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '768px',
+        numVisible: 1,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '560px',
+        numVisible: 1,
+        numScroll: 1,
+      },
+    ];
+   }
 
   ngOnInit(): void {
     this.loadTestSets();
     this.loadGames();
+    this.loadLevels();
   }
 
   loadTestSets(): void {
@@ -38,6 +62,12 @@ export class CreateMatchmakingComponent implements OnInit {
     });
   }
 
+  loadLevels(): void {
+    this.levelService.getAllLevels().subscribe((data: { [key: string]: any[] }) => {
+      this.groupedLevels = data;
+    });
+  }
+
   selectTest(test: any): void {
     this.selectedTest = test;
     console.log(this.selectedTest);
@@ -46,8 +76,13 @@ export class CreateMatchmakingComponent implements OnInit {
   selectGame(game: any): void {
     this.scrollToSection();
     this.selectedGame = game;
-    console.log(this.selectedGame);
+    this.selectedLevel = undefined;
   }
+
+  selectLevel(level: Level): void {
+    this.selectedLevel = level;
+  }
+
 
   onSubmit(): void {
     const selectedDate = this.dateControl.value;
@@ -56,13 +91,15 @@ export class CreateMatchmakingComponent implements OnInit {
     const selectedGame = this.selectedGame;
     const timerInMinutes = this.timerControl.value ?? 15;
     const timerInSeconds = timerInMinutes * 60;
-    if (selectedTest && selectedGame && selectedDate && selectedTime) {
+    const selectedLevel = this.selectedLevel;
+    if (selectedTest && selectedGame && selectedDate && selectedTime && this.selectedLevel) {
       const data = {
         test: selectedTest,
         game: selectedGame,
         date: selectedDate,
         time: selectedTime,
-        timerInSeconds: timerInSeconds
+        timerInSeconds: timerInSeconds,
+        level: selectedLevel
       };
 
       console.log('Submitting:', data);

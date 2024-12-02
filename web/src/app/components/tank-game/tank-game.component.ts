@@ -48,7 +48,8 @@ export class TankGameComponent implements OnInit {
   explorerScore:number=0;
   socializerScore:number=0;
   achieverScore:number=0;
-
+  levelMap: any;
+  
   constructor(private dialog: MatDialog,
     private TestsService: TestService,
     private socketService: SocketServiceService,
@@ -88,6 +89,7 @@ export class TankGameComponent implements OnInit {
     this.testID=history.state.data.testId;
     //this.testID=1;
     this.historyTestId = history.state.data.testHistoryId;
+    this.levelMap = history.state.data.levelMap;
     this.timer=history.state.data.timer;
     this.phaserGame = new Phaser.Game(this.config);
 

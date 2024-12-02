@@ -1,14 +1,15 @@
 {
   "GENERAL": {
-
-
+    "SUBMIT": "Submit",
+    "CLOSE": "Close"
   },
   "NAVIGATION": {
     "TESTS": "Tests",
     "JOIN_LOBBY": "Join Lobby",
     "CREATE_LOBBY": "Schedule test",
     "TESTS_HISTORY": "Tests history",
-    "LOG_OUT": "Log out"
+    "LOG_OUT": "Log out",
+    "MAP_EDITOR": "Map editor"
   },
   "LOBBY": {
     "CREATE_LOBBY": "Create Lobby",
@@ -63,7 +64,11 @@
     "SET_DURATION": "Set duration (in minutes)",
     "ENTER_DURATION": "Enter duration in minutes",
     "CHOOSE_GAME": "Choose game",
-    "SCHEDULE": "Schedule"
+    "SCHEDULE": "Schedule",
+    "CHOOSE_MAP": "Choose map",
+    "MAP_NAME": "Map name",
+    "SUGGESTED_TIME": "Suggested game duration",
+    "ADD_MAP": "Add map"
   },
   "LIVE_SCOREBOARD": {
     "SCORE": "Score",
@@ -79,5 +84,30 @@
     "TO_ACHIEVE": "to achieve",
     "POINTS": "Pts.",
     "DOWNLOAD_RESULTS": "Download results"
-  }
+  },
+  "DIFFICULTY": {
+    "DIFFICULTY": "Difficulty",
+    "EASY": "Easy",
+    "MEDIUM": "Medium",
+    "HARD": "Hard"
+  },
+  "MAP_EDITOR": {
+    "TITLE": "Create new map",
+    "GAME": "Game",
+    "GAME_LABEL": "Choose game to which you want to add a map",
+    "CHOOSE_GAME": "Choose game",
+    "MAP_LABEL": "Choose map name",
+    "CHOOSE_MAP": "Choose map",
+    "TIME_LABEL": "Suggested game time",
+    "CHOOSE_TIME": "Choose time in minutes",
+    "CHOOSE_DIFFICULTY": "Choose difficulty",
+    "ADD_MAP": "Add map file (.json file)",
+    "NO_MAPS": "No maps available",
+    "LEVEL_CREATED": "Level created successfully",
+    "GAME_REQUIRED": "Game is required",
+    "MAP_REQUIRED": "Map is required",
+    "TIME_REQUIRED": "Time is required",
+    "NAME_REQUIRED": "Name is required",
+    "DIFFICULTY_REQUIRED": "Difficulty is required"
+    }
 }

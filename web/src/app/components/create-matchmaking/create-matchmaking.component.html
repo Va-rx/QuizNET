@@ -42,7 +42,32 @@
     </div>
   </div>
 
+
+
+  <div *ngIf="selectedGame && groupedLevels">
+    <h2 class="mb-4">{{ 'CREATE_MATCHMAKING.CHOOSE_MAP' | translate }}</h2>
+    <div class="row">
+      <p-carousel *ngIf="groupedLevels[selectedGame.id]"
+      [value]="groupedLevels[selectedGame.id]" 
+      [numVisible]="3" 
+      [numScroll]="3"
+      [responsiveOptions]="responsiveOptions" >
+      <ng-template let-level let-i="index" pTemplate="item">
+        <div class="level-game-container">
+          <div class="card mb-4" [class.border-primary]="level === selectedLevel" (click)="selectLevel(level)">
+            <div class="card-body">
+              <h5 class="card-title">{{'CREATE_MATCHMAKING.MAP_NAME' | translate}}: {{ level.name }}</h5>
+              <p>{{'CREATE_MATCHMAKING.SUGGESTED_TIME' | translate}}: {{ level.time }}</p>
+              <p>{{'DIFFICULTY.DIFFICULTY' | translate}}: {{ level.difficulty | translate }}</p>
+              <button class="btn btn-primary" (click)="selectLevel(level); $event.stopPropagation()">{{ 'CREATE_MATCHMAKING.CHOOSE' | translate }}</button>
+            </div>
+          </div>
+       </div>
+      </ng-template>
+      </p-carousel>
+    </div>
+  </div>
   <button #targetSection class="btn btn-primary mt-4 plan" (click)="onSubmit()">{{ 'CREATE_MATCHMAKING.SCHEDULE' | translate }}</button>
 </div>
 
-<app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [date]="dateControl.value" [time]="timeControl.value" [timerInput]="timerInSeconds"></app-create-lobby>
+<app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [level]="selectedLevel" [date]="dateControl.value" [time]="timeControl.value" [timerInput]="timerInSeconds"></app-create-lobby>
