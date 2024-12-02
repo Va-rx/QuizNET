@@ -44,7 +44,7 @@ export default class platformerScene extends Phaser.Scene {
 
         this.setEvents();
 
-        this.currentLevel = 1;
+        this.currentLevel = 5;
         this.loadLevel(this.currentLevel);
     }
 
@@ -60,7 +60,6 @@ export default class platformerScene extends Phaser.Scene {
 
     loadLevel(level: number) {
         this.currentLevel = level;
-        console.log(this.currentLevel);
 
         this.createLayer();
         this.initializeObjects();
@@ -121,8 +120,8 @@ export default class platformerScene extends Phaser.Scene {
 
     createLayer() {
         this.map = this.make.tilemap({ key: `map${this.currentLevel}` });
-        const tileset1 = this.map.addTilesetImage('adv_map_tiles', 'tileset');
-        const tileset2 = this.map.addTilesetImage('Spikes', 'spikes');
+        const tileset1 = this.map.addTilesetImage('terrain', 'tileset');
+        const tileset2 = this.map.addTilesetImage('spikes', 'spikes');
         if (tileset1 && tileset2) {
             this.tilesets = [tileset1, tileset2];
         } else {
@@ -186,10 +185,11 @@ export default class platformerScene extends Phaser.Scene {
             finishObjects?.forEach(finishObject => {
                 if (finishObject.x && finishObject.y) {
                     const finish = new Finish(this, 2*finishObject.x, 2*finishObject.y, 'finish-not-yet');
-                    finish.setScale(2);
+                    finish.setOrigin(0.25, 0.75);
+                    finish.setScale(0.5);
                     this.finishes?.add(finish);
-                    finish.setOrigin(0, 0);
-                    finish.body?.setOffset(64, 64);
+                    finish.body?.setOffset(7.5, 55);
+                    finish.setScale(2);
                 }
             });
     

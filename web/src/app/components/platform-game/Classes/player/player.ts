@@ -110,7 +110,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     public respawn(x: number, y: number) {
-        console.log('resp');
         this.setCollideWorldBounds(true);
         this.setVisible(true);
         this.x = x;

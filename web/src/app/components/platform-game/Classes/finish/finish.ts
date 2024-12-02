@@ -5,7 +5,7 @@ export class Finish extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, texture);
 
         scene.add.existing(this);
-        this.body?.setSize(64, 64);
+        // this.body?.setSize(16, 16);
     }
 
     public enableFinish() {

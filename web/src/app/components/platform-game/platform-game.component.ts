@@ -57,7 +57,7 @@ export class PlatformGameComponent {
     this.config = {
       type: Phaser.AUTO,
       height: 960,
-      width: 1632,
+      width: 1600,
       backgroundColor: 'red',
       parent: 'phaser-game',
       pixelArt: true,

@@ -18,4 +18,9 @@
   canvas {
     display : block;   
     margin : auto;
-    }
+  }
+
+  .timer {
+    left: 50% !important;
+
+  }
