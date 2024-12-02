@@ -224,8 +224,8 @@ io.on("connection", (socket) => {
 
   // #endregion
   //Handle Health sharing
-  socket.on("shareHealth",(userName)=>{
-    const session = getSessionBySocket(socket);
+  socket.on("shareHealth",(userName,join_code)=>{
+    const session = sessions.get(join_code);
     const filteredUsers = session.users
     .map((socket) => socketToUser.get(socket))
     .filter((user) => user !== userName && user !== 'Creator');
@@ -272,7 +272,9 @@ io.on("connection", (socket) => {
     if (session) {
       userToSocket.set(userName, { user: [socket] }); // TODO: dodac usuwanie z tego mappingu po disconnect
       socketToUser.set(socket, userName); // TODO: dodac usuwanie z tego mappingu po disconnect
-      session.users.push(socket);
+      if(!session.users.includes(socket)){ // FIX tego jak ktoś spróbuje dołączyć kilka razy na ten sam kod
+        session.users.push(socket);
+      }
       console.log("Event participant joined the event");
       socket.emit("joinedConfirmation");
       players[socket.id] = {
@@ -288,10 +290,9 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("startGame", (date, time, game_route, test_id,timer, level) => {
+  socket.on("startGame", (join_code,date, time, game_route, test_id,timer, level) => {
     console.log(`Game will start at ${time} on ${date}`);
-
-    codeToSessionInfo.set(getJoinCodeBySession(getSessionBySocket(socket)),{ date: `${time}, ${date}`, test: test_id, game:game_route})
+    codeToSessionInfo.set(join_code,{ date: `${time}, ${date}`, test: test_id, game:game_route})
 
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
@@ -300,7 +301,7 @@ io.on("connection", (socket) => {
       const buffer = Buffer.from(levelData.buffer.data);
       const jsonString = buffer.toString('utf-8');
       const levelMap = JSON.parse(jsonString);
-      const session = getSessionBySocket(socket);
+      const session = sessions.get(join_code);
       const xml = await generateQuizXML(test_id);
       maxQuestions = parseInt((await getNumberOfQuestions(1)).rows[0].count);
       maxNumberOfStars = maxQuestions * Object.keys(players).length + 2;
@@ -309,11 +310,30 @@ io.on("connection", (socket) => {
         starsCounter = 0;
         stars = [];
         readyClients = 0;
+
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
             participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelMap);
           }
         });
+
+        ////TIMER///
+        let timerValue = timer;
+        let timerInterval;
+        
+        timerInterval = setInterval(() => {
+          if (timerValue > 0) {
+              timerValue--;
+              session.users.forEach((participantSocket) => {
+                  if (participantSocket !== socket) {
+                      participantSocket.emit('timer-update', timerValue);
+                  }
+              });
+          } else {
+              clearInterval(timerInterval);
+              timerInterval = null;
+          }
+      }, 1000);
       }
     });
   });
@@ -359,24 +379,6 @@ io.on("connection", (socket) => {
         session.users.map((socket) => socketToUser.get(socket))
       );
     });
-  }
-
-  function getSessionBySocket(socket) {
-    for (const session of sessions.values()) {
-      if (session.users.includes(socket)) {
-        return session;
-      }
-    }
-    return null;
-  }
-
-  function getJoinCodeBySession(session) {
-    for (const [joinCode, storedSession] of sessions.entries()) {
-      if (storedSession === session) {
-        return joinCode;
-      }
-    }
-    return null; // Return null if the session is not found
   }
   
 });

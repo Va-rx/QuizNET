@@ -12,7 +12,7 @@ import { UserResultsService } from "../../services/user-results/user-results.ser
 import { UserAnswersService } from "../../services/user-answers/user-answers.service";
 import {UserPersonalityResultsService} from "../../services/user-personality-results/user-personality-results.service";
 import {PersonalityResults} from "../../models/user-personality-results";
-
+import { NavbarService } from '../../services/navbar/navbar.service';
 @Component({
   selector: 'app-tank-game',
   templateUrl: './tank-game.component.html',
@@ -56,7 +56,8 @@ export class TankGameComponent implements OnInit {
     private route: ActivatedRoute,
     private auth: AuthService,
     private userAnswersService: UserAnswersService,
-    private userResultsService: UserResultsService, private userPersonalityResultsService: UserPersonalityResultsService ) {
+    private userResultsService: UserResultsService, private userPersonalityResultsService: UserPersonalityResultsService,
+    private navbarService: NavbarService ) {
     this.config = {
       type: Phaser.AUTO,
       //height as window
@@ -84,6 +85,7 @@ export class TankGameComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.navbarService.hideNavbar();
     this.socket = this.socketService.getSocket();
     //this.testID= this.route.snapshot.params["id"];
     this.testID=history.state.data.testId;
@@ -135,13 +137,15 @@ export class TankGameComponent implements OnInit {
     this.phaserGame.scene.game.events.on('shareHealth', () => {
       console.log("SHARING HEALTH WITH OTHER USER")
       console.log(this.nickname)
-      this.socket.emit('shareHealth', this.nickname)
+      this.socket.emit('shareHealth', this.nickname,this.socketService.getJoinCode())
     })
 
     this.socket.on('receiveHealth', (userName) => {
       console.log("You received apteczka from user: " + userName);
       this.phaserGame.events.emit("receiveHealth_inPhaser", userName)
     })
+
+
 
   }
 
@@ -200,7 +204,6 @@ export class TankGameComponent implements OnInit {
     await this.userPersonalityResultsService.create(personalityResults).toPromise();
 
     this.gameFinished = true;
-
 
   }
 

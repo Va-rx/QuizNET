@@ -36,6 +36,7 @@ export class CreateLobbyComponent implements OnInit {
       console.log('Received join code:', code);
       this.joinCode = code;
       this.created = true;
+      this.onStartGame();
     });
 
     this.socket.on('userList', (users: string[]) => {
@@ -56,11 +57,11 @@ export class CreateLobbyComponent implements OnInit {
     console.log(this.userName);
     this.socketService.setUserId(this.userName);
     this.socket.emit('requestJoinCode', this.userName, this.lobbyName);
-    this.onStartGame();
+
   }
 
   onStartGame(): void {
-    this.socket.emit('startGame', this.date, this.time, this.game, this.test,this.timerInput, this.level);
+    this.socket.emit('startGame', this.joinCode,this.date, this.time, this.game, this.test,this.timerInput, this.level);
     this.scheduled = true;
   }
 }
