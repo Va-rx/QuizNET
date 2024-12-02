@@ -22,10 +22,6 @@ export class NavbarComponent {
   constructor(private authService: AuthService, private router: Router, private translate: TranslateService,private navbarService: NavbarService) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-<<<<<<< HEAD
-        this.showNavbar = !['/tank-game'].includes(event.urlAfterRedirects) || !['/platformer'].includes(event.urlAfterRedirects);
-=======
->>>>>>> origin/main
       }
     });
   }

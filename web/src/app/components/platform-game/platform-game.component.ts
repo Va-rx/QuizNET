@@ -11,6 +11,7 @@ import { UserResultsService } from 'src/app/services/user-results/user-results.s
 import { PersonalityResults } from 'src/app/models/user-personality-results';
 import { UserPersonalityResultsService } from 'src/app/services/user-personality-results/user-personality-results.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { NavbarService } from 'src/app/services/navbar/navbar.service';
 
 @Component({
   selector: 'app-platform-game',
@@ -47,7 +48,8 @@ export class PlatformGameComponent {
               private userAnswersService: UserAnswersService,
               private userResultsService: UserResultsService,
               private userPersonalityResultsService: UserPersonalityResultsService,
-              private auth: AuthService) {}
+              private auth: AuthService,
+              private navbarService: NavbarService) {}
   
   
 
@@ -73,6 +75,8 @@ export class PlatformGameComponent {
       },
       scene: new platformerScene({key: 'platformerScene'}),
     };
+
+    this.navbarService.hideNavbar();
 
     this.nickname = this.auth.getNickname();
     this.historyTestId = history.state.data.testHistoryId;
