@@ -1,4 +1,4 @@
 <div *ngIf="!gameFinished" class="game-container">
     <div id="phaser-game"></div>
 </div>
-<app-scoreboard *ngIf="gameFinished" [testName]="this.test.name" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [totalScore]="this.test.maxPoints"></app-scoreboard>
+<app-scoreboard *ngIf="gameFinished" [testName]="this.test.name" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [totalScore]="this.test.maxPoints" [bonusScore]="bonusPoints" [achieverScore]="achieverScore"></app-scoreboard>

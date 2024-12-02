@@ -6,7 +6,6 @@ import { TestService } from 'src/app/services/test/test.service';
 import { QuestionViewComponent } from '../question-view/question-view.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
-import { Socket } from 'socket.io-client';
 import { UserAnswersService } from 'src/app/services/user-answers/user-answers.service';
 import { UserResultsService } from 'src/app/services/user-results/user-results.service';
 import { PersonalityResults } from 'src/app/models/user-personality-results';
@@ -21,8 +20,11 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 export class PlatformGameComponent {
   phaserGame!: Phaser.Game;
   config!: Phaser.Types.Core.GameConfig;
+
   test: Test = new Test();
   score: number = 0;
+  maxBonusPoints: number = 2;
+  bonusPoints: number = 0;
   socket: any;
   historyTestId!: number;
   gameFinished = false;
@@ -30,6 +32,10 @@ export class PlatformGameComponent {
 
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   scoreBoard: any[] = [];
+
+  maxBonusFruits: number = 2;
+  bonusFruitsCollected: number = 0;
+  achieverScore: number = 0;
 
   constructor(private testService: TestService, 
               private dialog: MatDialog, 
@@ -84,9 +90,18 @@ export class PlatformGameComponent {
         }
 
         this.phaserGame.resume();
+        console.log('NASTEPNY LEVEL WYSYLAM EMIT')
         this.phaserGame.events.emit("nextLevel");
       });
     });
+
+    this.phaserGame.scene.game.events.on('bonusFruitCollected', () => {
+      this.bonusFruitsCollected +=1;
+      const earnedBonusPoints = (this.maxBonusPoints) / (this.maxBonusFruits);
+      this.bonusPoints += earnedBonusPoints;
+      this.score += earnedBonusPoints;
+      this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.score, this.socketService.getJoinCode());
+    })
 
     this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
       this.scoreBoardMap = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
@@ -112,13 +127,13 @@ export class PlatformGameComponent {
     let createdResults = await this.userResultsService.create(results).toPromise();
 
     this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.score, this.socketService.getJoinCode());
-
+    this.achieverScore = (this.bonusFruitsCollected) / (this.maxBonusFruits) * 100
     let personalityResults: PersonalityResults = {
       userResultsId: createdResults.id,
       explorer: 0,
       socializer: 0,
       killer: 0,
-      achiever: 0
+      achiever: this.achieverScore
     };
     await this.userPersonalityResultsService.create(personalityResults).toPromise();
     this.gameFinished = true;

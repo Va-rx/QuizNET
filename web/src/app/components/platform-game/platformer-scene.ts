@@ -42,7 +42,9 @@ export default class platformerScene extends Phaser.Scene {
         const animationManager = new AnimationManager(this);
         animationManager.createAllAnimations();
 
-        this.currentLevel = 2;
+        this.setEvents();
+
+        this.currentLevel = 1;
         this.loadLevel(this.currentLevel);
     }
 
@@ -58,6 +60,7 @@ export default class platformerScene extends Phaser.Scene {
 
     loadLevel(level: number) {
         this.currentLevel = level;
+        console.log(this.currentLevel);
 
         this.createLayer();
         this.initializeObjects();
@@ -72,7 +75,6 @@ export default class platformerScene extends Phaser.Scene {
         this.playerColliders();
         this.createBackground();
         this.setCamera();
-        this.setEvents();
 
         this.cursors = this.input.keyboard?.createCursorKeys();
 
@@ -230,6 +232,9 @@ export default class platformerScene extends Phaser.Scene {
                 this.physics.add.overlap(this.player, this.fruits, (player, fruit) => {
                     const fruitObject = fruit as Fruit;
                     fruitObject.collect().then(res => {
+                        if (fruitObject.getIsBonus()) {
+                            this.game.events.emit('bonusFruitCollected');
+                        }
                         this.checkEnableFinish();
                     })
                 });
@@ -315,6 +320,7 @@ export default class platformerScene extends Phaser.Scene {
 
     setEvents() {
         this.game.events.on("nextLevel", () => {
+            console.log('event');
             this.map?.destroy();
             this.player?.destroy();
             this.layer?.destroy();
