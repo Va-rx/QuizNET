@@ -54,8 +54,6 @@ export default class platformerScene extends Phaser.Scene {
         if (this.player && this.cursors) {
             this.player.update(this.cursors);
         }
-
-        this.checkEnableFinish();
     }
 
     loadLevel(level: number) {
@@ -77,6 +75,8 @@ export default class platformerScene extends Phaser.Scene {
         this.setEvents();
 
         this.cursors = this.input.keyboard?.createCursorKeys();
+
+        this.checkEnableFinish();  // if the level has 0 fruits
     }
 
     nextLevel() {
@@ -102,13 +102,19 @@ export default class platformerScene extends Phaser.Scene {
     }
 
     checkEnableFinish() {
-        if (this.fruits?.children.size === 0) {
-            this.finishes?.children.entries.forEach((finish) => {
-                if (finish instanceof Finish && !finish.getCanFinish()) {
-                    finish.enableFinish();
-                }
-            });
-        } 
+        const fruitsList = this.fruits?.children.entries;
+        if (fruitsList) {
+            for (const fruit of fruitsList) {
+                const fruitObject = fruit as Fruit;
+                if (!fruitObject.getIsBonus()) return;
+            }
+        }
+
+        this.finishes?.children.entries.forEach((finish) => {
+            if (finish instanceof Finish && !finish.getCanFinish()) {
+                finish.enableFinish();
+            }
+        });
     }
 
     createLayer() {
@@ -223,7 +229,9 @@ export default class platformerScene extends Phaser.Scene {
             if (this.fruits) {
                 this.physics.add.overlap(this.player, this.fruits, (player, fruit) => {
                     const fruitObject = fruit as Fruit;
-                    fruitObject.collect();
+                    fruitObject.collect().then(res => {
+                        this.checkEnableFinish();
+                    })
                 });
             }
 

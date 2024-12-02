@@ -12,16 +12,19 @@ export class Fruit extends Phaser.Physics.Arcade.Sprite {
         this.anims.play(texture, true);
     }
 
-    public collect() {
-        if (this.anims.currentAnim?.key !== 'fruit-collect') {
-            this.anims.play('fruit-collect');
-
-            this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
-                if (anim.key === 'fruit-collect') {
-                    this.destroy();
-                }
-            });
-        }
+    public collect(): Promise<boolean> {
+        return new Promise((resolve) => {
+            if (this.anims.currentAnim?.key !== 'fruit-collect') {
+                this.anims.play('fruit-collect');
+    
+                this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
+                    if (anim.key === 'fruit-collect') {
+                        this.destroy();
+                        resolve(true);
+                    }
+                });
+            }
+        })
     }
 
     public setBonus() {
@@ -34,5 +37,9 @@ export class Fruit extends Phaser.Physics.Arcade.Sprite {
     public override destroy() {
         this.bonusGlow?.destroy();
         super.destroy(true);
+    }
+
+    public getIsBonus() {
+        return this.isBonus;
     }
 }
