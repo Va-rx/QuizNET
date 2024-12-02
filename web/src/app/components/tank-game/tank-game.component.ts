@@ -49,6 +49,8 @@ export class TankGameComponent implements OnInit {
   socializerScore:number=0;
   achieverScore:number=0;
   levelMap: any;
+  startingWidth: number = 0;
+  startingHeight: number = 0;
   
   constructor(private dialog: MatDialog,
     private TestsService: TestService,
@@ -58,6 +60,8 @@ export class TankGameComponent implements OnInit {
     private userAnswersService: UserAnswersService,
     private userResultsService: UserResultsService, private userPersonalityResultsService: UserPersonalityResultsService,
     private navbarService: NavbarService ) {
+      this.startingHeight = Math.min(window.innerHeight - 80, 800);
+      this.startingWidth = window.innerWidth
   }
 
   async ngOnInit() {
@@ -69,12 +73,12 @@ export class TankGameComponent implements OnInit {
     this.historyTestId = history.state.data.testHistoryId;
     this.levelMap = history.state.data.levelMap;
     this.timer=history.state.data.timer;
-    this.phaserGame = new Phaser.Game(this.config);
+
     this.config = {
       type: Phaser.AUTO,
       //height as window
-      height: Math.min(window.innerHeight - 80, 800),
-      width: window.innerWidth,
+      height: this.startingHeight,
+      width: this.startingWidth,
       physics: {
         default: 'matter',
         matter: {
@@ -94,6 +98,9 @@ export class TankGameComponent implements OnInit {
       scene: [new Tanks({key: 'Tanks'}, this.levelMap), UIScene], // Use Example scene here
     };
     this.nickname = this.auth.getNickname();
+
+    this.phaserGame = new Phaser.Game(this.config);
+   
     //Sometime there is problem with loading it at scene start, this fixes it
 
     await this.loadTestDetails();
