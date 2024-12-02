@@ -10,3 +10,8 @@ body { margin: 0; padding: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
     --mdc-dialog-subhead-color: rgba(0, 0, 0, 0.0);
     --mdc-dialog-supporting-text-color: rgba(0, 0, 0, 0.0);
 }
+
+
+::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator.p-highlight button {
+    background-color: red !important;
+}

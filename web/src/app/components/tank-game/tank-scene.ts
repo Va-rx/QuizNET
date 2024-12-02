@@ -243,12 +243,17 @@ export default class Tanks extends Phaser.Scene {
   BARTLE_stars_picked = 0;
   BARTLE_medkits_shared = 0;
   BARTLE_turrets_destroyed = 0;
+  map;
+  constructor(config: Phaser.Types.Scenes.SettingsConfig, map) {
+    super(config);
+    this.map = map;
+  }
 
   preload() {
     this.load.audio('tankRiding', 'assets/games/tankgame/sounds/engine_heavy_loop.ogg');
     this.load.audio('tankShot', 'assets/games/tankgame/sounds/heavy_canon.ogg');
     this.load.audio('enemyShot', 'assets/games/tankgame/sounds/heavy_canon.ogg');
-    this.load.tilemapTiledJSON('map', 'assets/games/tankgame/MAP/tanktest.json');
+    this.load.tilemapTiledJSON('map', this.map);
     this.load.spritesheet('terrain', 'assets/games/tankgame/Terrains/terrain.png', { frameWidth: 32, frameHeight: 32 });
     this.load.image('tankBody', 'assets/games/tankgame/Camo/Bodies/body_tracks.png');
     this.load.spritesheet('tankTurret', 'assets/games/tankgame/Camo/Weapons/turret_01_mk1.png', { frameWidth: 128, frameHeight: 128 });

@@ -14,6 +14,7 @@ import {UserResultsService} from "../../services/user-results/user-results.servi
 import {ShareHealthAnswer, ShareHealthComponent} from "./share-health/share-health.component";
 import {PersonalityResults} from "../../models/user-personality-results";
 import {UserPersonalityResultsService} from "../../services/user-personality-results/user-personality-results.service";
+import { NavbarService } from 'src/app/services/navbar/navbar.service';
 
 @Component({
   selector: 'app-multiplayer-game',
@@ -54,11 +55,13 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
               private auth: AuthService,
               private userAnswersService: UserAnswersService,
               private userResultsService: UserResultsService,
-              private userPersonalityResultsService: UserPersonalityResultsService) {
+              private userPersonalityResultsService: UserPersonalityResultsService,
+            private navbarService: NavbarService) {
     this.nickname = this.auth.getNickname();
   }
 
   async ngOnInit(): Promise<void> {
+    this.navbarService.hideNavbar();
     this.socket=this.socketService.getSocket();
     this.testId=history.state.data.testId;
     this.historyTestId = history.state.data.testHistoryId;

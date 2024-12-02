@@ -20,7 +20,7 @@ import { NavbarService } from '../../services/navbar/navbar.service';
 })
 export class TankGameComponent implements OnInit {
   phaserGame!: Phaser.Game;
-  config: Phaser.Types.Core.GameConfig;
+  config!: Phaser.Types.Core.GameConfig;
   questions: Question[] = [];
   testID: number = 1;
   testName: string = '';
@@ -58,6 +58,18 @@ export class TankGameComponent implements OnInit {
     private userAnswersService: UserAnswersService,
     private userResultsService: UserResultsService, private userPersonalityResultsService: UserPersonalityResultsService,
     private navbarService: NavbarService ) {
+  }
+
+  async ngOnInit() {
+    this.navbarService.hideNavbar();
+    this.socket = this.socketService.getSocket();
+    //this.testID= this.route.snapshot.params["id"];
+    this.testID=history.state.data.testId;
+    //this.testID=1;
+    this.historyTestId = history.state.data.testHistoryId;
+    this.levelMap = history.state.data.levelMap;
+    this.timer=history.state.data.timer;
+    this.phaserGame = new Phaser.Game(this.config);
     this.config = {
       type: Phaser.AUTO,
       //height as window
@@ -79,22 +91,9 @@ export class TankGameComponent implements OnInit {
         target: 60,
         forceSetTimeOut: true
       },
-      scene: [Tanks, UIScene], // Use Example scene here
+      scene: [new Tanks({key: 'Tanks'}, this.levelMap), UIScene], // Use Example scene here
     };
     this.nickname = this.auth.getNickname();
-  }
-
-  async ngOnInit() {
-    this.navbarService.hideNavbar();
-    this.socket = this.socketService.getSocket();
-    //this.testID= this.route.snapshot.params["id"];
-    this.testID=history.state.data.testId;
-    //this.testID=1;
-    this.historyTestId = history.state.data.testHistoryId;
-    this.levelMap = history.state.data.levelMap;
-    this.timer=history.state.data.timer;
-    this.phaserGame = new Phaser.Game(this.config);
-
     //Sometime there is problem with loading it at scene start, this fixes it
 
     await this.loadTestDetails();

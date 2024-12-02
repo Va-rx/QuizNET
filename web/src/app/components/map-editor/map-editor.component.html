@@ -10,7 +10,7 @@
           <form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
             <div class="form-group">
 
-              <mat-label>{{'MAP_EDITOR.GAME_LABEL' | translate}}</mat-label>
+              <mat-label>{{'MAP_EDITOR.GAME' | translate}}</mat-label>
               <mat-select [(ngModel)]="form.gameId" name="gameId" required #gameId="ngModel" class="form-control"
                 placeholder="{{'MAP_EDITOR.CHOOSE_GAME' | translate }}">
                 <mat-option *ngFor="let game of games" [value]="game.id">

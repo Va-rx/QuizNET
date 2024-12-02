@@ -147,3 +147,12 @@ h2 {
     color: #888;
     opacity: 0.7;
 }
+
+::ng-deep .mat-mdc-select-value {
+  color: unset !important;
+}
+
+.p-carousel .p-carousel-indicators .p-carousel-indicator button {
+  background-color: #cccccc !important; /* Replace with your desired color */
+  border-color: #cccccc; /* Replace with your desired color */
+}

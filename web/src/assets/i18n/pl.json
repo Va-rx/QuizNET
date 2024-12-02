@@ -94,10 +94,9 @@
   "MAP_EDITOR": {
     "TITLE": "Stwórz nową mapę",
     "GAME": "Gra",
-    "GAME_LABEL": "Wybierz grę do której chcesz dodać mapę",
     "CHOOSE_GAME": "Wybierz grę",
-    "MAP_LABEL": "Wybierz nazwę mapy",
-    "CHOOSE_MAP": "Wybierz mapę",
+    "MAP_LABEL": "Nazwa mapy",
+    "CHOOSE_MAP": "Wybierz nazwę mapy",
     "TIME_LABEL": "Sugerowany czas gry",
     "CHOOSE_TIME": "Wybierz czas w minutach",
     "CHOOSE_DIFFICULTY": "Wybierz poziom trudności",
