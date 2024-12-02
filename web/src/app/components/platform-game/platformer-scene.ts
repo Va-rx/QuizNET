@@ -320,7 +320,6 @@ export default class platformerScene extends Phaser.Scene {
 
     setEvents() {
         this.game.events.on("nextLevel", () => {
-            console.log('event');
             this.map?.destroy();
             this.player?.destroy();
             this.layer?.destroy();

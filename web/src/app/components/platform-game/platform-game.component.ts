@@ -37,6 +37,10 @@ export class PlatformGameComponent {
   bonusFruitsCollected: number = 0;
   achieverScore: number = 0;
 
+  timer: number = 900; //IN SECONDS
+  timerEnded:boolean=false;
+  timerStarted:boolean=false;
+
   constructor(private testService: TestService, 
               private dialog: MatDialog, 
               private socketService: SocketServiceService,
@@ -44,8 +48,10 @@ export class PlatformGameComponent {
               private userResultsService: UserResultsService,
               private userPersonalityResultsService: UserPersonalityResultsService,
               private auth: AuthService) {}
+  
+  
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     this.config = {
       type: Phaser.AUTO,
       height: 960,
@@ -70,9 +76,10 @@ export class PlatformGameComponent {
 
     this.nickname = this.auth.getNickname();
     this.historyTestId = history.state.data.testHistoryId;
+    this.timer=history.state.data.timer;
     this.socket = this.socketService.getSocket();
     this.phaserGame = new Phaser.Game(this.config);
-    this.loadTestDetails();
+    await this.loadTestDetails();
 
     this.phaserGame.scene.game.events.on('finishLevel', (level) => {
       this.phaserGame.pause();
@@ -94,6 +101,11 @@ export class PlatformGameComponent {
         this.phaserGame.events.emit("nextLevel");
       });
     });
+
+    if(!this.timerStarted){
+      this.phaserGame.events.emit("getTimer", this.timer, this.test.questions.length);
+      this.timerStarted=true;
+    }
 
     this.phaserGame.scene.game.events.on('bonusFruitCollected', () => {
       this.bonusFruitsCollected +=1;
@@ -137,6 +149,12 @@ export class PlatformGameComponent {
     };
     await this.userPersonalityResultsService.create(personalityResults).toPromise();
     this.gameFinished = true;
+    this.timerEnded=true;
+  }
+
+  onTimerEnded(){
+    this.timerEnded=true;
+    this.finishGame();
   }
 }
 

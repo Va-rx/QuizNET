@@ -1,3 +1,4 @@
+<app-timer *ngIf="!timerEnded" [seconds]="timer" (timerEnded)="onTimerEnded()"></app-timer>
 <div *ngIf="!gameFinished" class="game-container">
     <div id="phaser-game"></div>
 </div>
