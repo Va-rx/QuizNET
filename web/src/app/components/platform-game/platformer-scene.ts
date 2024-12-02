@@ -42,7 +42,7 @@ export default class platformerScene extends Phaser.Scene {
         const animationManager = new AnimationManager(this);
         animationManager.createAllAnimations();
 
-        this.currentLevel = 1;
+        this.currentLevel = 2;
         this.loadLevel(this.currentLevel);
     }
 
@@ -148,20 +148,19 @@ export default class platformerScene extends Phaser.Scene {
             const platformObjects = this.map.getObjectLayer('Platforms')?.objects;
     
             fruitObjects?.forEach(fruitObject => {
-                if (fruitObject.x && fruitObject.y) {
+                if (fruitObject.x && fruitObject.y) {                    
                     let fruit;
                     if (fruitObject.name) {
-                        fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, fruitObject.name);
+                        if (fruitObject.name.substring(0, 2) === 's-') {
+                            fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, fruitObject.name.substring(2));
+                            fruit.setBonus();
+                        } else {
+                            fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, fruitObject.name);
+                        }
                     } else {
                         fruit = new Fruit(this, 2*fruitObject.x, 2*fruitObject.y, this.randomFruit());
                     }
-    
-                    if (fruitObject.name.substring(0, 2) === 's-') {
-                        const glowCircle = this.add.graphics();
-                        glowCircle.fillStyle(0xFFD700, 0.3);
-                        glowCircle.fillCircle(fruit.x, fruit.y, 32);
-                    }
-    
+
                     this.fruits?.add(fruit);
                     fruit.setScale(2);
                 }

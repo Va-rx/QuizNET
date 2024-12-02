@@ -1,5 +1,6 @@
 export class Fruit extends Phaser.Physics.Arcade.Sprite {
-
+    private isBonus: boolean = false;
+    private bonusGlow?: Phaser.GameObjects.Graphics;
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture);
@@ -21,5 +22,17 @@ export class Fruit extends Phaser.Physics.Arcade.Sprite {
                 }
             });
         }
+    }
+
+    public setBonus() {
+        this.isBonus = true;
+        this.bonusGlow = this.scene.add.graphics();
+        this.bonusGlow.fillStyle(0xc97928, 0.3);
+        this.bonusGlow.fillCircle(this.x, this.y, 32);
+    }
+
+    public override destroy() {
+        this.bonusGlow?.destroy();
+        super.destroy(true);
     }
 }
