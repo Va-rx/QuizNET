@@ -21,6 +21,11 @@ export default class multiplayerScene extends Phaser.Scene {
   maxQuestions: number = 0;
   map;
 
+  soundtrack!: Phaser.Sound.BaseSound;
+  attackSound!: Phaser.Sound.BaseSound;
+  deathSound!: Phaser.Sound.BaseSound;
+  collectSound!: Phaser.Sound.BaseSound;
+
   private socket: Socket;
 
   constructor(config: Phaser.Types.Scenes.SettingsConfig, socket: Socket, startingPlayers: any, maxQuestions: number, map: any) {
@@ -38,9 +43,33 @@ export default class multiplayerScene extends Phaser.Scene {
     this.load.image('plains', 'assets/games/multiplayergame/Map/plains.png');
     this.load.image('grass', 'assets/games/multiplayergame/Map/grass.png');
     this.load.image('fences', 'assets/games/multiplayergame/Map/fences.png');
+
+
+    this.load.audio('collect', 'assets/games/platformer/sounds/collect.mp3');
+    this.load.audio('swing-sword', 'assets/games/multiplayergame/Sounds/swing-sword.mp3');
+    this.load.audio('death', 'assets/games/platformer/sounds/death.mp3');
+    this.load.audio('soundtrack', 'assets/games/multiplayergame/Sounds/soundtrack.mp3');
+
   }
 
   create() {
+    this.soundtrack = this.sound.add('soundtrack', {
+      loop: true,
+      volume: 0.3,
+    });
+
+    this.attackSound = this.sound.add('swing-sword', {
+      volume: 0.3
+    })
+
+    this.collectSound = this.sound.add('collect', {
+      volume: 0.3
+    })
+
+    this.deathSound = this.sound.add('death', {
+      volume: 0.3
+    })
+    this.soundtrack.play();
 
     let mappy = this.make.tilemap({ key: 'map' });
     let plains = mappy.addTilesetImage( 'plains', 'plains');
@@ -205,6 +234,7 @@ export default class multiplayerScene extends Phaser.Scene {
         killedPlayer.health = player.hp;
         killedPlayer.stopAnimation = true;
         killedPlayer.isTargetable = false;
+        this.deathSound.play();
         killedPlayer.sprite.anims.play('death', true).once('animationcomplete', () => {
           killedPlayer.stopAnimation = false;
           killedPlayer.isTargetable = true;
@@ -334,6 +364,7 @@ export default class multiplayerScene extends Phaser.Scene {
 
     this.input.on('pointerdown', (pointer) => {
       this.socket.emit('requestAttackAnimation', this.socket.id);
+      this.attackSound.play();
       const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       const clickedPlayer = Object.keys(this.players).find(id => {
         if (id === this.socket.id) {
@@ -448,6 +479,7 @@ export default class multiplayerScene extends Phaser.Scene {
           if (bodyA.gameObject.name == 'star' && bodyB.gameObject.name == 'dude' || bodyA.gameObject.name == 'dude' && bodyB.gameObject.name == 'star') {
             if (this.player && this.player.canCollectStar) {
               this.socket.emit('collectStar', star, this.socket.id);
+              this.collectSound.play();
             }
           }
         }
