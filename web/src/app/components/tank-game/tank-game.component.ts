@@ -184,15 +184,15 @@ export class TankGameComponent implements OnInit {
     this.timerEnded=true;
     let results = JSON.parse(this.userAnswersService.getWrappedResult(this.historyTestId));
 
-    this.playerScore += this.phaserGame.scene.getScene("default")["bonus"];
-    this.playerScoreBonus=this.phaserGame.scene.getScene("default")["bonus"];
+    this.playerScore += this.phaserGame.scene.getScene("Tanks")["bonus"];
+    this.playerScoreBonus=this.phaserGame.scene.getScene("Tanks")["bonus"];
     ////////SET PARAMETERS FOR BARTLE//////
-    this.totalHealth= this.phaserGame.scene.getScene("default")["totalApteczkas"];
-    this.totalStars= this.phaserGame.scene.getScene("default")["totalStars"];
-    this.starsPicked = this.phaserGame.scene.getScene("default")["BARTLE_stars_picked"];
-    this.medkitsShared = this.phaserGame.scene.getScene("default")["BARTLE_medkits_shared"];
-    this.turretsDestroyed = this.phaserGame.scene.getScene("default")["BARTLE_turrets_destroyed"];
-    this.totalTurrets = this.phaserGame.scene.getScene("default")["allTurrets"];
+    this.totalHealth= this.phaserGame.scene.getScene("Tanks")["totalApteczkas"];
+    this.totalStars= this.phaserGame.scene.getScene("Tanks")["totalStars"];
+    this.starsPicked = this.phaserGame.scene.getScene("Tanks")["BARTLE_stars_picked"];
+    this.medkitsShared = this.phaserGame.scene.getScene("Tanks")["BARTLE_medkits_shared"];
+    this.turretsDestroyed = this.phaserGame.scene.getScene("Tanks")["BARTLE_turrets_destroyed"];
+    this.totalTurrets = this.phaserGame.scene.getScene("Tanks")["allTurrets"];
     ///////////////////////////////////////
     this.playerScore = Math.round(this.playerScore * 100) / 100;
     results.score=this.playerScore;

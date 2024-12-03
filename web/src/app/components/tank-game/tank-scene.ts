@@ -263,6 +263,11 @@ export default class Tanks extends Phaser.Scene {
     this.load.image('ammo', 'assets/games/tankgame/ammo.png');
     this.load.image('star', 'assets/games/firstgame/assets/star.png');
     this.load.image('health', 'assets/games/tankgame/health.png');
+
+    
+  this.load.on('complete', () => {
+    console.log('All assets loaded');
+  });
   }
 
   create() {
@@ -1006,7 +1011,7 @@ export class UIScene extends Phaser.Scene {
 
 
 
-    const ourGame = this.scene.get('default');
+    const ourGame = this.scene.get('Tanks');
 
     ////INITIALIZE LEVEL COUNTING/////////////
     ourGame.events.on("set_ui_max_level",(max_level)=> {
