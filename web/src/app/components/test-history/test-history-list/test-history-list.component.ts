@@ -10,7 +10,6 @@ import {
   UserPersonalityResultsService
 } from "../../../services/user-personality-results/user-personality-results.service";
 import {PersonalityResults} from "../../../models/user-personality-results";
-import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-test-history-list',
