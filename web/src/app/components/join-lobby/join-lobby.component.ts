@@ -25,12 +25,12 @@ export class JoinLobbyComponent {
    // if (joinCode !== null && joinCode !== '' && joinCode !== undefined ) {
       // Reconnect to the same socket using the stored join code
    //   console.log('Reconnecting to lobby with code: ' + joinCode);
-    //  this.socket = io('http://localhost:8080');
+    //  this.socket = io('http://72.145.1.108:8080');
     //  this.socket.emit('joinByCode', joinCode);
     //  this.joined = true;
     //} else {
       // Connect to Socket.io server
-      //this.socket = io('http://localhost:8080');
+      //this.socket = io('http://72.145.1.108:8080');
       this.socket=this.socketService.getSocket();
     //}
 
