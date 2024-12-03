@@ -57,7 +57,7 @@ export default class platformerScene extends Phaser.Scene {
         };
 
         this.setEvents();
-        this.currentLevel = 7;
+        this.currentLevel = 5;
         this.loadLevel(this.currentLevel);
         this.initializeQuestionLeftText();
     }
@@ -291,7 +291,10 @@ export default class platformerScene extends Phaser.Scene {
                     const finishObject = finish as Finish;
                     if (finishObject.getCanFinish()) {
                         this.currentSoundtrack.stop();
-                        this.game.events.emit('finishLevel', this.currentLevel);
+                        if (this.currentLevel) {
+                            const a = this.currentLevel - 4;
+                            this.game.events.emit('finishLevel', a); // do zmiany po nowym wczytywaniu map
+                        }
                     }
                 });
             }
@@ -385,12 +388,13 @@ export default class platformerScene extends Phaser.Scene {
               fill: true    
             }
           });
+          this.questionsLeftText.setDepth(10);
           this.updateQuestionsLeftText();
     }
 
     updateQuestionsLeftText() {
         if (this.currentLevel) {
-            const questionsLeft = this.currentLevel-5; // do poprawy po zmianie wczytywania map
+            const questionsLeft = this.currentLevel - 5; // do poprawy po zmianie wczytywania map
             this.maxLevels = 3;
             this.questionsLeftText.setText(`${questionsLeft}/${this.maxLevels}`);
         }

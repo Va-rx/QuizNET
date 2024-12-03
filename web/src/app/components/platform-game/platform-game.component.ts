@@ -24,7 +24,7 @@ export class PlatformGameComponent {
 
   test: Test = new Test();
   score: number = 0;
-  maxBonusPoints: number = 2;
+  maxBonusPoints: number = 2; // do poprawy po zmianie wczytywania map
   bonusPoints: number = 0;
   socket: any;
   historyTestId!: number;
@@ -34,7 +34,7 @@ export class PlatformGameComponent {
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   scoreBoard: any[] = [];
 
-  maxBonusFruits: number = 2;
+  maxBonusFruits: number = 5; // do poprawy po zmianie wczytywania map
   bonusFruitsCollected: number = 0;
   achieverScore: number = 0;
 
