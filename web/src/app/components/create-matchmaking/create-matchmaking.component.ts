@@ -95,7 +95,7 @@ export class CreateMatchmakingComponent implements OnInit {
     const timerInMinutes = this.timerControl.value ?? 15;
     const timerInSeconds = timerInMinutes * 60;
     const selectedLevels = this.selectedLevels;
-    if (selectedTest && selectedGame && selectedDate && selectedTime && this.selectedLevels) {
+    if (selectedTest && selectedGame && selectedDate && selectedTime && this.selectedLevels.length > 0) {
       const data = {
         test: selectedTest,
         game: selectedGame,
