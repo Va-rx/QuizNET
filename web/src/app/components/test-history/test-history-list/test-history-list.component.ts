@@ -29,7 +29,7 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
   averagePersonalityResults!: PersonalityResults;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private route: ActivatedRoute, private userResultsService: UserResultsService, private router: Router, private testHistoryService: TestHistoryService, private userPersonalityResultsService: UserPersonalityResultsService, private authService: AuthService) { }
+  constructor(private route: ActivatedRoute, private userResultsService: UserResultsService, private router: Router, private testHistoryService: TestHistoryService, private userPersonalityResultsService: UserPersonalityResultsService) { }
 
   ngOnInit(): void {
     this.testId =  this.route.snapshot.params['id'];
