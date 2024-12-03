@@ -10,6 +10,7 @@ import {
   UserPersonalityResultsService
 } from "../../../services/user-personality-results/user-personality-results.service";
 import {PersonalityResults} from "../../../models/user-personality-results";
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-test-history-list',
@@ -28,7 +29,7 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
   averagePersonalityResults!: PersonalityResults;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private route: ActivatedRoute, private userResultsService: UserResultsService, private router: Router, private testHistoryService: TestHistoryService, private userPersonalityResultsService: UserPersonalityResultsService) { }
+  constructor(private route: ActivatedRoute, private userResultsService: UserResultsService, private router: Router, private testHistoryService: TestHistoryService, private userPersonalityResultsService: UserPersonalityResultsService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.testId =  this.route.snapshot.params['id'];
@@ -89,7 +90,7 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
       return '';
     }
 
-    const headers = ['Imię', 'Nazwisko', 'Numer ID', 'E-mail', 'Punkty'];
+    const headers = ['Imię', 'Nazwisko', 'Numer ID', 'Punkty'];
     const csvRows: string[] = [];
 
     csvRows.push(headers.join(','));
@@ -102,9 +103,7 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
           case 'Nazwisko':
             return JSON.stringify(row.surname);
           case 'Numer ID':
-            return '412121';
-          case 'E-mail':
-            return 'abc@abc.pl';
+            return JSON.stringify(row.index);
           case 'Punkty':
             return JSON.stringify(row.score);
           default:

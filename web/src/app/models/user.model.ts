@@ -6,7 +6,7 @@ export class User {
     role!: Role;
     name!: string;
     surname!: string;
-    index?: number;
+    index?: string;
 }
 
 
