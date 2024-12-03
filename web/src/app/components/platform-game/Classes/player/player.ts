@@ -13,6 +13,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     private canControl: boolean = false;
 
+    private deathSound = this.scene.sound.add('death', { volume: 0.1 });
+    private jumpSound = this.scene.sound.add('jump', { volume: 0.3 });
+
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture);
@@ -61,6 +64,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     private performJump(animationKey: string) {
+        this.jumpSound.play();
         this.setVelocityY(this.jumpVelocity);
         this.lastJumpTime = Date.now();
         this.jumpInRowCount++;
@@ -138,6 +142,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     public kill(): Promise<void> {
         return new Promise((resolve) => {
             if (this.anims.currentAnim?.key !== 'disappear') {
+            this.deathSound.play();
             this.canControl = false;
             this.setVelocityX(0);
             this.setVelocityY(300);

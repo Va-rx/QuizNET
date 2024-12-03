@@ -29,6 +29,9 @@ export default class platformerScene extends Phaser.Scene {
     private levelSpawnX?: number;
     private levelSpawnY?: number;
 
+    private soundtracks?: any;
+    private currentSoundtrack?: any;
+
     constructor(config: Phaser.Types.Scenes.SettingsConfig) {
         super(config);
     }
@@ -41,10 +44,19 @@ export default class platformerScene extends Phaser.Scene {
     create() {
         const animationManager = new AnimationManager(this);
         animationManager.createAllAnimations();
+        this.soundtracks = {
+            fight: this.sound.add('soundtrack-fight', { loop: true, volume: 0.3 }),
+            focus: this.sound.add('soundtrack-focus', { loop: true, volume: 0.3 }),
+            hiphop: this.sound.add('soundtrack-hiphop', { loop: true, volume: 0.3 }),
+            sleep: this.sound.add('soundtrack-sleep', { loop: true, volume: 0.3 }),
+            sneaky: this.sound.add('soundtrack-sneaky', { loop: true, volume: 0.3 }),
+            sunrise: this.sound.add('soundtrack-sunrise', { loop: true, volume: 0.3 }),
+            welcome: this.sound.add('soundtrack-welcome', { loop: true, volume: 0.3 }),
+        };
 
         this.setEvents();
 
-        this.currentLevel = 5;
+        this.currentLevel = 6;
         this.loadLevel(this.currentLevel);
     }
 
@@ -77,6 +89,7 @@ export default class platformerScene extends Phaser.Scene {
 
         this.cursors = this.input.keyboard?.createCursorKeys();
 
+        this.playSoundtrack();
         this.checkEnableFinish();  // if the level has 0 fruits
     }
 
@@ -275,7 +288,8 @@ export default class platformerScene extends Phaser.Scene {
                 this.physics.add.overlap(this.player, this.finishes, (player, finish) => {
                     const finishObject = finish as Finish;
                     if (finishObject.getCanFinish()) {
-                    this.game.events.emit('finishLevel', this.currentLevel);
+                        this.currentSoundtrack.stop();
+                        this.game.events.emit('finishLevel', this.currentLevel);
                     }
                 });
             }
@@ -331,5 +345,24 @@ export default class platformerScene extends Phaser.Scene {
             allSprites.forEach(x => x.destroy());
             this.nextLevel();
         });
+    }
+
+    playSoundtrack() {
+        let soundtrack = '';
+        if (this.currentSoundtrack) {
+            this.currentSoundtrack.stop();
+        }
+
+        if (this.layer) {
+            const properties = this.layer.layer.properties as { name: string; value: any }[];
+            soundtrack = properties.find(prop => prop.name === 'soundtrack')?.value;
+            if (soundtrack === undefined) {
+                const keys = Object.keys(this.soundtracks);
+                soundtrack = keys[Phaser.Math.Between(0, keys.length - 1)];
+            }
+        }
+
+        this.currentSoundtrack = this.soundtracks[soundtrack];
+        this.currentSoundtrack.play();
     }
 }

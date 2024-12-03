@@ -12,6 +12,7 @@ export class AssetLoader {
         this.loadCharacters();
         this.loadFruits();
         this.loadFinishes();
+        this.loadSounds();
     }
 
     private loadMaps() {
@@ -85,5 +86,22 @@ export class AssetLoader {
         this.scene.load.image('finish-not-yet', 'assets/games/platformer/finishes/Finish (No Flag).png');
         this.scene.load.spritesheet('finish-flag-out', 'assets/games/platformer/finishes/Finish (Flag Out).png', {frameWidth: 64, frameHeight: 64});
         this.scene.load.spritesheet('finish-flag-idle', 'assets/games/platformer/finishes/Finish (Flag Idle).png', {frameWidth: 64, frameHeight: 64});
+    }
+
+    private loadSounds() {
+        this.scene.load.audio('soundtrack-fight', 'assets/games/platformer/sounds/soundtracks/fight.mp3')
+        this.scene.load.audio('soundtrack-focus', 'assets/games/platformer/sounds/soundtracks/focus.mp3');
+        this.scene.load.audio('soundtrack-hiphop', 'assets/games/platformer/sounds/soundtracks/hiphop.mp3');
+        this.scene.load.audio('soundtrack-sleep', 'assets/games/platformer/sounds/soundtracks/sleep.mp3');
+        this.scene.load.audio('soundtrack-sneaky', 'assets/games/platformer/sounds/soundtracks/sneaky.mp3');
+        this.scene.load.audio('soundtrack-sunrise', 'assets/games/platformer/sounds/soundtracks/sunrise.mp3');
+        this.scene.load.audio('soundtrack-welcome', 'assets/games/platformer/sounds/soundtracks/welcome.mp3');
+
+        this.scene.load.audio('collect', 'assets/games/platformer/sounds/collect.mp3');
+
+        this.scene.load.audio('open-finish', 'assets/games/platformer/sounds/open-finish.mp3');
+
+        this.scene.load.audio('death', 'assets/games/platformer/sounds/death.mp3');
+        this.scene.load.audio('jump', 'assets/games/platformer/sounds/jump.mp3');
     }
 }

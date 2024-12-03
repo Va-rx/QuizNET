@@ -1,6 +1,7 @@
 export class Fruit extends Phaser.Physics.Arcade.Sprite {
     private isBonus: boolean = false;
     private bonusGlow?: Phaser.GameObjects.Graphics;
+    private collectSound = this.scene.sound.add('collect');
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture);
@@ -16,6 +17,7 @@ export class Fruit extends Phaser.Physics.Arcade.Sprite {
         return new Promise((resolve) => {
             if (this.anims.currentAnim?.key !== 'fruit-collect') {
                 this.anims.play('fruit-collect');
+                this.collectSound.play();
     
                 this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
                     if (anim.key === 'fruit-collect') {
