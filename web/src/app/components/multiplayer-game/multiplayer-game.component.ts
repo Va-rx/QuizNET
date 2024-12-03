@@ -67,7 +67,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.historyTestId = history.state.data.testHistoryId;
     this.players = history.state.data.multiplayerPlayers;
     this.maxQuestions = history.state.data.maxQuestions;
-    this.levelMap = history.state.data.levelMap;
+    this.levelMap = history.state.data.levelsData[0].map;
     this.timer=history.state.data.timer;
 
     Object.keys(this.players).forEach((key) => {

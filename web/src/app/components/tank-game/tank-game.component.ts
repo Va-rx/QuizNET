@@ -71,7 +71,9 @@ export class TankGameComponent implements OnInit {
     this.testID=history.state.data.testId;
     //this.testID=1;
     this.historyTestId = history.state.data.testHistoryId;
-    this.levelMap = history.state.data.levelMap;
+    console.log(history.state.data.levelsData)
+    this.levelMap = history.state.data.levelsData[0].map;
+    console.log(this.levelMap);
     this.timer=history.state.data.timer;
 
     this.config = {

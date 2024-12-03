@@ -1,0 +1,5 @@
+<div *ngIf="!gameFinished" class="game-container">
+    <app-timer class="timer" *ngIf="!timerEnded" [seconds]="timer" (timerEnded)="onTimerEnded()"></app-timer>
+    <div id="phaser-game"></div>
+</div>
+<app-scoreboard *ngIf="gameFinished" [testName]="this.test.name" [scoreboard]="scoreBoardMap" [currentPlayer]="nickname" [totalScore]="this.test.maxPoints" [bonusScore]="bonusPoints" [achieverScore]="achieverScore"></app-scoreboard>

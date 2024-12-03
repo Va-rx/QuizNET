@@ -290,17 +290,23 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("startGame", (join_code,date, time, game_route, test_id,timer, level) => {
+  socket.on("startGame", async (join_code,date, time, game_route, test_id,timer, levels) => {
     console.log(`Game will start at ${time} on ${date}`);
     codeToSessionInfo.set(join_code,{ date: `${time}, ${date}`, test: test_id, game:game_route})
 
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
-      const levelData = (await getLevel(level.id)).rows[0].map;
-      const buffer = Buffer.from(levelData.buffer.data);
-      const jsonString = buffer.toString('utf-8');
-      const levelMap = JSON.parse(jsonString);
+
+      let levelsData = [];
+      for (lvl of levels) {
+        const lvlWithMap = (await getLevel(lvl.id)).rows[0];
+        const buffer = Buffer.from(lvlWithMap.map.buffer.data);
+        const jsonString = buffer.toString('utf-8');
+        lvlWithMap.map = JSON.parse(jsonString);
+        levelsData.push(lvlWithMap);
+      }
+      
       const session = sessions.get(join_code);
       const xml = await generateQuizXML(test_id);
       maxQuestions = parseInt((await getNumberOfQuestions(1)).rows[0].count);
@@ -313,7 +319,7 @@ io.on("connection", (socket) => {
 
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelMap);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelsData);
           }
         });
 
