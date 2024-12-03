@@ -19,7 +19,7 @@ export class CreateMatchmakingComponent implements OnInit {
   timeControl = new FormControl(new Date());
   timerControl = new FormControl(1);
   selectedGame: any;
-  selectedLevel?: Level;
+  selectedLevels: Level[] = [];
   isSubmitted = false;// DEBUG: TRUE return to false in PROD env
   @ViewChild('targetSection') targetSection!: ElementRef;
   responsiveOptions;
@@ -70,17 +70,20 @@ export class CreateMatchmakingComponent implements OnInit {
 
   selectTest(test: any): void {
     this.selectedTest = test;
-    console.log(this.selectedTest);
   }
 
   selectGame(game: any): void {
     this.scrollToSection();
     this.selectedGame = game;
-    this.selectedLevel = undefined;
+    this.selectedLevels = [];
   }
 
   selectLevel(level: Level): void {
-    this.selectedLevel = level;
+    if (this.selectedLevels && this.isLevelSelected(level)) {
+      this.selectedLevels = this.selectedLevels.filter(lvl => lvl.id !== level.id);
+    } else {
+      this.selectedLevels?.push(level);
+    }
   }
 
 
@@ -91,15 +94,15 @@ export class CreateMatchmakingComponent implements OnInit {
     const selectedGame = this.selectedGame;
     const timerInMinutes = this.timerControl.value ?? 15;
     const timerInSeconds = timerInMinutes * 60;
-    const selectedLevel = this.selectedLevel;
-    if (selectedTest && selectedGame && selectedDate && selectedTime && this.selectedLevel) {
+    const selectedLevels = this.selectedLevels;
+    if (selectedTest && selectedGame && selectedDate && selectedTime && this.selectedLevels) {
       const data = {
         test: selectedTest,
         game: selectedGame,
         date: selectedDate,
         time: selectedTime,
         timerInSeconds: timerInSeconds,
-        level: selectedLevel
+        level: selectedLevels
       };
 
       console.log('Submitting:', data);
@@ -117,5 +120,10 @@ export class CreateMatchmakingComponent implements OnInit {
 
   get timerInSeconds(): number {
     return (this.timerControl.value ?? 15) * 60;
+  }
+
+  isLevelSelected(level: Level) {
+    if (this.selectedLevels && this.selectedLevels.some(lvl => lvl.id === level.id )) return true;
+    return false;
   }
 }
