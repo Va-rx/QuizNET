@@ -23,6 +23,7 @@ export class CreateMatchmakingComponent implements OnInit {
   isSubmitted = false;// DEBUG: TRUE return to false in PROD env
   @ViewChild('targetSection') targetSection!: ElementRef;
   responsiveOptions;
+  chosenTestNumberOfQuestion: number = 0;
 
   constructor(private testsService: TestService,private gameService: GamesService, private levelService: LevelService) {
     this.responsiveOptions = [
@@ -70,6 +71,9 @@ export class CreateMatchmakingComponent implements OnInit {
 
   selectTest(test: any): void {
     this.selectedTest = test;
+    this.testsService.getTestDetails(this.selectedTest.id).subscribe((data) => {
+      this.chosenTestNumberOfQuestion = data.questions.length;
+    })
   }
 
   selectGame(game: any): void {
@@ -96,6 +100,15 @@ export class CreateMatchmakingComponent implements OnInit {
     const timerInSeconds = timerInMinutes * 60;
     const selectedLevels = this.selectedLevels;
     if (selectedTest && selectedGame && selectedDate && selectedTime && this.selectedLevels.length > 0) {
+      if ((selectedGame.name === 'Czołgi' || selectedGame.name === 'Deathmatch') && this.selectedLevels.length !== 1) {
+        alert('Wybrana gra może mieć tylko jedną mapę!');
+        return;
+      } else if (selectedGame.name === 'Platformer' && this.selectedLevels.length !== this.chosenTestNumberOfQuestion) {
+        alert('Wybrana gra powinna mieć tyle map ile ma pytań!');
+        return;
+      }
+
+
       const data = {
         test: selectedTest,
         game: selectedGame,
