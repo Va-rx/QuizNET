@@ -15,6 +15,7 @@ export class RegisterComponent {
     password: '',
     name: '',
     surname: '',
+    index: '',
     role: Role.USER
   };
   isSuccessful = false;
