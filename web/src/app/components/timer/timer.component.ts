@@ -13,7 +13,7 @@ import { SocketServiceService } from 'src/app/services/socket/socket-service.ser
   text-align: center;
   font-size: 2em;
   position: fixed;
-  top: 10%;
+  top: 1%;
   left: 50%; /* Position at the center horizontally */
   transform: translateX(-50%); /* Adjust by half of the element's width */
   font-size: 32px;
