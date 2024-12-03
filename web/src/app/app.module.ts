@@ -45,6 +45,11 @@ import { ShareHealthComponent } from './components/multiplayer-game/share-health
 import {MatTabsModule} from "@angular/material/tabs";
 import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+import { MapEditorComponent } from './components/map-editor/map-editor.component';
+import {MatSelectModule} from "@angular/material/select";
+import { CarouselModule } from 'primeng/carousel';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -76,6 +81,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     MultiplayerGameComponent,
     RoleDialogComponent,
     ShareHealthComponent,
+    MapEditorComponent,
   ],
     imports: [
         BrowserModule,
@@ -97,12 +103,16 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
         MatSortModule,
         MatTabsModule,
         TranslateModule.forRoot({
-        loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient]
-        }
-      })
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }),
+        MatSelectModule,
+        CarouselModule,
+        ToastModule,
+        ButtonModule
     ],
   providers: [SocketServiceService],
   bootstrap: [AppComponent]

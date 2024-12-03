@@ -1,0 +1,89 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card mt-5">
+        <div class="card-header bg-primary text-white">
+          <h4>{{'MAP_EDITOR.TITLE' | translate}}</h4>
+        </div>
+        <div class="card-body">
+
+          <form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+            <div class="form-group">
+
+              <mat-label>{{'MAP_EDITOR.GAME' | translate}}</mat-label>
+              <mat-select [(ngModel)]="form.gameId" name="gameId" required #gameId="ngModel" class="form-control"
+                placeholder="{{'MAP_EDITOR.CHOOSE_GAME' | translate }}">
+                <mat-option *ngFor="let game of games" [value]="game.id">
+                  {{game.name}}
+                </mat-option>
+              </mat-select>
+
+              <div class="alert-danger" *ngIf="gameId.errors && f.submitted">{{'MAP_EDITOR.GAME_REQUIRED' | translate}}</div>
+            </div>
+
+            <div class="form-group">
+              <mat-label>{{'MAP_EDITOR.MAP_LABEL' | translate}}</mat-label>
+              <input matInput [(ngModel)]="form.name" name="name" required #name="ngModel" class="form-control"
+                placeholder="{{'MAP_EDITOR.CHOOSE_MAP' | translate}}">
+              <div class="alert-danger" *ngIf="name.errors && f.submitted">{{'MAP_EDITOR.NAME_REQUIRED' | translate}}</div>
+            </div>
+
+
+            <div class="form-group">
+              <mat-label>{{'DIFFICULTY.DIFFICULTY' | translate}}</mat-label>
+              <mat-select [(ngModel)]="form.difficulty" name="difficulty" required #difficulty="ngModel"
+                class="form-control" placeholder="{{'MAP_EDITOR.CHOOSE_DIFFICULTY' | translate}}">
+                <mat-option [value]="Difficulty.EASY"> {{ Difficulty.EASY | translate }} </mat-option>
+                <mat-option [value]="Difficulty.MEDIUM"> {{ Difficulty.MEDIUM | translate }} </mat-option>
+                <mat-option [value]="Difficulty.HARD"> {{ Difficulty.HARD | translate }}</mat-option>
+              </mat-select>
+              <div class="alert-danger" *ngIf="difficulty.errors && f.submitted">{{'MAP_EDITOR.DIFFICULTY_REQUIRED' | translate}}</div>
+            </div>
+
+            <div class="form-group">
+              <mat-label>{{'MAP_EDITOR.TIME_LABEL' | translate}}</mat-label>
+              <input matInput type="number" [(ngModel)]="form.time" name="time" required #time="ngModel" class="form-control" placeholder="{{'MAP_EDITOR.CHOOSE_TIME' | translate}}">
+              <div class="alert-danger" *ngIf="time.errors && f.submitted">{{'MAP_EDITOR.TIME_REQUIRED' | translate}}</div>
+            </div>
+
+            <div class="form-group">
+              <mat-label>{{'MAP_EDITOR.ADD_MAP' | translate}}</mat-label>
+              <br>
+              <input type="file" (change)="onFileSelected($event)" accept=".json" name="map" required>
+              <div class="alert-danger" *ngIf="!selectedMap && f.submitted">{{'MAP_EDITOR.MAP_REQUIRED' | translate}}</div>
+            </div>
+
+            <button [disabled]="submitted" type="submit" class="btn btn-block btn-submit">{{'GENERAL.SUBMIT' | translate}}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="game" *ngFor="let game of games">
+        <h2 class="mb-4">{{ game.name | translate }}</h2>
+
+
+        <p-carousel *ngIf="groupedLevels[game.id] && groupedLevels[game.id].length > 0; else noLevels"
+          [value]="groupedLevels[game.id]" [numVisible]="3" [numScroll]="3" [responsiveOptions]="responsiveOptions">
+          <ng-template let-level let-i="index" pTemplate="item">
+            <div class="level-game-container">
+              <div class="card mb-4">
+                <div class="card-body">
+                  <h5 class="card-title">{{'CREATE_MATCHMAKING.MAP_NAME' | translate}}: {{ level.name }}</h5>
+                  <p>{{'CREATE_MATCHMAKING.SUGGESTED_TIME' | translate}}: {{ level.time }}</p>
+                  <p>{{'DIFFICULTY.DIFFICULTY' | translate}}: {{ level.difficulty | translate }}</p>
+                  <button (click)="deleteLevel(level); $event.stopPropagation()"
+                    class="btn btn-primary delete-btn"><mat-icon>delete</mat-icon></button>
+                  <!-- <button class="btn btn-primary" (click)="selectLevel(level); $event.stopPropagation()">{{ 'CREATE_MATCHMAKING.CHOOSE' | translate }}</button> -->
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </p-carousel>
+        <ng-template #noLevels>
+          <h4 class="no-maps">{{'MAP_EDITOR.NO_MAPS' | translate}}</h4>
+        </ng-template>
+      </div>
+    </div>
+  </div>

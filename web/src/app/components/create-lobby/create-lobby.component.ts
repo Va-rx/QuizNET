@@ -1,9 +1,6 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import io from 'socket.io-client';
-import { FormControl } from '@angular/forms';
-
 import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
-import { LiveScoreBoardComponent } from "../live-score-board/live-score-board.component";
+import { Level } from 'src/app/models/level.model';
 
 @Component({
   selector: 'app-create-lobby',
@@ -28,6 +25,7 @@ export class CreateLobbyComponent implements OnInit {
   @Input() time !: Date | null;
   @Input() game: any;
   @Input() timerInput: any;
+  @Input() levels!: Level[];
 
 
   constructor(private socketService: SocketServiceService) { }
@@ -63,7 +61,7 @@ export class CreateLobbyComponent implements OnInit {
   }
 
   onStartGame(): void {
-    this.socket.emit('startGame', this.joinCode,this.date, this.time, this.game, this.test,this.timerInput);
+    this.socket.emit('startGame', this.joinCode,this.date, this.time, this.game, this.test,this.timerInput, this.levels);
     this.scheduled = true;
   }
 }

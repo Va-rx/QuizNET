@@ -192,3 +192,13 @@ p, .scheduled-game, .code-section {
   height: 100%;
   margin-bottom: 15px;
 }
+
+.level-game-container{
+  margin: 0.3rem;
+}
+
+.add-map {
+  width: 200px;
+  margin-left: 72px;
+  margin-bottom: 15px;
+}

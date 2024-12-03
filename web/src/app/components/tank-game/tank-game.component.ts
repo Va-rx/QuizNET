@@ -20,7 +20,7 @@ import { NavbarService } from '../../services/navbar/navbar.service';
 })
 export class TankGameComponent implements OnInit {
   phaserGame!: Phaser.Game;
-  config: Phaser.Types.Core.GameConfig;
+  config!: Phaser.Types.Core.GameConfig;
   questions: Question[] = [];
   testID: number = 1;
   testName: string = '';
@@ -48,7 +48,10 @@ export class TankGameComponent implements OnInit {
   explorerScore:number=0;
   socializerScore:number=0;
   achieverScore:number=0;
-
+  levelMap: any;
+  startingWidth: number = 0;
+  startingHeight: number = 0;
+  
   constructor(private dialog: MatDialog,
     private TestsService: TestService,
     private socketService: SocketServiceService,
@@ -57,11 +60,25 @@ export class TankGameComponent implements OnInit {
     private userAnswersService: UserAnswersService,
     private userResultsService: UserResultsService, private userPersonalityResultsService: UserPersonalityResultsService,
     private navbarService: NavbarService ) {
+      this.startingHeight = Math.min(window.innerHeight - 80, 800);
+      this.startingWidth = window.innerWidth
+  }
+
+  async ngOnInit() {
+    this.navbarService.hideNavbar();
+    this.socket = this.socketService.getSocket();
+    //this.testID= this.route.snapshot.params["id"];
+    this.testID=history.state.data.testId;
+    //this.testID=1;
+    this.historyTestId = history.state.data.testHistoryId;
+    this.levelMap = history.state.data.levelsData[0].map;
+    this.timer=history.state.data.timer;
+
     this.config = {
       type: Phaser.AUTO,
       //height as window
-      height: Math.min(window.innerHeight - 80, 800),
-      width: window.innerWidth,
+      height: this.startingHeight,
+      width: this.startingWidth,
       physics: {
         default: 'matter',
         matter: {
@@ -78,21 +95,12 @@ export class TankGameComponent implements OnInit {
         target: 60,
         forceSetTimeOut: true
       },
-      scene: [Tanks, UIScene], // Use Example scene here
+      scene: [new Tanks({key: 'Tanks'}, this.levelMap), UIScene], // Use Example scene here
     };
     this.nickname = this.auth.getNickname();
-  }
 
-  async ngOnInit() {
-    this.navbarService.hideNavbar();
-    this.socket = this.socketService.getSocket();
-    //this.testID= this.route.snapshot.params["id"];
-    this.testID=history.state.data.testId;
-    //this.testID=1;
-    this.historyTestId = history.state.data.testHistoryId;
-    this.timer=history.state.data.timer;
     this.phaserGame = new Phaser.Game(this.config);
-
+   
     //Sometime there is problem with loading it at scene start, this fixes it
 
     await this.loadTestDetails();
@@ -174,15 +182,15 @@ export class TankGameComponent implements OnInit {
     this.timerEnded=true;
     let results = JSON.parse(this.userAnswersService.getWrappedResult(this.historyTestId));
 
-    this.playerScore += this.phaserGame.scene.getScene("default")["bonus"];
-    this.playerScoreBonus=this.phaserGame.scene.getScene("default")["bonus"];
+    this.playerScore += this.phaserGame.scene.getScene("Tanks")["bonus"];
+    this.playerScoreBonus=this.phaserGame.scene.getScene("Tanks")["bonus"];
     ////////SET PARAMETERS FOR BARTLE//////
-    this.totalHealth= this.phaserGame.scene.getScene("default")["totalApteczkas"];
-    this.totalStars= this.phaserGame.scene.getScene("default")["totalStars"];
-    this.starsPicked = this.phaserGame.scene.getScene("default")["BARTLE_stars_picked"];
-    this.medkitsShared = this.phaserGame.scene.getScene("default")["BARTLE_medkits_shared"];
-    this.turretsDestroyed = this.phaserGame.scene.getScene("default")["BARTLE_turrets_destroyed"];
-    this.totalTurrets = this.phaserGame.scene.getScene("default")["allTurrets"];
+    this.totalHealth= this.phaserGame.scene.getScene("Tanks")["totalApteczkas"];
+    this.totalStars= this.phaserGame.scene.getScene("Tanks")["totalStars"];
+    this.starsPicked = this.phaserGame.scene.getScene("Tanks")["BARTLE_stars_picked"];
+    this.medkitsShared = this.phaserGame.scene.getScene("Tanks")["BARTLE_medkits_shared"];
+    this.turretsDestroyed = this.phaserGame.scene.getScene("Tanks")["BARTLE_turrets_destroyed"];
+    this.totalTurrets = this.phaserGame.scene.getScene("Tanks")["allTurrets"];
     ///////////////////////////////////////
     this.playerScore = Math.round(this.playerScore * 100) / 100;
     results.score=this.playerScore;

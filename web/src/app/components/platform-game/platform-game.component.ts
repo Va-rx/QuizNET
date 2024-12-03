@@ -54,6 +54,8 @@ export class PlatformGameComponent {
   
 
   async ngAfterViewInit() {
+    const levelsData = history.state.data.levelsData;
+
     this.config = {
       type: Phaser.AUTO,
       height: 960,
@@ -73,7 +75,7 @@ export class PlatformGameComponent {
           tileBias: 64
         }
       },
-      scene: new platformerScene({key: 'platformerScene'}),
+      scene: new platformerScene({key: 'platformerScene'}, levelsData),
     };
 
     this.navbarService.hideNavbar();
@@ -89,6 +91,7 @@ export class PlatformGameComponent {
 
     this.phaserGame.scene.game.events.on('finishLevel', (level) => {
       this.phaserGame.pause();
+      console.log(level);
 
       const dialogRef = this.dialog.open(QuestionViewComponent, {
         data: { id: this.test.questions[level-1].id },
@@ -103,7 +106,6 @@ export class PlatformGameComponent {
         }
 
         this.phaserGame.resume();
-        console.log('NASTEPNY LEVEL WYSYLAM EMIT')
         this.phaserGame.events.emit("nextLevel");
       });
     });
@@ -115,7 +117,7 @@ export class PlatformGameComponent {
 
     this.phaserGame.scene.game.events.on('bonusFruitCollected', () => {
       this.bonusFruitsCollected +=1;
-      const earnedBonusPoints = (this.maxBonusPoints) / (this.maxBonusFruits);
+      const earnedBonusPoints = Math.round((this.maxBonusPoints) / (this.maxBonusFruits) * 100) / 100;
       this.bonusPoints += earnedBonusPoints;
       this.score += earnedBonusPoints;
       this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.score, this.socketService.getJoinCode());
