@@ -42,6 +42,11 @@
                  "name":"background",
                  "type":"string",
                  "value":"gray"
+                }, 
+                {
+                 "name":"soundtrack",
+                 "type":"string",
+                 "value":"focus"
                 }],
          "type":"tilelayer",
          "visible":true,

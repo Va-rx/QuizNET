@@ -85,6 +85,8 @@ export class PlatformGameComponent {
     this.phaserGame = new Phaser.Game(this.config);
     await this.loadTestDetails();
 
+    this.phaserGame.events.emit("set_ui_max_level", this.test.questions.length);
+
     this.phaserGame.scene.game.events.on('finishLevel', (level) => {
       this.phaserGame.pause();
 

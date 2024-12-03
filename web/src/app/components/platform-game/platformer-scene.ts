@@ -31,6 +31,8 @@ export default class platformerScene extends Phaser.Scene {
 
     private soundtracks?: any;
     private currentSoundtrack?: any;
+    private questionsLeftText!: Phaser.GameObjects.Text;
+    private maxLevels?: number;
 
     constructor(config: Phaser.Types.Scenes.SettingsConfig) {
         super(config);
@@ -55,9 +57,9 @@ export default class platformerScene extends Phaser.Scene {
         };
 
         this.setEvents();
-
-        this.currentLevel = 6;
+        this.currentLevel = 7;
         this.loadLevel(this.currentLevel);
+        this.initializeQuestionLeftText();
     }
 
     override update() {
@@ -344,6 +346,7 @@ export default class platformerScene extends Phaser.Scene {
             let allSprites = this.children.list.filter(x => x instanceof Phaser.GameObjects.Sprite);
             allSprites.forEach(x => x.destroy());
             this.nextLevel();
+            this.updateQuestionsLeftText();
         });
     }
 
@@ -364,5 +367,32 @@ export default class platformerScene extends Phaser.Scene {
 
         this.currentSoundtrack = this.soundtracks[soundtrack];
         this.currentSoundtrack.play();
+    }
+
+    initializeQuestionLeftText() {
+        this.questionsLeftText = this.add.text(10, 10, '', {
+            fontSize: '32px',
+            fontStyle: 'bold',    
+            color: '#ffffff',
+            stroke: '#000000',    
+            strokeThickness: 4, 
+            shadow: {
+              offsetX: 2,       
+              offsetY: 2,         
+              color: '#000000',    
+              blur: 2,           
+              stroke: true,    
+              fill: true    
+            }
+          });
+          this.updateQuestionsLeftText();
+    }
+
+    updateQuestionsLeftText() {
+        if (this.currentLevel) {
+            const questionsLeft = this.currentLevel-5; // do poprawy po zmianie wczytywania map
+            this.maxLevels = 3;
+            this.questionsLeftText.setText(`${questionsLeft}/${this.maxLevels}`);
+        }
     }
 }
