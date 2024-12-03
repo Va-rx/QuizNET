@@ -37,6 +37,7 @@ import { TestHistoryListComponent } from './components/test-history/test-history
 import {MatTableModule} from "@angular/material/table";
 import {MatSortModule} from "@angular/material/sort";
 import { TimerComponent } from './components/timer/timer.component';
+import { PlatformGameComponent } from './components/platform-game/platform-game.component';
 import { LiveScoreBoardComponent } from './components/live-score-board/live-score-board.component';
 import { MultiplayerGameComponent } from './components/multiplayer-game/multiplayer-game.component';
 import { RoleDialogComponent } from './components/multiplayer-game/role-dialog/role-dialog.component';
@@ -75,6 +76,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     TestHistoryDetailsComponent,
     TimerComponent,
     TestHistoryListComponent,
+    PlatformGameComponent,
     LiveScoreBoardComponent,
     MultiplayerGameComponent,
     RoleDialogComponent,
