@@ -32,15 +32,18 @@ export default class platformerScene extends Phaser.Scene {
     private soundtracks?: any;
     private currentSoundtrack?: any;
     private questionsLeftText!: Phaser.GameObjects.Text;
-    private maxLevels?: number;
 
-    constructor(config: Phaser.Types.Scenes.SettingsConfig) {
+    private levelsData: any;
+
+    constructor(config: Phaser.Types.Scenes.SettingsConfig, levelsData) {
         super(config);
+        console.log(levelsData);
+        this.levelsData = levelsData;
     }
 
     preload() {
         const assetLoader = new AssetLoader(this);
-        assetLoader.loadAllAssets();
+        assetLoader.loadAllAssets(this.levelsData);
     }
 
     create() {
@@ -57,7 +60,7 @@ export default class platformerScene extends Phaser.Scene {
         };
 
         this.setEvents();
-        this.currentLevel = 5;
+        this.currentLevel = 1;
         this.loadLevel(this.currentLevel);
         this.initializeQuestionLeftText();
     }
@@ -291,10 +294,7 @@ export default class platformerScene extends Phaser.Scene {
                     const finishObject = finish as Finish;
                     if (finishObject.getCanFinish()) {
                         this.currentSoundtrack.stop();
-                        if (this.currentLevel) {
-                            const a = this.currentLevel - 4;
-                            this.game.events.emit('finishLevel', a); // do zmiany po nowym wczytywaniu map
-                        }
+                        this.game.events.emit('finishLevel', this.currentLevel);
                     }
                 });
             }
@@ -394,9 +394,7 @@ export default class platformerScene extends Phaser.Scene {
 
     updateQuestionsLeftText() {
         if (this.currentLevel) {
-            const questionsLeft = this.currentLevel - 5; // do poprawy po zmianie wczytywania map
-            this.maxLevels = 3;
-            this.questionsLeftText.setText(`${questionsLeft}/${this.maxLevels}`);
+            this.questionsLeftText.setText(`${this.currentLevel}/${this.levelsData.length}`);
         }
     }
 }
