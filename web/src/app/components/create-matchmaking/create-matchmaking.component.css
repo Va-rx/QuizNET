@@ -46,7 +46,8 @@ table {
 }
 
 .form-group input[type="date"],
-.form-group input[type="time"] {
+.form-group input[type="time"],
+.form-group input[type="number"] {
   background-color: #333f4a;
   border: solid 1px #695497;
   color: #d1c3e2;
