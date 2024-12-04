@@ -135,6 +135,7 @@ export class PlatformGameComponent {
     };
     await this.userPersonalityResultsService.create(personalityResults).toPromise();
     this.gameFinished = true;
+    this.phaserGame.destroy(true);
   }
 
   onTimerEnded(){
@@ -178,7 +179,7 @@ export class PlatformGameComponent {
     this.phaserGame.scene.game.events.on('finishLevel', (level, deaths: number) => {
       this.phaserGame.pause();
       const spentTime = this.secondsWhenStartedLevel - this.currentServerSeconds;
-      if (spentTime <= (this.levelsData[level-1].time)/3 * 60) {
+      if (spentTime <= (this.levelsData[level-1].time)/3 * 60) { 
         this.bonusPoints += this.pointsPerLevelSpeed;
         this.points += this.pointsPerLevelSpeed;
       }
