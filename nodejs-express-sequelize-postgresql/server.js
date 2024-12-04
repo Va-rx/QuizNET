@@ -341,7 +341,7 @@ io.on("connection", (socket) => {
               clearInterval(timerInterval);
               timerInterval = null;
           }
-      }, 1000);
+        }, 1000);
       }
     });
   });

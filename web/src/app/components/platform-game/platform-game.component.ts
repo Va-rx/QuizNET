@@ -37,19 +37,22 @@ export class PlatformGameComponent {
 
   pointsPerBonusFruit: number = 0;
   pointsPerNoDeathLevel: number = 0;
-  levelSpeedPoints: number = 0; // TODO
+  pointsPerLevelSpeed: number = 0;
+
+  timer: number = 0;
+  secondsWhenStartedLevel: number = 0;
 
   nickname!: string;
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   scoreBoard: any[] = [];
 
-  timer: number = 0;
   gameFinished = false;
 
   bonusFruitsCollected: number = 0;
   achieverScore: number = 0;
 
   socket: any;
+  currentServerSeconds: number = 0;
 
   constructor(private testService: TestService, 
               private dialog: MatDialog, 
@@ -69,6 +72,7 @@ export class PlatformGameComponent {
     this.calculateMaxBonuses(bonuses);
 
     this.timer = history.state.data.timer;
+    this.secondsWhenStartedLevel = this.timer;
     this.historyTestId = history.state.data.testHistoryId;
     this.nickname = this.auth.getNickname();
     this.socket = this.socketService.getSocket();
@@ -96,12 +100,14 @@ export class PlatformGameComponent {
       scene: new platformerScene({key: 'platformerScene'}, this.levelsData),
     };
 
+    this.startListeningToServerSockets();
+
     this.phaserGame = new Phaser.Game(this.config);
 
     this.phaserGame.events.emit("getTimer", this.timer, this.test.questions.length);
     this.phaserGame.events.emit("set_ui_max_level", this.test.questions.length);
 
-    this.startListeningToSockets();
+    this.startListeningToGameEvents();
   };
 
   ngOnDestroy(): void {
@@ -148,16 +154,34 @@ export class PlatformGameComponent {
 
     this.pointsPerBonusFruit = Math.round((this.maxBonusFruitsPoints) / (this.maxBonusFruits) * 100) / 100;
     this.pointsPerNoDeathLevel = Math.round((this.maxLevelNoDeathPoints) / (this.test.questions.length) * 100) / 100;
+    this.pointsPerLevelSpeed = Math.round((this.maxLevelSpeedPoints) / (this.test.questions.length) * 100) / 100;
   }
 
-  startListeningToSockets() {
+  startListeningToServerSockets() {
     this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
       this.scoreBoardMap = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
       this.scoreBoard = Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({ username, score }));
     });
 
+    this.socket.on("timer-update",(timeValue)=>{
+      this.currentServerSeconds = timeValue;
+    });
+  }
+
+  startListeningToGameEvents() {
+    this.phaserGame.scene.game.events.on('startedLevel', () => {
+      setTimeout(() => {
+        this.secondsWhenStartedLevel = this.currentServerSeconds;
+      }, 1000)
+    })
+
     this.phaserGame.scene.game.events.on('finishLevel', (level, deaths: number) => {
       this.phaserGame.pause();
+      const spentTime = this.secondsWhenStartedLevel - this.currentServerSeconds;
+      if (spentTime <= (this.levelsData[level-1].time)/3 * 60) {
+        this.bonusPoints += this.pointsPerLevelSpeed;
+        this.points += this.pointsPerLevelSpeed;
+      }
 
       if (deaths === 0) {
         this.bonusPoints += this.pointsPerNoDeathLevel;
@@ -178,6 +202,7 @@ export class PlatformGameComponent {
 
         this.phaserGame.resume();
         this.phaserGame.events.emit("nextLevel");
+        this.secondsWhenStartedLevel = this.timer;
       });
     });
 
