@@ -99,6 +99,7 @@ export default class platformerScene extends Phaser.Scene {
 
         this.playSoundtrack();
         this.checkEnableFinish();  // if the level has 0 fruits
+        this.game.events.emit('startedLevel');
     }
 
     nextLevel() {
