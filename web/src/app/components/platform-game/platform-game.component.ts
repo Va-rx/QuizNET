@@ -39,7 +39,7 @@ export class PlatformGameComponent {
   pointsPerNoDeathLevel: number = 0;
   pointsPerLevelSpeed: number = 0;
 
-  timer: number = 0;
+  timeForGame: number = 0;
   secondsWhenStartedLevel: number = 0;
 
   nickname!: string;
@@ -71,8 +71,8 @@ export class PlatformGameComponent {
     this.calculateMaxBonusFruitsOnTest();
     this.calculateMaxBonuses(bonuses);
 
-    this.timer = history.state.data.timer;
-    this.secondsWhenStartedLevel = this.timer;
+    this.timeForGame = history.state.data.timer;
+    this.secondsWhenStartedLevel = this.timeForGame;
     this.historyTestId = history.state.data.testHistoryId;
     this.nickname = this.auth.getNickname();
     this.socket = this.socketService.getSocket();
@@ -104,7 +104,7 @@ export class PlatformGameComponent {
 
     this.phaserGame = new Phaser.Game(this.config);
 
-    this.phaserGame.events.emit("getTimer", this.timer, this.test.questions.length);
+    this.phaserGame.events.emit("getTimer", this.timeForGame, this.test.questions.length);
     this.phaserGame.events.emit("set_ui_max_level", this.test.questions.length);
 
     this.startListeningToGameEvents();
@@ -202,7 +202,6 @@ export class PlatformGameComponent {
 
         this.phaserGame.resume();
         this.phaserGame.events.emit("nextLevel");
-        this.secondsWhenStartedLevel = this.timer;
       });
     });
 
