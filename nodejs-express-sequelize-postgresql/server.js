@@ -294,21 +294,20 @@ io.on("connection", (socket) => {
     console.log(`Game will start at ${time} on ${date}`);
     codeToSessionInfo.set(join_code,{ date: `${time}, ${date}`, test: test_id, game:game_route, bonuses: bonuses})
 
-    let levelsData = [];
-    for (lvl of levels) {
-      const lvlWithMap = (await getLevel(lvl.id)).rows[0];
-      const buffer = Buffer.from(lvlWithMap.map.buffer.data);
-      const jsonString = buffer.toString('utf-8');
-      lvlWithMap.map = JSON.parse(jsonString);
-      if (game_route.name === 'Platformer') {
-        lvlWithMap.bonusFruits = getAmountBonusFruitsOnLevel(lvlWithMap.map)
-      }
-      levelsData.push(lvlWithMap);
-    }
-
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
+      let levelsData = [];
+      for (lvl of levels) {
+        const lvlWithMap = (await getLevel(lvl.id)).rows[0];
+        const buffer = Buffer.from(lvlWithMap.map.buffer.data);
+        const jsonString = buffer.toString('utf-8');
+        lvlWithMap.map = JSON.parse(jsonString);
+        if (game_route.name === 'Platformer') {
+          lvlWithMap.bonusFruits = getAmountBonusFruitsOnLevel(lvlWithMap.map)
+        }
+        levelsData.push(lvlWithMap);
+      }
       
       const session = sessions.get(join_code);
       const xml = await generateQuizXML(test_id);
