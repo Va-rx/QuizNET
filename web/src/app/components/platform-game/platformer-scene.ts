@@ -28,19 +28,23 @@ export default class platformerScene extends Phaser.Scene {
     private currentLevel?: number;
     private levelSpawnX?: number;
     private levelSpawnY?: number;
+    private deathsOnLevel!: number;
 
     private soundtracks?: any;
     private currentSoundtrack?: any;
     private questionsLeftText!: Phaser.GameObjects.Text;
-    private maxLevels?: number;
 
-    constructor(config: Phaser.Types.Scenes.SettingsConfig) {
+    private levelsData: any;
+
+    constructor(config: Phaser.Types.Scenes.SettingsConfig, levelsData) {
         super(config);
+        console.log(levelsData);
+        this.levelsData = levelsData;
     }
 
     preload() {
         const assetLoader = new AssetLoader(this);
-        assetLoader.loadAllAssets();
+        assetLoader.loadAllAssets(this.levelsData);
     }
 
     create() {
@@ -57,7 +61,7 @@ export default class platformerScene extends Phaser.Scene {
         };
 
         this.setEvents();
-        this.currentLevel = 5;
+        this.currentLevel = 1;
         this.loadLevel(this.currentLevel);
         this.initializeQuestionLeftText();
     }
@@ -74,6 +78,8 @@ export default class platformerScene extends Phaser.Scene {
 
     loadLevel(level: number) {
         this.currentLevel = level;
+        if (this.currentLevel > this.levelsData.length) return;
+        this.deathsOnLevel = 0;
 
         this.createLayer();
         this.initializeObjects();
@@ -93,6 +99,7 @@ export default class platformerScene extends Phaser.Scene {
 
         this.playSoundtrack();
         this.checkEnableFinish();  // if the level has 0 fruits
+        this.game.events.emit('startedLevel');
     }
 
     nextLevel() {
@@ -257,23 +264,13 @@ export default class platformerScene extends Phaser.Scene {
 
             if (this.saws) {
                 this.physics.add.overlap(this.player, this.saws, (player, saw) => {
-                    this.player?.kill().then(() => {
-                        if (this.levelSpawnX && this.levelSpawnY) {
-                        this.platforms?.clear(true, true);
-                        this.player?.respawn(2*this.levelSpawnX, 2*this.levelSpawnY);
-                        this.regenerateFallingPlatforms();}
-                    })
+                    this.playerDies();
                 });
             }
 
             if (this.spikes) {
                 this.physics.add.collider(this.player, this.spikes, () => {
-                    this.player?.kill().then(() => {
-                        if (this.levelSpawnX && this.levelSpawnY) {
-                        this.platforms?.clear(true, true);
-                        this.player?.respawn(2*this.levelSpawnX, 2*this.levelSpawnY)}
-                        this.regenerateFallingPlatforms();
-                    })
+                    this.playerDies();
                 });
             }
 
@@ -291,10 +288,7 @@ export default class platformerScene extends Phaser.Scene {
                     const finishObject = finish as Finish;
                     if (finishObject.getCanFinish()) {
                         this.currentSoundtrack.stop();
-                        if (this.currentLevel) {
-                            const a = this.currentLevel - 4;
-                            this.game.events.emit('finishLevel', a); // do zmiany po nowym wczytywaniu map
-                        }
+                        this.game.events.emit('finishLevel', this.currentLevel, this.deathsOnLevel);
                     }
                 });
             }
@@ -394,9 +388,19 @@ export default class platformerScene extends Phaser.Scene {
 
     updateQuestionsLeftText() {
         if (this.currentLevel) {
-            const questionsLeft = this.currentLevel - 5; // do poprawy po zmianie wczytywania map
-            this.maxLevels = 3;
-            this.questionsLeftText.setText(`${questionsLeft}/${this.maxLevels}`);
+            this.questionsLeftText.setText(`${this.currentLevel}/${this.levelsData.length}`);
         }
+    }
+
+    playerDies() {
+        this.player?.kill().then(() => {
+            if (this.levelSpawnX && this.levelSpawnY) {
+                this.deathsOnLevel += 1;
+
+                this.platforms?.clear(true, true);
+                this.player?.respawn(2*this.levelSpawnX, 2*this.levelSpawnY);
+                this.regenerateFallingPlatforms();
+            }
+        });
     }
 }

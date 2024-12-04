@@ -21,6 +21,7 @@ import {
 import {TestHistoryListComponent} from "./components/test-history/test-history-list/test-history-list.component";
 import {TestHistoryGuard} from "./guards/test-history.guard";
 import {MultiplayerGameComponent} from "./components/multiplayer-game/multiplayer-game.component";
+import {MapEditorComponent} from "./components/map-editor/map-editor.component";
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [authGuard] },
   { path: 'create-lobby', component: CreateLobbyComponent, canActivate: [authGuard, RoleGuard]},
@@ -37,8 +38,9 @@ const routes: Routes = [
   { path: 'test-history', component: TestHistoryComponent, canActivate: [authGuard]},
   { path: 'test-history/:id/:userId', component: TestHistoryDetailsComponent, canActivate: [authGuard, TestHistoryGuard]},
   { path: 'test-history/:id', component: TestHistoryListComponent, canActivate: [authGuard, RoleGuard] },
+  { path: 'deathmatch', component: MultiplayerGameComponent, canActivate: [authGuard]},
+  { path: 'map-editor', component: MapEditorComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'platformer', component: PlatformGameComponent},
-  { path: 'deathmatch', component: MultiplayerGameComponent, canActivate: [authGuard]}
 ];
 
 @NgModule({

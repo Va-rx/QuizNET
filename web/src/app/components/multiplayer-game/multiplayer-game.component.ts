@@ -14,6 +14,7 @@ import {UserResultsService} from "../../services/user-results/user-results.servi
 import {ShareHealthAnswer, ShareHealthComponent} from "./share-health/share-health.component";
 import {PersonalityResults} from "../../models/user-personality-results";
 import {UserPersonalityResultsService} from "../../services/user-personality-results/user-personality-results.service";
+import { NavbarService } from 'src/app/services/navbar/navbar.service';
 
 @Component({
   selector: 'app-multiplayer-game',
@@ -42,6 +43,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   killerScore = 0;
   socializerScore = 0;
   players;
+  levelMap: any;
 
   timer: number = 900; //IN SECONDS
   timerEnded:boolean=false;
@@ -53,16 +55,19 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
               private auth: AuthService,
               private userAnswersService: UserAnswersService,
               private userResultsService: UserResultsService,
-              private userPersonalityResultsService: UserPersonalityResultsService) {
+              private userPersonalityResultsService: UserPersonalityResultsService,
+            private navbarService: NavbarService) {
     this.nickname = this.auth.getNickname();
   }
 
   async ngOnInit(): Promise<void> {
+    this.navbarService.hideNavbar();
     this.socket=this.socketService.getSocket();
     this.testId=history.state.data.testId;
     this.historyTestId = history.state.data.testHistoryId;
     this.players = history.state.data.multiplayerPlayers;
     this.maxQuestions = history.state.data.maxQuestions;
+    this.levelMap = history.state.data.levelsData[0].map;
     this.timer=history.state.data.timer;
 
     Object.keys(this.players).forEach((key) => {
@@ -78,7 +83,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
-      scene: new multiplayerScene({key: 'multiplayerScene'}, this.socket, this.players, this.maxQuestions),
+      scene: new multiplayerScene({key: 'multiplayerScene'}, this.socket, this.players, this.maxQuestions, this.levelMap),
       parent: 'gameContainer',
       physics: {
         default: 'matter',

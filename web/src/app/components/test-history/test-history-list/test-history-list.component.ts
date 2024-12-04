@@ -89,7 +89,7 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
       return '';
     }
 
-    const headers = ['Imię', 'Nazwisko', 'Numer ID', 'E-mail', 'Punkty'];
+    const headers = ['Imię', 'Nazwisko', 'Numer ID', 'Punkty'];
     const csvRows: string[] = [];
 
     csvRows.push(headers.join(','));
@@ -102,9 +102,7 @@ export class TestHistoryListComponent implements OnInit, AfterViewInit {
           case 'Nazwisko':
             return JSON.stringify(row.surname);
           case 'Numer ID':
-            return '412121';
-          case 'E-mail':
-            return 'abc@abc.pl';
+            return JSON.stringify(row.index);
           case 'Punkty':
             return JSON.stringify(row.score);
           default:

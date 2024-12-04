@@ -42,7 +42,67 @@
     </div>
   </div>
 
+  <div *ngIf="selectedGame && groupedLevels">
+    <h2 class="mb-4">{{ 'CREATE_MATCHMAKING.CHOOSE_MAP' | translate }}</h2>
+    <div class="row">
+      <p-carousel *ngIf="groupedLevels[selectedGame.id]"
+      [value]="groupedLevels[selectedGame.id]" 
+      [numVisible]="3" 
+      [numScroll]="3"
+      [responsiveOptions]="responsiveOptions" >
+      <ng-template let-level let-i="index" pTemplate="item">
+        <div class="level-game-container">
+          <div class="card mb-4" [class.border-primary]="isLevelSelected(level)" (click)="selectLevel(level)">
+            <div class="card-body">
+              <h5 class="card-title">{{'CREATE_MATCHMAKING.MAP_NAME' | translate}}: {{ level.name }}</h5>
+              <p>{{'CREATE_MATCHMAKING.SUGGESTED_TIME' | translate}}: {{ level.time }}</p>
+              <p>{{'DIFFICULTY.DIFFICULTY' | translate}}: {{ level.difficulty | translate }}</p>
+              <button class="btn btn-primary" (click)="selectLevel(level); $event.stopPropagation()">{{ 'CREATE_MATCHMAKING.CHOOSE' | translate }}</button>
+            </div>
+          </div>
+       </div>
+      </ng-template>
+      </p-carousel>
+    </div>
+  </div>
+
+  <div class="bonusPointsPlatformer" *ngIf="selectedGame && selectedGame.name === 'Platformer'">
+    <h2 class="mb-4">{{ 'GENERAL.CHOOSE' | translate }} {{ 'PLATFORMER.NO_DEATH_LEVEL_BONUS' | translate }}</h2>
+    <div class="form-group">
+      <input 
+      [formControl]="platformerLevelNoDeathBonus" 
+      type="range" 
+      min="0" 
+      max="100" 
+      step="1" 
+      class="form-range custom-slider mb-2">
+      <p class="mt-3">{{ 'GENERAL.VALUE' | translate }}: {{ platformerLevelNoDeathBonus.value }}%</p>
+    </div>
+    <h2 class="mb-4">{{ 'GENERAL.CHOOSE' | translate }} {{ 'PLATFORMER.BONUS_FRUITS_BONUS' | translate }}</h2>
+    <div class="form-group">
+      <input 
+      [formControl]="platformerBonusFruitsBonus" 
+      type="range" 
+      min="0" 
+      max="100" 
+      step="1" 
+      class="form-range custom-slider mb-2">
+      <p class="mt-3">{{ 'GENERAL.VALUE' | translate }}: {{ platformerBonusFruitsBonus.value }}%</p>
+    </div>
+    <h2 class="mb-4">{{ 'GENERAL.CHOOSE' | translate }} {{ 'PLATFORMER.LEVEL_SPEED_BONUS' | translate }}</h2>
+    <div class="form-group">
+      <input 
+      [formControl]="platformerLevelSpeedBonus" 
+      type="range" 
+      min="0" 
+      max="100" 
+      step="1" 
+      class="form-range custom-slider mb-2">
+      <p class="mt-3">{{ 'GENERAL.VALUE' | translate }}: {{ platformerLevelSpeedBonus.value }}%</p>
+    </div>
+  </div>
+
   <button #targetSection class="btn btn-primary mt-4 plan" (click)="onSubmit()">{{ 'CREATE_MATCHMAKING.SCHEDULE' | translate }}</button>
 </div>
 
-<app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [date]="dateControl.value" [time]="timeControl.value" [timerInput]="timerInSeconds"></app-create-lobby>
+<app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [levels]="selectedLevels" [date]="dateControl.value" [time]="timeControl.value" [timerInput]="timerInSeconds" [bonuses]="bonuses"></app-create-lobby>

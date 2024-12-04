@@ -5,8 +5,8 @@ export class AssetLoader {
         this.scene = scene;
     }
 
-    loadAllAssets() {
-        this.loadMaps();
+    loadAllAssets(levelsData: any) {
+        this.loadMaps(levelsData);
         this.loadTiles();
         this.loadBackgrounds();
         this.loadCharacters();
@@ -15,15 +15,22 @@ export class AssetLoader {
         this.loadSounds();
     }
 
-    private loadMaps() {
-        this.scene.load.tilemapTiledJSON('map1', 'assets/games/platformer/levels/mapa-1.json');
-        this.scene.load.tilemapTiledJSON('map2', 'assets/games/platformer/levels/mapa-2.json');
-        this.scene.load.tilemapTiledJSON('map3', 'assets/games/platformer/levels/mapa-3.json');
-        this.scene.load.tilemapTiledJSON('map4', 'assets/games/platformer/levels/mapa-4.json');
+    private loadMaps(levelsData: any) {
+        let id: number = 1;
+        for (let levelData of levelsData) {
+            this.scene.load.tilemapTiledJSON(`map${id}`, levelData.map);
+            id += 1;
+        }
 
-        this.scene.load.tilemapTiledJSON('map5', 'assets/games/platformer/levels/mapa-5.json');
-        this.scene.load.tilemapTiledJSON('map6', 'assets/games/platformer/levels/mapa-6.json');
-        this.scene.load.tilemapTiledJSON('map7', 'assets/games/platformer/levels/mapa-7.json');
+
+        // this.scene.load.tilemapTiledJSON('map1', 'assets/games/platformer/levels/mapa-1.json');
+        // this.scene.load.tilemapTiledJSON('map2', 'assets/games/platformer/levels/mapa-2.json');
+        // this.scene.load.tilemapTiledJSON('map3', 'assets/games/platformer/levels/mapa-3.json');
+        // this.scene.load.tilemapTiledJSON('map4', 'assets/games/platformer/levels/mapa-4.json');
+
+        // this.scene.load.tilemapTiledJSON('map5', 'assets/games/platformer/levels/mapa-5.json');
+        // this.scene.load.tilemapTiledJSON('map6', 'assets/games/platformer/levels/mapa-6.json');
+        // this.scene.load.tilemapTiledJSON('map7', 'assets/games/platformer/levels/mapa-7.json');
     }
 
     private loadTiles() {

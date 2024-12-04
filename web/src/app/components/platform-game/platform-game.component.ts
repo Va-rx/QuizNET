@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import Phaser, {Scene} from 'phaser';
+import { Component } from '@angular/core';
+import Phaser from 'phaser';
 import platformerScene from './platformer-scene';
 import { Test } from 'src/app/models/test.model';
 import { TestService } from 'src/app/services/test/test.service';
@@ -23,24 +23,36 @@ export class PlatformGameComponent {
   config!: Phaser.Types.Core.GameConfig;
 
   test: Test = new Test();
-  score: number = 0;
-  maxBonusPoints: number = 2; // do poprawy po zmianie wczytywania map
+  points: number = 0;
   bonusPoints: number = 0;
-  socket: any;
   historyTestId!: number;
-  gameFinished = false;
-  nickname!: string;
 
+  levelsData: any;
+
+  maxBonusFruits: number = 0;
+
+  maxBonusFruitsPoints: number = 0;
+  maxLevelNoDeathPoints: number = 0;
+  maxLevelSpeedPoints: number = 0;
+
+  pointsPerBonusFruit: number = 0;
+  pointsPerNoDeathLevel: number = 0;
+  pointsPerLevelSpeed: number = 0;
+
+  timeForGame: number = 0;
+  secondsWhenStartedLevel: number = 0;
+
+  nickname!: string;
   scoreBoardMap: Map<string, number> = new Map<string, number>();
   scoreBoard: any[] = [];
 
-  maxBonusFruits: number = 5; // do poprawy po zmianie wczytywania map
+  gameFinished = false;
+
   bonusFruitsCollected: number = 0;
   achieverScore: number = 0;
 
-  timer: number = 900; //IN SECONDS
-  timerEnded:boolean=false;
-  timerStarted:boolean=false;
+  socket: any;
+  currentServerSeconds: number = 0;
 
   constructor(private testService: TestService, 
               private dialog: MatDialog, 
@@ -51,14 +63,26 @@ export class PlatformGameComponent {
               private auth: AuthService,
               private navbarService: NavbarService) {}
   
-  
-
   async ngAfterViewInit() {
+    this.test = await this.getTestDetails();
+    this.levelsData = await history.state.data.levelsData;
+
+    const bonuses = history.state.data.bonuses;
+    this.calculateMaxBonusFruitsOnTest();
+    this.calculateMaxBonuses(bonuses);
+
+    this.timeForGame = history.state.data.timer;
+    this.secondsWhenStartedLevel = this.timeForGame;
+    this.historyTestId = history.state.data.testHistoryId;
+    this.nickname = this.auth.getNickname();
+    this.socket = this.socketService.getSocket();
+
+    this.navbarService.hideNavbar();
+
     this.config = {
       type: Phaser.AUTO,
       height: 960,
       width: 1600,
-      backgroundColor: 'red',
       parent: 'phaser-game',
       pixelArt: true,
       scale: {
@@ -73,78 +97,34 @@ export class PlatformGameComponent {
           tileBias: 64
         }
       },
-      scene: new platformerScene({key: 'platformerScene'}),
+      scene: new platformerScene({key: 'platformerScene'}, this.levelsData),
     };
 
-    this.navbarService.hideNavbar();
+    this.startListeningToServerSockets();
 
-    this.nickname = this.auth.getNickname();
-    this.historyTestId = history.state.data.testHistoryId;
-    this.timer=history.state.data.timer;
-    this.socket = this.socketService.getSocket();
     this.phaserGame = new Phaser.Game(this.config);
-    await this.loadTestDetails();
 
+    this.phaserGame.events.emit("getTimer", this.timeForGame, this.test.questions.length);
     this.phaserGame.events.emit("set_ui_max_level", this.test.questions.length);
 
-    this.phaserGame.scene.game.events.on('finishLevel', (level) => {
-      this.phaserGame.pause();
-
-      const dialogRef = this.dialog.open(QuestionViewComponent, {
-        data: { id: this.test.questions[level-1].id },
-        disableClose: true
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        this.score += result;
-        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.score, this.socketService.getJoinCode());
-        if (level >= this.test.questions.length) {
-          this.finishGame();
-        }
-
-        this.phaserGame.resume();
-        console.log('NASTEPNY LEVEL WYSYLAM EMIT')
-        this.phaserGame.events.emit("nextLevel");
-      });
-    });
-
-    if(!this.timerStarted){
-      this.phaserGame.events.emit("getTimer", this.timer, this.test.questions.length);
-      this.timerStarted=true;
-    }
-
-    this.phaserGame.scene.game.events.on('bonusFruitCollected', () => {
-      this.bonusFruitsCollected +=1;
-      const earnedBonusPoints = (this.maxBonusPoints) / (this.maxBonusFruits);
-      this.bonusPoints += earnedBonusPoints;
-      this.score += earnedBonusPoints;
-      this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.score, this.socketService.getJoinCode());
-    })
-
-    this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
-      this.scoreBoardMap = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
-      this.scoreBoard = Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({ username, score }));
-    });
+    this.startListeningToGameEvents();
   };
 
   ngOnDestroy(): void {
     this.phaserGame.destroy(true);
   }
 
-  async loadTestDetails() {
+  async getTestDetails() {
     const testId = history.state.data.testId;
-    const res = await this.testService.getTestDetails(testId).toPromise();
-    this.test.questions = res.questions;
-    this.test.maxPoints = res.maxPoints;
-    this.test.name = res.name;
+    return await this.testService.getTestDetails(testId).toPromise();
   }
 
   async finishGame() {
     let results = JSON.parse(this.userAnswersService.getWrappedResult(this.historyTestId));
-    results.score = Math.round(this.score * 100) / 100;
+    results.score = Math.round(this.points * 100) / 100;
     let createdResults = await this.userResultsService.create(results).toPromise();
 
-    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.score, this.socketService.getJoinCode());
+    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
     this.achieverScore = (this.bonusFruitsCollected) / (this.maxBonusFruits) * 100
     let personalityResults: PersonalityResults = {
       userResultsId: createdResults.id,
@@ -155,12 +135,85 @@ export class PlatformGameComponent {
     };
     await this.userPersonalityResultsService.create(personalityResults).toPromise();
     this.gameFinished = true;
-    this.timerEnded=true;
+    this.phaserGame.destroy(true);
   }
 
   onTimerEnded(){
-    this.timerEnded=true;
     this.finishGame();
+  }
+
+  calculateMaxBonusFruitsOnTest() {
+    this.levelsData.forEach(levelData => {
+      this.maxBonusFruits += levelData.bonusFruits;
+    });
+  }
+
+  calculateMaxBonuses(bonuses: any) {
+    this.maxBonusFruitsPoints = Math.round(bonuses['PLATFORMER.BONUS_FRUITS_BONUS'] * this.test.maxPoints * 100) / 100;
+    this.maxLevelNoDeathPoints = Math.round(bonuses['PLATFORMER.NO_DEATH_LEVEL_BONUS'] * this.test.maxPoints * 100) / 100;
+    this.maxLevelSpeedPoints = Math.round(bonuses['PLATFORMER.LEVEL_SPEED_BONUS'] * this.test.maxPoints * 100) / 100;
+
+    this.pointsPerBonusFruit = Math.round((this.maxBonusFruitsPoints) / (this.maxBonusFruits) * 100) / 100;
+    this.pointsPerNoDeathLevel = Math.round((this.maxLevelNoDeathPoints) / (this.test.questions.length) * 100) / 100;
+    this.pointsPerLevelSpeed = Math.round((this.maxLevelSpeedPoints) / (this.test.questions.length) * 100) / 100;
+  }
+
+  startListeningToServerSockets() {
+    this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
+      this.scoreBoardMap = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
+      this.scoreBoard = Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({ username, score }));
+    });
+
+    this.socket.on("timer-update",(timeValue)=>{
+      this.currentServerSeconds = timeValue;
+    });
+  }
+
+  startListeningToGameEvents() {
+    this.phaserGame.scene.game.events.on('startedLevel', () => {
+      setTimeout(() => {
+        this.secondsWhenStartedLevel = this.currentServerSeconds;
+      }, 1000)
+    })
+
+    this.phaserGame.scene.game.events.on('finishLevel', (level, deaths: number) => {
+      this.phaserGame.pause();
+      const spentTime = this.secondsWhenStartedLevel - this.currentServerSeconds;
+      if (spentTime <= (this.levelsData[level-1].time)/3 * 60) { 
+        this.bonusPoints += this.pointsPerLevelSpeed;
+        this.points += this.pointsPerLevelSpeed;
+      }
+
+      if (deaths === 0) {
+        this.bonusPoints += this.pointsPerNoDeathLevel;
+        this.points += this.pointsPerNoDeathLevel;
+      }
+
+      const dialogRef = this.dialog.open(QuestionViewComponent, {
+        data: { id: this.test.questions[level-1].id },
+        disableClose: true
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        this.points += result;
+        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
+        if (level >= this.test.questions.length) {
+          this.finishGame();
+        }
+
+        this.phaserGame.resume();
+        this.phaserGame.events.emit("nextLevel");
+      });
+    });
+
+    this.phaserGame.scene.game.events.on('bonusFruitCollected', () => {
+      this.bonusFruitsCollected +=1;
+      
+      this.bonusPoints += this.pointsPerBonusFruit;
+      this.points += this.pointsPerBonusFruit;
+
+      this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
+    })
   }
 }
 
