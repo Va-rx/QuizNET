@@ -41,6 +41,7 @@ const routes: Routes = [
   { path: 'deathmatch', component: MultiplayerGameComponent, canActivate: [authGuard]},
   { path: 'map-editor', component: MapEditorComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'platformer', component: PlatformGameComponent},
+  { path: 'ankieta', component: HomeComponent, canActivate: [authGuard]}
 ];
 
 @NgModule({
