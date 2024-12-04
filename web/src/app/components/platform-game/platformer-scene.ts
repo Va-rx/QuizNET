@@ -28,6 +28,7 @@ export default class platformerScene extends Phaser.Scene {
     private currentLevel?: number;
     private levelSpawnX?: number;
     private levelSpawnY?: number;
+    private deathsOnLevel!: number;
 
     private soundtracks?: any;
     private currentSoundtrack?: any;
@@ -77,6 +78,8 @@ export default class platformerScene extends Phaser.Scene {
 
     loadLevel(level: number) {
         this.currentLevel = level;
+        if (this.currentLevel > this.levelsData.length) return;
+        this.deathsOnLevel = 0;
 
         this.createLayer();
         this.initializeObjects();
@@ -260,23 +263,13 @@ export default class platformerScene extends Phaser.Scene {
 
             if (this.saws) {
                 this.physics.add.overlap(this.player, this.saws, (player, saw) => {
-                    this.player?.kill().then(() => {
-                        if (this.levelSpawnX && this.levelSpawnY) {
-                        this.platforms?.clear(true, true);
-                        this.player?.respawn(2*this.levelSpawnX, 2*this.levelSpawnY);
-                        this.regenerateFallingPlatforms();}
-                    })
+                    this.playerDies();
                 });
             }
 
             if (this.spikes) {
                 this.physics.add.collider(this.player, this.spikes, () => {
-                    this.player?.kill().then(() => {
-                        if (this.levelSpawnX && this.levelSpawnY) {
-                        this.platforms?.clear(true, true);
-                        this.player?.respawn(2*this.levelSpawnX, 2*this.levelSpawnY)}
-                        this.regenerateFallingPlatforms();
-                    })
+                    this.playerDies();
                 });
             }
 
@@ -294,7 +287,7 @@ export default class platformerScene extends Phaser.Scene {
                     const finishObject = finish as Finish;
                     if (finishObject.getCanFinish()) {
                         this.currentSoundtrack.stop();
-                        this.game.events.emit('finishLevel', this.currentLevel);
+                        this.game.events.emit('finishLevel', this.currentLevel, this.deathsOnLevel);
                     }
                 });
             }
@@ -396,5 +389,17 @@ export default class platformerScene extends Phaser.Scene {
         if (this.currentLevel) {
             this.questionsLeftText.setText(`${this.currentLevel}/${this.levelsData.length}`);
         }
+    }
+
+    playerDies() {
+        this.player?.kill().then(() => {
+            if (this.levelSpawnX && this.levelSpawnY) {
+                this.deathsOnLevel += 1;
+
+                this.platforms?.clear(true, true);
+                this.player?.respawn(2*this.levelSpawnX, 2*this.levelSpawnY);
+                this.regenerateFallingPlatforms();
+            }
+        });
     }
 }

@@ -1,7 +1,9 @@
 {
   "GENERAL": {
     "SUBMIT": "Zatwierdź",
-    "CLOSE": "Zamknij"
+    "CLOSE": "Zamknij",
+    "VALUE": "Wartość",
+    "CHOOSE": "Wybierz"
   },
   "NAVIGATION": {
     "TESTS": "Testy",
@@ -22,7 +24,8 @@
     "GAME": "Gra",
     "TEST": "Test",
     "DESCRIPTION": "Opis",
-    "PLAYERS": "Użytkownicy w poczekalni"
+    "PLAYERS": "Użytkownicy w poczekalni",
+    "BONUSES": "Bonusy"
   },
   "TEST_HISTORY": {
     "CREATED_AT": "Utworzono",
@@ -60,7 +63,7 @@
     "NAME": "Nazwa",
     "DESCRIPTION": "Opis",
     "CHOOSE": "Wybierz",
-    "CHOOSE_DATE_TIME": "Wybierz datę i godzin",
+    "CHOOSE_DATE_TIME": "Wybierz datę i godzinę",
     "SET_DURATION": "Ustaw czas trwania (w minutach)",
     "ENTER_DURATION": "Wprowadź czas w minutach",
     "CHOOSE_GAME": "Wybierz grę",
@@ -68,7 +71,7 @@
     "CHOOSE_MAP": "Wybierz mapę",
     "MAP_NAME": "Nazwa mapy",
     "SUGGESTED_TIME": "Sugerowany czas gry",
-     "ADD_MAP": "Dodaj mapę"
+    "ADD_MAP": "Dodaj mapę"
   },
   "LIVE_SCOREBOARD": {
     "SCORE": "Wynik",
@@ -108,5 +111,10 @@
     "TIME_REQUIRED": "Czas jest wymagany",
     "NAME_REQUIRED": "Nazwa jest wymagana",
     "DIFFICULTY_REQUIRED": "Poziom trudności jest wymagany"
+  },
+  "PLATFORMER": {
+    "NO_DEATH_LEVEL_BONUS": "maksymalny bonus za przejście poziomów bez śmierci",
+    "BONUS_FRUITS_BONUS": "maksymalny bonus za zebrane bonusowe owoce",
+    "LEVEL_SPEED_BONUS": "maksymalny bonus za prędkość przejścia poziomów"
   }
 }

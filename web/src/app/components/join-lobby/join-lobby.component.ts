@@ -17,6 +17,7 @@ export class JoinLobbyComponent {
   startgame_str: string='';
   test_name:string='';
   game_name:string='';
+  bonusesEntries:any;
   test_desc:string='';
   constructor(private router: Router,private socketService:SocketServiceService,private auth:AuthService) { }
 
@@ -39,15 +40,16 @@ export class JoinLobbyComponent {
       this.joined = true;
     });
 
-    this.socket.on('receive_Data',(startdate:string,test_name:string,test_desc:string,game_name:string)=>{
+    this.socket.on('receive_Data',(startdate:string,test_name:string,test_desc:string,game_name:string, bonuses:any)=>{
         this.scheduled=true;
         this.startgame_str=startdate;
         this.test_name=test_name;
         this.test_desc=test_desc;
         this.game_name=game_name;
+        this.bonusesEntries = Object.entries(bonuses);
     })
 
-    this.socket.on('gameStarted', (game_route,test, testHistoryId,timer, players, maxQuestions, levelsData) => {
+    this.socket.on('gameStarted', (game_route,test, testHistoryId,timer, players, maxQuestions, levelsData, bonuses) => {
       //router to game
       console.log(game_route);
       console.log('Game started'+game_route+test.id);
@@ -57,7 +59,8 @@ export class JoinLobbyComponent {
         timer: timer,
         multiplayerPlayers: players,
         maxQuestions: maxQuestions,
-        levelsData: levelsData
+        levelsData: levelsData,
+        bonuses: bonuses
       };
       this.router.navigate([game_route.route],{state:{data}});//test.id
     });

@@ -46,7 +46,8 @@ table {
 }
 
 .form-group input[type="date"],
-.form-group input[type="time"] {
+.form-group input[type="time"],
+.form-group input[type="number"] {
   background-color: #333f4a;
   border: solid 1px #695497;
   color: #d1c3e2;
@@ -201,4 +202,53 @@ p, .scheduled-game, .code-section {
   width: 200px;
   margin-left: 72px;
   margin-bottom: 15px;
+}
+
+input[type="range"].custom-slider::-webkit-slider-runnable-track {
+  background: #333f4a;
+  height: 8px;
+  border-radius: 5px;
+}
+
+input[type="range"].custom-slider::-moz-range-track {
+  background: #333f4a;
+  height: 8px;
+  border-radius: 5px;
+}
+
+input[type="range"].custom-slider::-ms-track {
+  background: #333f4a;
+  height: 8px;
+  border-radius: 5px;
+  border: none;
+}
+
+input[type="range"].custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: #9662d2;
+  border: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  margin-top: -4px;
+}
+
+input[type="range"].custom-slider::-moz-range-thumb {
+  background-color: #9662d2;
+  border: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"].custom-slider::-ms-thumb {
+  background-color: #9662d2;
+  border: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
 }
