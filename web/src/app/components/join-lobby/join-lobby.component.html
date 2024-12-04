@@ -17,9 +17,15 @@
               </div>
               <div class="scheduled-game-content">
                 <p><strong>{{'LOBBY.START_TIME' | translate}}:</strong> {{startgame_str}}</p>
-                <p><strong>{{'LOBBY.GAME' | translate}}:</strong> {{game_name}}</p>
                 <p><strong>{{'LOBBY.TEST' | translate}}:</strong> {{test_name}}</p>
                 <p><strong>{{'LOBBY.DESCRIPTION' | translate}}:</strong> {{test_desc}}</p>
+                <p><strong>{{'LOBBY.GAME' | translate}}:</strong> {{game_name}}</p>
+                <div *ngIf="bonusesEntries.length != 0" class="bonuses">
+                  <p><strong>{{'LOBBY.BONUSES' | translate}}:</strong></p>
+                  <div *ngFor="let entry of bonusesEntries">
+                    <p><strong>{{entry[0] | translate}}:</strong> {{entry[1] * 100}}%</p>
+                  </div>
+                </div>
               </div>
             </div>
           </form>

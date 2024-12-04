@@ -1,7 +1,9 @@
 {
   "GENERAL": {
     "SUBMIT": "Submit",
-    "CLOSE": "Close"
+    "CLOSE": "Close",
+    "VALUE": "Value",
+    "CHOOSE": "Choose"
   },
   "NAVIGATION": {
     "TESTS": "Tests",
@@ -22,7 +24,8 @@
     "GAME": "Game",
     "TEST": "Test",
     "DESCRIPTION": "Description",
-    "PLAYERS": "Users in lobby"
+    "PLAYERS": "Users in lobby",
+    "BONUSES": "Bonuses"
   },
   "TEST_HISTORY": {
     "CREATED_AT": "Created at",
@@ -108,5 +111,10 @@
     "TIME_REQUIRED": "Time is required",
     "NAME_REQUIRED": "Name is required",
     "DIFFICULTY_REQUIRED": "Difficulty is required"
+    },
+    "PLATFORMER": {
+      "NO_DEATH_LEVEL_BONUS": "max bonus for passing levels without death",
+      "BONUS_FRUITS_BONUS": "max bonus for collecting bonus fruits",
+      "LEVEL_SPEED_BONUS": "max bonus for speed of completing levels"
     }
 }

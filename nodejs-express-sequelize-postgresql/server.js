@@ -282,7 +282,7 @@ io.on("connection", (socket) => {
         questionsAnswered: 0, attackDamage: 10, attackRange: 60, maxHealth: maxHealth, speed: 2.2, playersKilled: 0, nickname: userName
       };
       const sesInfo= codeToSessionInfo.get(joinCode);
-      socket.emit("receive_Data",sesInfo.date,sesInfo.test.name,sesInfo.test.description,sesInfo.game.name);
+      socket.emit("receive_Data",sesInfo.date,sesInfo.test.name,sesInfo.test.description,sesInfo.game.name, sesInfo.bonuses);
       broadcastUserList(session);
     } else {
       console.log("Invalid join code");
@@ -290,22 +290,25 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("startGame", async (join_code,date, time, game_route, test_id,timer, levels) => {
+  socket.on("startGame", async (join_code,date, time, game_route, test_id,timer, levels, bonuses) => {
     console.log(`Game will start at ${time} on ${date}`);
-    codeToSessionInfo.set(join_code,{ date: `${time}, ${date}`, test: test_id, game:game_route})
+    codeToSessionInfo.set(join_code,{ date: `${time}, ${date}`, test: test_id, game:game_route, bonuses: bonuses})
+
+    let levelsData = [];
+    for (lvl of levels) {
+      const lvlWithMap = (await getLevel(lvl.id)).rows[0];
+      const buffer = Buffer.from(lvlWithMap.map.buffer.data);
+      const jsonString = buffer.toString('utf-8');
+      lvlWithMap.map = JSON.parse(jsonString);
+      if (game_route.name === 'Platformer') {
+        lvlWithMap.bonusFruits = getAmountBonusFruitsOnLevel(lvlWithMap.map)
+      }
+      levelsData.push(lvlWithMap);
+    }
 
     const [year, month, day] = date.split('-');
     const [hour, minute] = time.split(':');
     cron.schedule(`${minute} ${hour} ${day} ${month} *`, async () => {
-
-      let levelsData = [];
-      for (lvl of levels) {
-        const lvlWithMap = (await getLevel(lvl.id)).rows[0];
-        const buffer = Buffer.from(lvlWithMap.map.buffer.data);
-        const jsonString = buffer.toString('utf-8');
-        lvlWithMap.map = JSON.parse(jsonString);
-        levelsData.push(lvlWithMap);
-      }
       
       const session = sessions.get(join_code);
       const xml = await generateQuizXML(test_id);
@@ -319,7 +322,7 @@ io.on("connection", (socket) => {
 
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelsData);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelsData, bonuses);
           }
         });
 
@@ -466,5 +469,20 @@ function addPowerUp(player, powerUp){
   }
 
   return powerUp;
+}
+
+function getAmountBonusFruitsOnLevel(level) {
+  let count = 0;
+
+  const collectiblesLayer = level.layers.find(layer => layer.name === 'Collectibles');
+
+  if (collectiblesLayer) {
+    collectiblesLayer.objects.forEach(object => {
+      if (object.name && object.name.startsWith('s-')) {
+        count++;
+      }});
+  }
+
+  return count;
 }
 // #endregion

@@ -27,6 +27,8 @@ export class CreateLobbyComponent implements OnInit {
   @Input() timerInput: any;
   @Input() levels!: Level[];
 
+  @Input() bonuses: any;
+
 
   constructor(private socketService: SocketServiceService) { }
 
@@ -61,7 +63,7 @@ export class CreateLobbyComponent implements OnInit {
   }
 
   onStartGame(): void {
-    this.socket.emit('startGame', this.joinCode,this.date, this.time, this.game, this.test,this.timerInput, this.levels);
+    this.socket.emit('startGame', this.joinCode,this.date, this.time, this.game, this.test,this.timerInput, this.levels, this.bonuses);
     this.scheduled = true;
   }
 }

@@ -25,6 +25,12 @@ export class CreateMatchmakingComponent implements OnInit {
   responsiveOptions;
   chosenTestNumberOfQuestion: number = 0;
 
+  platformerLevelNoDeathBonus: FormControl = new FormControl(5);
+  platformerBonusFruitsBonus: FormControl = new FormControl(5);
+  platformerLevelSpeedBonus: FormControl = new FormControl(5);
+
+  bonuses: { [key: string]: number } = {};
+
   constructor(private testsService: TestService,private gameService: GamesService, private levelService: LevelService) {
     this.responsiveOptions = [
       {
@@ -117,6 +123,15 @@ export class CreateMatchmakingComponent implements OnInit {
         timerInSeconds: timerInSeconds,
         level: selectedLevels
       };
+
+      this.bonuses = {};
+      if (selectedGame.name === 'Platformer') {
+        this.bonuses = {
+          'PLATFORMER.NO_DEATH_LEVEL_BONUS': this.platformerLevelNoDeathBonus.value / 100,
+          'PLATFORMER.BONUS_FRUITS_BONUS': this.platformerBonusFruitsBonus.value / 100,
+          'PLATFORMER.LEVEL_SPEED_BONUS': this.platformerLevelSpeedBonus.value / 100,
+        }
+      }
 
       console.log('Submitting:', data);
       this.isSubmitted = true;
