@@ -1,5 +1,5 @@
 const db = require('../database-connection');
-const allColumns = "id, test_name as \"testName\", content, created_at as \"createdAt\""
+const allColumns = "id, test_name as \"testName\", content, created_date as \"createdDate\""
 
 const getTestHistoryById = async (id) => {
     try {
@@ -12,7 +12,7 @@ const getTestHistoryById = async (id) => {
 
 const getAllTestHistory = async () => {
     try {
-        const res = await db.query(`SELECT id, test_name as \"testName\" , created_at as \"createdAt\" FROM test_history`);
+        const res = await db.query(`SELECT id, test_name as \"testName\" , created_date as \"createdDate\" FROM test_history`);
         return res.rows;
     } catch (err) {
         console.log(err.message);
@@ -21,7 +21,7 @@ const getAllTestHistory = async () => {
 
 const getAllTestHistoryConnectedToUser = async (userId) => {
     try {
-        const res = await db.query(`select th.test_name as \"testName\", th.created_at as \"createdAt\", th.id from test_history th inner join user_results ur on th.id = ur.test_history_id where user_id = $1`, [userId]);
+        const res = await db.query(`select th.test_name as \"testName\", th.created_date as \"createdDate\", th.id from test_history th inner join user_results ur on th.id = ur.test_history_id where user_id = $1`, [userId]);
         return res.rows;
     } catch (err) {
         console.log(err.message);
@@ -30,7 +30,7 @@ const getAllTestHistoryConnectedToUser = async (userId) => {
 
 const createTestHistory = async (testHistory) => {
     try {
-        const res = await db.query(`INSERT INTO test_history (test_name, content, created_at) VALUES ($1, $2, $3) RETURNING *`, [testHistory.testName, testHistory.content, testHistory.createdAt]);
+        const res = await db.query(`INSERT INTO test_history (test_name, content, created_date) VALUES ($1, $2, $3) RETURNING *`, [testHistory.testName, testHistory.content, testHistory.createdDate]);
         return res.rows[0];
     } catch (err) {
         console.log(err.message);

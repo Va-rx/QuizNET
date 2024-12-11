@@ -7,7 +7,7 @@
         <mat-card-title>{{test.testName}}</mat-card-title>
         <mat-card-subtitle>
           <h6>{{test.description}}</h6>
-          <p>{{'HISTORY_LIST.CREATED_AT' | translate}}: {{test.createdAt | date: 'yyyy-MM-dd'}}</p>
+          <p>{{'HISTORY_LIST.CREATED_AT' | translate}}: {{test.createdDate | date: 'yyyy-MM-dd'}}</p>
           <p>{{'HISTORY_LIST.MAX_POINTS' | translate}}: {{test.maxPoints}}</p>
           <button class="downloadResults" (click)="downloadResults()">{{'HISTORY_LIST.DOWNLOAD_RESULTS' | translate}}</button>
         </mat-card-subtitle>
