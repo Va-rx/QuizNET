@@ -49,7 +49,7 @@ export class JoinLobbyComponent {
         this.bonusesEntries = Object.entries(bonuses);
     })
 
-    this.socket.on('gameStarted', (game_route,test, testHistoryId,timer, players, maxQuestions, levelsData, bonuses) => {
+    this.socket.on('gameStarted', (game_route,test, testHistoryId,timer, players, maxQuestions, levelsData, bonuses, shuffleQuestions, shuffleAnswers) => {
       //router to game
       console.log(game_route);
       console.log('Game started'+game_route+test.id);
@@ -60,7 +60,9 @@ export class JoinLobbyComponent {
         multiplayerPlayers: players,
         maxQuestions: maxQuestions,
         levelsData: levelsData,
-        bonuses: bonuses
+        bonuses: bonuses,
+        shuffleQuestions: shuffleQuestions,
+        shuffleAnswers: shuffleAnswers
       };
       this.router.navigate([game_route.route],{state:{data}});//test.id
     });

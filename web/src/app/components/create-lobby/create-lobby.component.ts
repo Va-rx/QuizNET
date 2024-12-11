@@ -27,9 +27,9 @@ export class CreateLobbyComponent implements OnInit {
   @Input() timerInput: any;
   @Input() levels!: Level[];
 
-  @Input() bonuses: any;
-
-
+  @Input() bonuses: any;  
+  @Input() shuffleQuestions: boolean = false;
+  @Input() shuffleAnswers: boolean = false;
   constructor(private socketService: SocketServiceService) { }
 
   ngOnInit(): void {
@@ -63,7 +63,7 @@ export class CreateLobbyComponent implements OnInit {
   }
 
   onStartGame(): void {
-    this.socket.emit('startGame', this.joinCode,this.date, this.time, this.game, this.test,this.timerInput, this.levels, this.bonuses);
+    this.socket.emit('startGame', this.joinCode,this.date, this.time, this.game, this.test,this.timerInput, this.levels, this.bonuses, this.shuffleQuestions, this.shuffleAnswers);
     this.scheduled = true;
   }
 }

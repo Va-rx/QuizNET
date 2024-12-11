@@ -24,7 +24,8 @@ export class CreateMatchmakingComponent implements OnInit {
   @ViewChild('targetSection') targetSection!: ElementRef;
   responsiveOptions;
   chosenTestNumberOfQuestion: number = 0;
-
+  shuffleQuestions: boolean = false;
+  shuffleAnswers: boolean = false;
   platformerLevelNoDeathBonus: FormControl = new FormControl(5);
   platformerBonusFruitsBonus: FormControl = new FormControl(5);
   platformerLevelSpeedBonus: FormControl = new FormControl(5);

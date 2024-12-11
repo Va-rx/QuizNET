@@ -30,6 +30,7 @@ export class QuestionViewComponent implements OnInit{
         this.question = question;
         this.isMultipleChoice = (this.question.type === 'multi');
         this.max_points_sum = question.maxPoints;
+        this.question.answers = this.shuffleArray(question.answers);
       });
    }
 
@@ -80,6 +81,14 @@ export class QuestionViewComponent implements OnInit{
       return URL.createObjectURL(imageData);
     }
     return '';
+  }
+
+  shuffleArray(array: any[]): any[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 }
 

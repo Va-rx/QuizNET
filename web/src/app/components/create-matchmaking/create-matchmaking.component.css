@@ -67,6 +67,9 @@ table {
   outline: 0;
 }
 
+::ng-deep .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background, .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background, .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__native-control[data-indeterminate=true]:enabled~.mdc-checkbox__background{
+  background-color: #9662d2 !important;
+}
 .form-group {
   margin-bottom: 1rem;
 }
@@ -251,4 +254,8 @@ input[type="range"].custom-slider::-ms-thumb {
   height: 16px;
   border-radius: 50%;
   cursor: pointer;
+}
+
+.shuffle {
+  color: #b0b3b8;
 }

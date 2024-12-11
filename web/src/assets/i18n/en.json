@@ -71,7 +71,9 @@
     "CHOOSE_MAP": "Choose map",
     "MAP_NAME": "Map name",
     "SUGGESTED_TIME": "Suggested game duration",
-    "ADD_MAP": "Add map"
+    "ADD_MAP": "Add map",
+    "SHUFFLE_ANSWERS": "Shuffle answers",
+    "SHUFFLE_QUESTIONS": "Shuffle questions"
   },
   "LIVE_SCOREBOARD": {
     "SCORE": "Score",
