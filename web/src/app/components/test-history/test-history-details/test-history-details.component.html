@@ -8,7 +8,7 @@
           <mat-card-subtitle>
             <h6>{{test.description}}</h6>
             <p>{{'TEST_HISTORY.MARK' | translate}}: {{test.score }} {{'TEST_HISTORY.POINTS' | translate}} / {{test.maxPoints}} {{'TEST_HISTORY.POINTS' | translate}} ({{(test.score / test.maxPoints * 100).toFixed(2)}}%)</p>
-            <p>{{'TEST_HISTORY.CREATED_AT' | translate}}: {{test.createdAt | date: 'yyyy-MM-dd'}}</p>
+            <p>{{'TEST_HISTORY.CREATED_AT' | translate}}: {{test.createdDate | date: 'yyyy-MM-dd'}}</p>
           </mat-card-subtitle>
         </mat-card-title-group>
       </mat-card-header>

@@ -4,7 +4,7 @@ const { deleteQuestion, getQuestionMaxPoints, getAnswersToQuestion } = require('
 
 const getTests = () => {
     try {
-        return db.query(`SELECT test_id as id, name, description, created_date as "createdDate", modified_date as "modifiedDate" FROM tests`);
+        return db.query(`SELECT id, name, description, created_date as "createdDate", modified_date as "modifiedDate" FROM tests`);
     } catch (err) {
         console.error('db query get tests error: ', err);
     }
@@ -15,7 +15,7 @@ const createTest = (test) => {
     if (test.description === undefined) test.description = null;
 
     try {
-        return db.query(`INSERT INTO tests (name, description) VALUES ($1, $2) RETURNING test_id as id, name, description, created_date, modified_date`, [test.name, test.description]);
+        return db.query(`INSERT INTO tests (name, description) VALUES ($1, $2) RETURNING id, name, description, created_date, modified_date`, [test.name, test.description]);
     } catch (err) {
         console.error('db query create test error: ', err);
     }
@@ -23,7 +23,7 @@ const createTest = (test) => {
 
 const getTest = (id) => {
     try {
-        return db.query(`SELECT test_id as id, name, description, created_date as createdDate, modified_date as modifiedDate FROM tests WHERE test_id = $1`, [id]);
+        return db.query(`SELECT id, name, description, created_date as createdDate, modified_date as modifiedDate FROM tests WHERE id = $1`, [id]);
     } catch (err) {
         console.error('db query get test error: ', err);
     }
@@ -39,7 +39,7 @@ const getNumberOfQuestions = (id) => {
 
 const updateTest = (test) => {
     try {
-        return db.query(`UPDATE tests SET name = $1, description = $2 WHERE test_id = $3 RETURNING test_id as id, name, description, created_date, modified_date`, [test.name, test.description, test.id]);
+        return db.query(`UPDATE tests SET name = $1, description = $2 WHERE id = $3 RETURNING  id, name, description, created_date, modified_date`, [test.name, test.description, test.id]);
     } catch (err) {
         console.error('db query update test error: ', err);
     }
@@ -56,7 +56,7 @@ const deleteTest = async (id) => {
             rows_affected += (await deleteQuestion(question_id));
         }
 
-        rows_affected += (await db.query(`DELETE FROM tests WHERE test_id = $1`, [id])).rowCount
+        rows_affected += (await db.query(`DELETE FROM tests WHERE id = $1`, [id])).rowCount
 
         return rows_affected;
     } catch (err) {
@@ -66,7 +66,7 @@ const deleteTest = async (id) => {
 
 const getTestQuestions = (id) => {
     try {
-        return db.query(`SELECT q.question_id as id, s.question_position as position, q.question, q.image_link, q.type FROM questions q JOIN sets s ON q.question_id = s.question_id WHERE s.test_id = $1 ORDER BY s.question_position ASC`, [id]);
+        return db.query(`SELECT q.id, s.question_position as position, q.question, q.image_link, q.type FROM questions q JOIN sets s ON q.id = s.question_id WHERE s.test_id = $1 ORDER BY s.question_position ASC`, [id]);
     } catch (err) {
         console.error('db query get questions for test error: ', err);
     }
@@ -115,9 +115,9 @@ const addQuestionToTest = async (question, id) => {
 const getTestWithAnswers = async (id) => {
     try {
         const res = await db.query(`
-        SELECT q.question_id as id, q.question, q.image_link
+        SELECT q.id, q.question, q.image_link
         FROM questions q
-        JOIN sets s ON q.question_id = s.question_id
+        JOIN sets s ON q.id = s.question_id
         WHERE s.test_id = $1
     `, [id]);
         for (const row of res.rows) {

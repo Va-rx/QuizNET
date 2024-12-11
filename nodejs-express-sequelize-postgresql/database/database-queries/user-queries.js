@@ -1,6 +1,6 @@
 const db = require('../database-connection');
 const bcrypt = require("bcrypt");
-const allColumns =  "user_id as id, email, name, surname, nickname, password, role_id as role";
+const allColumns =  "id, email, name, surname, nickname, password, role_id as role";
 
 const checkIfUserExist  = async (email, index, nickname) => {
     try {

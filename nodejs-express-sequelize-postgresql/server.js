@@ -313,7 +313,7 @@ io.on("connection", (socket) => {
       const xml = await generateQuizXML(test_id);
       maxQuestions = parseInt((await getNumberOfQuestions(1)).rows[0].count);
       maxNumberOfStars = maxQuestions * Object.keys(players).length + 2;
-      const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
+      const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdDate: new Date()});
       if (session) {
         starsCounter = 0;
         stars = [];

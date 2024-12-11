@@ -47,7 +47,7 @@ router.get("/:id/:userId", async (req, res) => {
 
     const answerIds = parsedAnswers.answers.question.flatMap(q => q.answer ? q.answer.map(a => parseInt(a)) : []);
     const userTest = {
-        createdAt: test.createdAt,
+        createdDate: test.createdDate,
         testName: parsedResult.test.$.name,
         description: parsedResult.test.$.description,
         maxPoints: parseInt(parsedResult.test.$.max_points),
