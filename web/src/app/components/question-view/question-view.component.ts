@@ -12,25 +12,28 @@ import { UserAnswersService } from "../../services/user-answers/user-answers.ser
   styleUrls: ['./question-view.component.css']
 })
 export class QuestionViewComponent implements OnInit{
-2
   isMultipleChoice: boolean = false;
   chosenAnswers: Answer[] = [];
   isSubmitted: boolean = false;
   result: number = 0;
   max_points_sum = 0;
   question: Question = new Question();
+  
   constructor(private questionService: QuestionService,
               @Inject(MAT_DIALOG_DATA) public data: any,
               public dialogRef: MatDialogRef<QuestionViewComponent>,
               private userAnswersService: UserAnswersService) {}
 
     ngOnInit(): void {
+      
       this.dialogRef.updateSize('40%');
         this.questionService.getQuestion(this.data.id).subscribe(question => {
         this.question = question;
         this.isMultipleChoice = (this.question.type === 'multi');
         this.max_points_sum = question.maxPoints;
-        this.question.answers = this.shuffleArray(question.answers);
+        if (this.data.shuffleAnswers) {
+          this.question.answers = this.shuffleArray(question.answers);
+        }
       });
    }
 

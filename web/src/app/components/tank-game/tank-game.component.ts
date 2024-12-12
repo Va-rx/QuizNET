@@ -129,7 +129,7 @@ export class TankGameComponent implements OnInit {
       }
 
       const dialogRef = this.dialog.open(QuestionViewComponent, {
-        data: { id: question.id },
+        data: { id: question.id, shuffleAnswers: this.shuffleAnswers},
         disableClose: true
       });
       this.currentLevel++;

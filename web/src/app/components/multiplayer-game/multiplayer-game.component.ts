@@ -136,7 +136,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
       }
 
       const dialogRef = this.dialog.open(QuestionViewComponent, {
-        data: { id: question.id },
+        data: { id: question.id, shuffleAnswers: this.shuffleAnswers },
         disableClose: true
       });
 
