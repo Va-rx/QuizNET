@@ -56,7 +56,6 @@ export class PlatformGameComponent {
   currentServerSeconds: number = 0;
   shuffleQuestions: boolean = false;
   shuffleAnswers: boolean = false;
-  maxQuestions: number = 0;
 
   constructor(private testService: TestService, 
               private dialog: MatDialog, 
@@ -80,7 +79,6 @@ export class PlatformGameComponent {
     this.historyTestId = history.state.data.testHistoryId;
     this.shuffleQuestions = history.state.data.shuffleQuestions;
     this.shuffleAnswers = history.state.data.shuffleAnswers;
-    this.maxQuestions = history.state.data.maxQuestions;
     this.nickname = this.auth.getNickname();
     this.socket = this.socketService.getSocket();
 
@@ -203,9 +201,8 @@ export class PlatformGameComponent {
           console.error("No more questions to ask");
           return;
         }
-      }
-      else{
-        question = this.test.questions[level-1];
+      } else {
+          question = this.test.questions[level-1];
       }
 
       const dialogRef = this.dialog.open(QuestionViewComponent, {
@@ -217,7 +214,7 @@ export class PlatformGameComponent {
       dialogRef.afterClosed().subscribe(result => {
         this.points += result;
         this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
-        if (level >= this.maxQuestions) {
+        if (level >= this.test.questions.length) {
           this.finishGame();
         }
 
