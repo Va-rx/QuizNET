@@ -18,8 +18,16 @@
       </tr>
     </tbody>
   </table>
+ <div>
+  <mat-checkbox [(ngModel)]="shuffleQuestions"></mat-checkbox>
+  <label class="shuffle">{{ 'CREATE_MATCHMAKING.SHUFFLE_QUESTIONS' | translate }}</label>
+</div>
+<div>
+  <mat-checkbox [(ngModel)]="shuffleAnswers"></mat-checkbox>
+  <label class="shuffle">{{ 'CREATE_MATCHMAKING.SHUFFLE_ANSWERS' | translate }}</label>
+</div>
 
-  <h2 class="mb-4">{{ 'CREATE_MATCHMAKING.CHOOSE_DATE_TIME' | translate }}</h2>
+<h2 class="mb-4">{{ 'CREATE_MATCHMAKING.CHOOSE_DATE_TIME' | translate }}</h2>
   <div class="form-group">
     <input [formControl]="dateControl" type="date" class="form-control mb-2">
     <input [formControl]="timeControl" type="time" class="form-control" >
@@ -105,4 +113,4 @@
   <button #targetSection class="btn btn-primary mt-4 plan" (click)="onSubmit()">{{ 'CREATE_MATCHMAKING.SCHEDULE' | translate }}</button>
 </div>
 
-<app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [levels]="selectedLevels" [date]="dateControl.value" [time]="timeControl.value" [timerInput]="timerInSeconds" [bonuses]="bonuses"></app-create-lobby>
+<app-create-lobby *ngIf="isSubmitted" [test]="selectedTest" [game]="selectedGame" [levels]="selectedLevels" [date]="dateControl.value" [time]="timeControl.value" [timerInput]="timerInSeconds" [bonuses]="bonuses" [shuffleQuestions]="shuffleQuestions" [shuffleAnswers]="shuffleAnswers"></app-create-lobby>

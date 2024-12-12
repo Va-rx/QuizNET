@@ -290,7 +290,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("startGame", async (join_code,date, time, game_route, test_id,timer, levels, bonuses) => {
+  socket.on("startGame", async (join_code,date, time, game_route, test_id,timer, levels, bonuses, shuffleQuestions, shuffleAnswers) => {
     console.log(`Game will start at ${time} on ${date}`);
     codeToSessionInfo.set(join_code,{ date: `${time}, ${date}`, test: test_id, game:game_route, bonuses: bonuses})
 
@@ -321,7 +321,7 @@ io.on("connection", (socket) => {
 
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelsData, bonuses);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelsData, bonuses, shuffleQuestions, shuffleAnswers);
           }
         });
 
