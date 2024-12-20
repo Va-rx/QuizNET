@@ -16,6 +16,9 @@ var corsOptions = {
   // Origin: "http://72.145.1.108:8081" bez tego działa
 };
 
+var timerValue = 0;
+var gameTime = 0;
+
 // #region MultiplayerVariables
 const players = {};
 var stars = [];
@@ -326,7 +329,9 @@ io.on("connection", (socket) => {
         });
 
         ////TIMER///
-        let timerValue = timer;
+        timerValue = timer;
+        gameTime = timer;
+
         let timerInterval;
         
         timerInterval = setInterval(() => {
@@ -346,11 +351,11 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("userScoreUpdate", (userName, userScore, joinCode) => {
+  socket.on("userScoreUpdate", (userName, userScore, joinCode, isFinishedGame) => {
     console.log(`User: ${userName} current score: ${userScore}`);
     const session = sessions.get(joinCode);
     if (session) {
-      session.scoreBoard.set(userName, userScore);
+      session.scoreBoard.set(userName, [userScore, isFinishedGame ? gameTime - timerValue : 0]);
       session.scoreBoard.forEach((key, val) => console.log(key + val));
       broadcastScoreBoard(session);
     }

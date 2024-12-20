@@ -17,7 +17,7 @@ export class CreateLobbyComponent implements OnInit {
   userName: string = "Creator";
   scheduled: boolean = false;
   timer:number=900;
-  @Input() scoreBoard: Map<string, number> = new Map<string, number>();
+  @Input() scoreBoard: Map<string, [number, number]> = new Map<string, [number, number]>();
 
 
   @Input() test: any;

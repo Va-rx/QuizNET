@@ -34,7 +34,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   testMaxPoints: number = 0;
   testName: string = '';
   gameFinished: boolean = false;
-  scoreBoardMap: Map<string, number> = new Map<string, number>();
+  scoreBoardMap: Map<string, [number, number]> = new Map<string, [number, number]>();
   killBoardMap: Map<string, [string, number]> = new Map<string, [string, number]>();
   killBoard: any[] = [];
   scoreBoard: any[] = [];
@@ -143,7 +143,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
       dialogRef.afterClosed().subscribe(result => {
         this.phaserGame.scene.game.events.emit('questionAnswered');
         this.playerScore += result;
-        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
+        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode(), false)
       });
     });
 
@@ -192,7 +192,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     results.score = Math.round(this.playerScore * 100) / 100;
     let createdResults = await this.userResultsService.create(results).toPromise();
 
-    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
+    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode(), true)
     this.socket.off('spawnStar');
     this.socket.off('currentPlayers');
     this.socket.off('currentStars');

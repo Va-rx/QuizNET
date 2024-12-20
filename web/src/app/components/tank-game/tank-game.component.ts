@@ -31,7 +31,7 @@ export class TankGameComponent implements OnInit {
   playerScore: number = 0;
   playerScoreBonus: number = 0;
   gameFinished: boolean = false;
-  scoreBoardMap: Map<string, number> = new Map<string, number>();
+  scoreBoardMap: Map<string, [number, number]> = new Map<string, [number, number]>();
   nickname: string = "";
   private socket: any;
   starsPicked: number = 0;
@@ -137,7 +137,7 @@ export class TankGameComponent implements OnInit {
         console.log(`Dialog result: ${result}`);
         console.log(result);
         this.playerScore += result;
-        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
+        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode(), false)
         //resume game
         this.phaserGame.resume();
         if (this.currentLevel == this.maxLevel) {//REVERT THIS TO ==this.maxLevel for user experience
@@ -148,6 +148,7 @@ export class TankGameComponent implements OnInit {
 
     this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
       console.log(jsonScoreBoard);
+
       this.scoreBoardMap = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
       this.scoreBoard = Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({ username, score }));
       console.log(this.scoreBoard);
@@ -211,7 +212,7 @@ export class TankGameComponent implements OnInit {
     results.score=this.playerScore;
     let createdResults = await this.userResultsService.create(results).toPromise();
 
-    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
+    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode(), true)
     this.phaserGame.destroy(true);
     this.calculateScores();
 
