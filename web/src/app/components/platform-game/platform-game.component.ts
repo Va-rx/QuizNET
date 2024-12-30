@@ -44,7 +44,7 @@ export class PlatformGameComponent {
   secondsWhenStartedLevel: number = 0;
 
   nickname!: string;
-  scoreBoardMap: Map<string, number> = new Map<string, number>();
+  scoreBoardMap: Map<string, [number, number]> = new Map<string, [number, number]>();
   scoreBoard: any[] = [];
 
   gameFinished = false;
@@ -131,7 +131,7 @@ export class PlatformGameComponent {
     results.score = Math.round(this.points * 100) / 100;
     let createdResults = await this.userResultsService.create(results).toPromise();
 
-    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
+    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode(), true);
     this.achieverScore = (this.bonusFruitsCollected) / (this.maxBonusFruits) * 100
     let personalityResults: PersonalityResults = {
       userResultsId: createdResults.id,
@@ -215,7 +215,7 @@ export class PlatformGameComponent {
 
       dialogRef.afterClosed().subscribe(result => {
         this.points += result;
-        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
+        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode(), false);
         if (level >= this.maxQuestions) {
           this.finishGame();
         }
@@ -231,7 +231,7 @@ export class PlatformGameComponent {
       this.bonusPoints += this.pointsPerBonusFruit;
       this.points += this.pointsPerBonusFruit;
 
-      this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
+      this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode(), false);
     })
   }
 

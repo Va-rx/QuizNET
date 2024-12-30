@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 
 interface LiveResults {
   name: string;
-  score: number;
+  score: [number, number];
 }
 
 @Component({
@@ -14,7 +14,7 @@ interface LiveResults {
 })
 export class LiveScoreBoardComponent implements AfterViewInit, OnChanges {
 
-  @Input() scoreboard: Map<string, number> = new Map<string, number>();
+  @Input() scoreboard: Map<string, [number, number]> = new Map<string, [number, number]>();
 
   displayedColumns: string[] = ['name', 'score'];
   userResults = new MatTableDataSource<LiveResults>([]);
