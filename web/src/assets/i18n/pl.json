@@ -5,6 +5,13 @@
     "VALUE": "Wartość",
     "CHOOSE": "Wybierz"
   },
+  "SORTING_TESTS": {
+    "SORT_BY": "Sortuj",
+    "NAME_A-Z": "Nazwa A-Z",
+    "NAME_Z-A": "Nazwa Z-A",
+    "DATE_NEWEST": "Data (Najpierw najnowsze)",
+    "DATE_OLDEST": "Data (Najpierw najstarsze)"
+  },
   "NAVIGATION": {
     "TESTS": "Testy",
     "JOIN_LOBBY": "Dołącz do testu",

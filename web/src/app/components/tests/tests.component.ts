@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Test } from 'src/app/models/test.model';
 import { TestService } from 'src/app/services/test/test.service';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tests',
@@ -11,7 +12,7 @@ import { Router } from '@angular/router';
 export class TestsComponent implements OnInit{
   tests: Test[] = [];
 
-  constructor(private testService: TestService, private router: Router) { }
+  constructor(private testService: TestService, private router: Router, private translate: TranslateService) { }
 
   ngOnInit() {
     this.testService.getAllTests().subscribe({

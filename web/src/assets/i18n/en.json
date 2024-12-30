@@ -5,6 +5,13 @@
     "VALUE": "Value",
     "CHOOSE": "Choose"
   },
+  "SORTING_TESTS": {
+    "SORT_BY": "Sort by",
+    "NAME_A-Z": "Name A-Z",
+    "NAME_Z-A": "Name Z-A",
+    "DATE_NEWEST": "Date (Newest first)",
+    "DATE_OLDEST": "Date (Oldest first)"
+  },
   "NAVIGATION": {
     "TESTS": "Tests",
     "JOIN_LOBBY": "Join Lobby",
