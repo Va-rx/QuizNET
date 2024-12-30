@@ -13,7 +13,7 @@ router.get("/:id", async (req, res) => {
     }
     const test1 = {
         testName: parsedResult.test.$.name,
-        createdAt: test.createdAt,
+        createdDate: test.createdDate,
         maxPoints: parseInt(parsedResult.test.$.max_points),
         description: parsedResult.test.$.description,
         questions: parsedResult.test.questions.map((q) => ({

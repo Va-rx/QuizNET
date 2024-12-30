@@ -16,6 +16,9 @@ var corsOptions = {
   // Origin: "http://72.145.1.108:8081" bez tego działa
 };
 
+var timerValue = 0;
+var gameTime = 0;
+
 // #region MultiplayerVariables
 const players = {};
 var stars = [];
@@ -290,7 +293,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("startGame", async (join_code,date, time, game_route, test_id,timer, levels, bonuses) => {
+  socket.on("startGame", async (join_code,date, time, game_route, test_id,timer, levels, bonuses, shuffleQuestions, shuffleAnswers) => {
     console.log(`Game will start at ${time} on ${date}`);
     codeToSessionInfo.set(join_code,{ date: `${time}, ${date}`, test: test_id, game:game_route, bonuses: bonuses})
 
@@ -313,7 +316,7 @@ io.on("connection", (socket) => {
       const xml = await generateQuizXML(test_id);
       maxQuestions = parseInt((await getNumberOfQuestions(1)).rows[0].count);
       maxNumberOfStars = maxQuestions * Object.keys(players).length + 2;
-      const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdAt: new Date()});
+      const testHistory = await createTestHistory({testName: test_id.name, content: xml, createdDate: new Date()});
       if (session) {
         starsCounter = 0;
         stars = [];
@@ -321,12 +324,14 @@ io.on("connection", (socket) => {
 
         session.users.forEach((participantSocket) => {
           if (participantSocket !== socket) {
-            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelsData, bonuses);
+            participantSocket.emit("gameStarted", game_route, test_id, testHistory.id,timer, players, maxQuestions, levelsData, bonuses, shuffleQuestions, shuffleAnswers);
           }
         });
 
         ////TIMER///
-        let timerValue = timer;
+        timerValue = timer;
+        gameTime = timer;
+
         let timerInterval;
         
         timerInterval = setInterval(() => {
@@ -346,11 +351,11 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("userScoreUpdate", (userName, userScore, joinCode) => {
+  socket.on("userScoreUpdate", (userName, userScore, joinCode, isFinishedGame) => {
     console.log(`User: ${userName} current score: ${userScore}`);
     const session = sessions.get(joinCode);
     if (session) {
-      session.scoreBoard.set(userName, userScore);
+      session.scoreBoard.set(userName, [userScore, isFinishedGame ? gameTime - timerValue : 0]);
       session.scoreBoard.forEach((key, val) => console.log(key + val));
       broadcastScoreBoard(session);
     }

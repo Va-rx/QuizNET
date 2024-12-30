@@ -3,7 +3,7 @@ const db = require('../database-connection');const { deleteAnswer, updateAnswer,
 
 const getQuestion = (id) => {
     try {
-        return db.query(`SELECT question_id as id, question, image_link, type FROM questions WHERE question_id = $1`, [id]);
+        return db.query(`SELECT id, question, image_link, type FROM questions WHERE id = $1`, [id]);
     } catch (err) {
         console.error("db query get question error: ", err);
     }
@@ -11,7 +11,7 @@ const getQuestion = (id) => {
 
 const getAnswersToQuestion = (id) => {
     try {
-        return db.query(`SELECT answer_id as id, answer, is_correct as "isCorrect", points FROM answers WHERE question_id = $1`, [id]);
+        return db.query(`SELECT id, answer, is_correct as "isCorrect", points FROM answers WHERE question_id = $1`, [id]);
     } catch (err) {
         console.error("db query get answers error: ", err);
     }
@@ -28,7 +28,7 @@ const deleteQuestion = async (id) => {
             rows_affected += (await deleteAnswer(answer_id)).rowCount;
         }
 
-        rows_affected += (await db.query(`DELETE FROM questions WHERE question_id = $1`, [id])).rowCount;
+        rows_affected += (await db.query(`DELETE FROM questions WHERE id = $1`, [id])).rowCount;
 
         return rows_affected;
     } catch (err) {
@@ -38,7 +38,7 @@ const deleteQuestion = async (id) => {
 
 const updateQuestion = async (id, question) => {
     try {
-        const updatedQuestion = await db.query(`UPDATE questions SET question = $1, image_link = $2, type = $3 WHERE question_id = $4 RETURNING question, image_link, type, question_id as id`, [question.question, question.image_link, question.type, id]);
+        const updatedQuestion = await db.query(`UPDATE questions SET question = $1, image_link = $2, type = $3 WHERE id = $4 RETURNING question, image_link, type, id`, [question.question, question.image_link, question.type, id]);
         const updatedPosition = await db.query(`UPDATE sets SET question_position = $1 WHERE question_id = $2 RETURNING question_position as position`, [question.position, id]);
         const result = {
             id: updatedQuestion.rows[0].id,
@@ -55,7 +55,7 @@ const updateQuestion = async (id, question) => {
 
 const createQuestion = (question) => {
     try {
-        return db.query(`INSERT INTO questions (question, image_link, type) VALUES ($1, $2, $3) RETURNING question_id as id, question, image_link, type`, [question.question, question.image_link, question.type]);
+        return db.query(`INSERT INTO questions (question, image_link, type) VALUES ($1, $2, $3) RETURNING id, question, image_link, type`, [question.question, question.image_link, question.type]);
     } catch (err) {
         console.error('db query create question error: ', err);
     }

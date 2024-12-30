@@ -12,6 +12,7 @@ import { PersonalityResults } from 'src/app/models/user-personality-results';
 import { UserPersonalityResultsService } from 'src/app/services/user-personality-results/user-personality-results.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { NavbarService } from 'src/app/services/navbar/navbar.service';
+import { Question } from 'src/app/models/question.model';
 
 @Component({
   selector: 'app-platform-game',
@@ -43,7 +44,7 @@ export class PlatformGameComponent {
   secondsWhenStartedLevel: number = 0;
 
   nickname!: string;
-  scoreBoardMap: Map<string, number> = new Map<string, number>();
+  scoreBoardMap: Map<string, [number, number]> = new Map<string, [number, number]>();
   scoreBoard: any[] = [];
 
   gameFinished = false;
@@ -53,6 +54,9 @@ export class PlatformGameComponent {
 
   socket: any;
   currentServerSeconds: number = 0;
+  shuffleQuestions: boolean = false;
+  shuffleAnswers: boolean = false;
+  maxQuestions: number = 0;
 
   constructor(private testService: TestService, 
               private dialog: MatDialog, 
@@ -74,6 +78,9 @@ export class PlatformGameComponent {
     this.timeForGame = history.state.data.timer;
     this.secondsWhenStartedLevel = this.timeForGame;
     this.historyTestId = history.state.data.testHistoryId;
+    this.shuffleQuestions = history.state.data.shuffleQuestions;
+    this.shuffleAnswers = history.state.data.shuffleAnswers;
+    this.maxQuestions = history.state.data.maxQuestions;
     this.nickname = this.auth.getNickname();
     this.socket = this.socketService.getSocket();
 
@@ -124,7 +131,7 @@ export class PlatformGameComponent {
     results.score = Math.round(this.points * 100) / 100;
     let createdResults = await this.userResultsService.create(results).toPromise();
 
-    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
+    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode(), true);
     this.achieverScore = (this.bonusFruitsCollected) / (this.maxBonusFruits) * 100
     let personalityResults: PersonalityResults = {
       userResultsId: createdResults.id,
@@ -189,15 +196,27 @@ export class PlatformGameComponent {
         this.points += this.pointsPerNoDeathLevel;
       }
 
+      let question;
+      if (this.shuffleQuestions) {
+        question = this.getRandomQuestion();
+        if (question == null) {
+          console.error("No more questions to ask");
+          return;
+        }
+      } else {
+          question = this.test.questions[level-1];
+      }
+
       const dialogRef = this.dialog.open(QuestionViewComponent, {
-        data: { id: this.test.questions[level-1].id },
+        
+        data: { id: question.id, shuffleAnswers: this.shuffleAnswers },
         disableClose: true
       });
 
       dialogRef.afterClosed().subscribe(result => {
         this.points += result;
-        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
-        if (level >= this.test.questions.length) {
+        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode(), false);
+        if (level >= this.maxQuestions) {
           this.finishGame();
         }
 
@@ -212,8 +231,20 @@ export class PlatformGameComponent {
       this.bonusPoints += this.pointsPerBonusFruit;
       this.points += this.pointsPerBonusFruit;
 
-      this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode());
+      this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode(), false);
     })
   }
+
+    getRandomQuestion(): Question | null {
+      if (this.test.questions.length === 0) {
+        return null;
+      }
+      const randomIndex = Math.floor(Math.random() * this.test.questions.length);
+      const question = this.test.questions[randomIndex];
+      this.test.questions.splice(randomIndex, 1);
+      return question;
+    }
+
+  
 }
 

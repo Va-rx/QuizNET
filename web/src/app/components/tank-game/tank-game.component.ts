@@ -31,7 +31,7 @@ export class TankGameComponent implements OnInit {
   playerScore: number = 0;
   playerScoreBonus: number = 0;
   gameFinished: boolean = false;
-  scoreBoardMap: Map<string, number> = new Map<string, number>();
+  scoreBoardMap: Map<string, [number, number]> = new Map<string, [number, number]>();
   nickname: string = "";
   private socket: any;
   starsPicked: number = 0;
@@ -51,6 +51,8 @@ export class TankGameComponent implements OnInit {
   levelMap: any;
   startingWidth: number = 0;
   startingHeight: number = 0;
+  shuffleQuestions: boolean = false;
+  shuffleAnswers: boolean = false;
   
   constructor(private dialog: MatDialog,
     private TestsService: TestService,
@@ -73,7 +75,8 @@ export class TankGameComponent implements OnInit {
     this.historyTestId = history.state.data.testHistoryId;
     this.levelMap = history.state.data.levelsData[0].map;
     this.timer=history.state.data.timer;
-
+    this.shuffleQuestions = history.state.data.shuffleQuestions; 
+    this.shuffleAnswers = history.state.data.shuffleAnswers;
     this.config = {
       type: Phaser.AUTO,
       //height as window
@@ -111,10 +114,22 @@ export class TankGameComponent implements OnInit {
     }
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
       //freeze game for question time
+
+      let question;
       this.phaserGame.pause();
+      if (this.shuffleQuestions) {
+        question = this.getRandomQuestion();
+        if (question == null) {
+          console.error("No more questions to ask");
+          return;
+        }
+      }
+      else{
+        question = this.questions[this.currentLevel];
+      }
 
       const dialogRef = this.dialog.open(QuestionViewComponent, {
-        data: { id: this.questions[this.currentLevel].id },
+        data: { id: question.id, shuffleAnswers: this.shuffleAnswers},
         disableClose: true
       });
       this.currentLevel++;
@@ -122,7 +137,7 @@ export class TankGameComponent implements OnInit {
         console.log(`Dialog result: ${result}`);
         console.log(result);
         this.playerScore += result;
-        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
+        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode(), false)
         //resume game
         this.phaserGame.resume();
         if (this.currentLevel == this.maxLevel) {//REVERT THIS TO ==this.maxLevel for user experience
@@ -133,6 +148,7 @@ export class TankGameComponent implements OnInit {
 
     this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
       console.log(jsonScoreBoard);
+
       this.scoreBoardMap = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
       this.scoreBoard = Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({ username, score }));
       console.log(this.scoreBoard);
@@ -196,7 +212,7 @@ export class TankGameComponent implements OnInit {
     results.score=this.playerScore;
     let createdResults = await this.userResultsService.create(results).toPromise();
 
-    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
+    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode(), true)
     this.phaserGame.destroy(true);
     this.calculateScores();
 
@@ -232,6 +248,16 @@ export class TankGameComponent implements OnInit {
 
   ngOnDestroy() {
     this.phaserGame.destroy(true);
+  }
+
+  getRandomQuestion(): Question | null {
+    if (this.questions.length === 0) {
+      return null;
+    }
+    const randomIndex = Math.floor(Math.random() * this.questions.length);
+    const question = this.questions[randomIndex];
+    this.questions.splice(randomIndex, 1);
+    return question;
   }
 }
 

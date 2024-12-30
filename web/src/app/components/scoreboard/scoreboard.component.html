@@ -11,8 +11,8 @@
       <ul>
         <li *ngFor="let entry of sortedScoreboard" [ngClass]="{'current-player': entry.key === currentPlayer}">
           <span class="username">{{ entry.key }}</span>
-          <span class="time">{{everyUserTime}} s.</span>
-          <span class="score">{{ entry.value }} pt.</span>
+          <span class="time">{{entry.value[1] }} s.</span>
+          <span class="score">{{ entry.value[0] }} pt.</span>
         </li>
       </ul>
     </div>

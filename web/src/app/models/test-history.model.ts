@@ -2,7 +2,7 @@ export class TestHistory {
     id!: number;
     testName!: string;
     description!: string;
-    createdAt!: Date;
+    createdDate!: Date;
     questions?: QuestionHistory[];
     maxPoints!: number;
     score!: number;

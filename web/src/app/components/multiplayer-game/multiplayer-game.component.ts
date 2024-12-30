@@ -34,7 +34,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   testMaxPoints: number = 0;
   testName: string = '';
   gameFinished: boolean = false;
-  scoreBoardMap: Map<string, number> = new Map<string, number>();
+  scoreBoardMap: Map<string, [number, number]> = new Map<string, [number, number]>();
   killBoardMap: Map<string, [string, number]> = new Map<string, [string, number]>();
   killBoard: any[] = [];
   scoreBoard: any[] = [];
@@ -48,6 +48,8 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   timer: number = 900; //IN SECONDS
   timerEnded:boolean=false;
   timerStarted:boolean=false;
+  shuffleQuestions: boolean = false;
+  shuffleAnswers: boolean = false;
 
   constructor(private socketService:SocketServiceService,
               private dialog: MatDialog,
@@ -69,6 +71,8 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.maxQuestions = history.state.data.maxQuestions;
     this.levelMap = history.state.data.levelsData[0].map;
     this.timer=history.state.data.timer;
+    this.shuffleQuestions = history.state.data.shuffleQuestions;
+    this.shuffleAnswers = history.state.data.shuffleAnswers;
 
     Object.keys(this.players).forEach((key) => {
       this.killBoardMap.set(this.players[key].id, [this.players[key].nickname,0]);
@@ -119,15 +123,27 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     });
 
     this.phaserGame.scene.game.events.on('spawnQuestion', (questionsAnswered) => {
+      let question;
+      if (this.shuffleQuestions) {
+        question = this.getRandomQuestion();
+        if (question == null) {
+          console.error("No more questions to ask");
+          return;
+        }
+      }
+      else{
+        question = this.questions[questionsAnswered];
+      }
+
       const dialogRef = this.dialog.open(QuestionViewComponent, {
-        data: { id: this.questions[questionsAnswered].id },
+        data: { id: question.id, shuffleAnswers: this.shuffleAnswers },
         disableClose: true
       });
 
       dialogRef.afterClosed().subscribe(result => {
         this.phaserGame.scene.game.events.emit('questionAnswered');
         this.playerScore += result;
-        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
+        this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode(), false)
       });
     });
 
@@ -176,7 +192,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     results.score = Math.round(this.playerScore * 100) / 100;
     let createdResults = await this.userResultsService.create(results).toPromise();
 
-    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode())
+    this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode(), true)
     this.socket.off('spawnStar');
     this.socket.off('currentPlayers');
     this.socket.off('currentStars');
@@ -224,5 +240,15 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
     this.phaserGame.destroy(true);
     this.gameFinished = true;
     this.timerEnded=true;
+  }
+
+  getRandomQuestion(): Question | null {
+    if (this.questions.length === 0) {
+      return null;
+    }
+    const randomIndex = Math.floor(Math.random() * this.questions.length);
+    const question = this.questions[randomIndex];
+    this.questions.splice(randomIndex, 1);
+    return question;
   }
 }
