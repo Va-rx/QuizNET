@@ -22,19 +22,13 @@ export class ScoreboardComponent implements OnChanges,OnInit {
   @Input() killerScore: number = -1;
   private socket: any;
 
-  //newOnes, need to calculate them!
-  timeLeft: number = 0 // current player left time for the test
-  everyUserTime: number = 0; // array, map of every users time spent on solving test
+  timeSpent: number = 0;
 
   constructor(private socketService: SocketServiceService,private navbarService: NavbarService) {
   }
   ngOnInit(){
     this.navbarService.showNavbar();
     this.socket = this.socketService.getSocket();
-    this.socket.on("timer-update",(timeValue)=>{
-      this.everyUserTime=timeValue;
-      this.timeLeft=timeValue;
-    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -46,6 +40,7 @@ export class ScoreboardComponent implements OnChanges,OnInit {
     this.currentPlayerScore = playerScore ? playerScore[0] : 0;
     this.currentPlayerPercentage = (this.currentPlayerScore / this.totalScore) * 100;
     this.currentPlayerScoreOnlyQuestions = this.currentPlayerScore - this.bonusScore;
+    this.timeSpent = playerScore ? playerScore[1] : 0;
 
     console.log(this.currentPlayerScore);
     console.log(this.bonusScore)
