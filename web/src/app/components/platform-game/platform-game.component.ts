@@ -177,9 +177,10 @@ export class PlatformGameComponent {
   }
 
   startListeningToGameEvents() {
-    this.phaserGame.scene.game.events.on('startedLevel', () => {
+    this.phaserGame.scene.game.events.on('startedLevel', (level) => {
       setTimeout(() => {
         this.secondsWhenStartedLevel = this.currentServerSeconds;
+        this.detectLevelTimeOut(level);
       }, 1000)
     })
 
@@ -235,7 +236,7 @@ export class PlatformGameComponent {
     })
   }
 
-    getRandomQuestion(): Question | null {
+  getRandomQuestion(): Question | null {
       if (this.test.questions.length === 0) {
         return null;
       }
@@ -243,7 +244,16 @@ export class PlatformGameComponent {
       const question = this.test.questions[randomIndex];
       this.test.questions.splice(randomIndex, 1);
       return question;
+  }
+
+  detectLevelTimeOut(level: number) {
+    const maxTime = this.levelsData[level-1].time * 60
+    if (this.secondsWhenStartedLevel - this.currentServerSeconds >= maxTime) {
+      this.phaserGame.events.emit("finishLevel", level, 999);
+    } else {
+      setTimeout(() => this.detectLevelTimeOut(level), 1000);
     }
+  }
 
   
 }
