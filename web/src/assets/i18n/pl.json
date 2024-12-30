@@ -7,11 +7,11 @@
   },
   "NAVIGATION": {
     "TESTS": "Testy",
-    "JOIN_LOBBY": "Dołącz do poczekalni",
+    "JOIN_LOBBY": "Dołącz do testu",
     "CREATE_LOBBY": "Zaplanuj test",
     "TESTS_HISTORY": "Historia testów",
     "LOG_OUT": "Wyloguj",
-    "MAP_EDITOR": "Edytor map"
+    "MAP_EDITOR": "Edytor poziomów"
   },
   "LOBBY": {
     "CREATE_LOBBY": "Utwórz poczekalnię",

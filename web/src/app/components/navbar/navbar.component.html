@@ -10,12 +10,12 @@
         <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
             <a routerLink="create-matchmaking" class="nav-link">{{'NAVIGATION.CREATE_LOBBY' | translate}}</a>
         </li>
-        <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
-          <a routerLink="map-editor" class="nav-link">{{'NAVIGATION.MAP_EDITOR' | translate}}</a>
-      </li>
       <li class="nav-item border-right" routerLinkActive="active">
         <a routerLink="test-history" class="nav-link">{{'NAVIGATION.TESTS_HISTORY' | translate}}</a>
       </li>
+      <li class="nav-item border-right" *ngIf="role === roles.ADMIN" routerLinkActive="active">
+        <a routerLink="map-editor" class="nav-link">{{'NAVIGATION.MAP_EDITOR' | translate}}</a>
+    </li>
         <li class="nav-item" (click)="logout()">
             <a routerLink="login" class="nav-link">{{'NAVIGATION.LOG_OUT' | translate}}</a>
         </li>
