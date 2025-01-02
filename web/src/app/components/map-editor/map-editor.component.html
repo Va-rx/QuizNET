@@ -46,12 +46,18 @@
               <div class="alert-danger" *ngIf="time.errors && f.submitted">{{'MAP_EDITOR.TIME_REQUIRED' | translate}}</div>
             </div>
 
-            <div class="form-group">
-              <mat-label>{{'MAP_EDITOR.ADD_MAP' | translate}}</mat-label>
-              <br>
-              <input type="file" (change)="onFileSelected($event)" accept=".json" name="map" required>
-              <div class="alert-danger" *ngIf="!selectedMap && f.submitted">{{'MAP_EDITOR.MAP_REQUIRED' | translate}}</div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="form-group">
+                <mat-label>{{'MAP_EDITOR.ADD_MAP' | translate}}</mat-label>
+                <br>
+                <input type="file" (change)="onFileSelected($event)" accept=".json" name="map" required>
+                <div class="alert-danger" *ngIf="!selectedMap && f.submitted">{{'MAP_EDITOR.MAP_REQUIRED' | translate}}</div>
+              </div>
+              <div class="downloadAssetsDiv">
+                <button (click)="downloadAssets()">{{'MAP_EDITOR.DOWNLOAD_ASSETS' | translate}}</button>
+              </div>
             </div>
+
 
             <button [disabled]="submitted" type="submit" class="btn btn-block btn-submit">{{'GENERAL.SUBMIT' | translate}}</button>
           </form>

@@ -153,6 +153,6 @@ h2 {
 }
 
 .p-carousel .p-carousel-indicators .p-carousel-indicator button {
-  background-color: #cccccc !important; /* Replace with your desired color */
-  border-color: #cccccc; /* Replace with your desired color */
+  background-color: #cccccc !important;
+  border-color: #cccccc;
 }

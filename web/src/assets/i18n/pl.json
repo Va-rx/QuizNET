@@ -119,7 +119,8 @@
     "MAP_REQUIRED": "Mapa jest wymagana",
     "TIME_REQUIRED": "Czas jest wymagany",
     "NAME_REQUIRED": "Nazwa jest wymagana",
-    "DIFFICULTY_REQUIRED": "Poziom trudności jest wymagany"
+    "DIFFICULTY_REQUIRED": "Poziom trudności jest wymagany",
+    "DOWNLOAD_ASSETS": "Pobierz materiały"
   },
   "PLATFORMER": {
     "NO_DEATH_LEVEL_BONUS": "maksymalny bonus za przejście poziomów bez śmierci",

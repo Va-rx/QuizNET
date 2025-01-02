@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { Difficulty, Level } from 'src/app/models/level.model';
 import { GamesService } from 'src/app/services/game/game.service';
 import { LevelService } from 'src/app/services/level/level.service';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-map-editor',
@@ -25,6 +27,18 @@ export class MapEditorComponent implements OnInit {
     time: null,
     map: null
   };
+
+  filesStructure = [
+    // { folder: 'tanks', name: 'ammo.png', path: 'assets/games/tankgame/ammo.png' },
+
+    // { folder: 'deathmatch', name: 'plik2.jpg', path: 'assets/folder/plik2.jpg' },
+
+    { folder: 'platformer', name: 'Terrain.png', path: 'assets/games/platformer/tilesets/Terrain.png' },
+    { folder: 'platformer', name: 'Spikes.png', path: 'assets/games/platformer/tilesets/Spikes.png' },
+    { folder: 'platformer', name: 'Platform.png', path: 'assets/games/platformer/tilesets/platforms/Off.png' },
+    { folder: 'platformer', name: 'Saw.png', path: 'assets/games/platformer/tilesets//Off.png' },
+    //PDF DO PLATFORMERA,
+  ];
 
   constructor(private gamesService: GamesService, private levelService: LevelService, private _snackBar: MatSnackBar, private translateService: TranslateService) {
     this.responsiveOptions = [
@@ -107,6 +121,18 @@ export class MapEditorComponent implements OnInit {
         }
       });
     }
+  }
+
+  async downloadAssets() {
+    const zip = new JSZip();
+
+    for (const file of this.filesStructure) {
+      const response = await fetch(file.path);
+      const blob = await response.blob();
+      zip.folder(file.folder)?.file(file.name, blob);
+    }
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    saveAs(zipBlob, 'quiznetGameAssets.zip');
   }
 }
 

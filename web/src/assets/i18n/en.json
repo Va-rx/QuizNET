@@ -119,7 +119,8 @@
     "MAP_REQUIRED": "Map is required",
     "TIME_REQUIRED": "Time is required",
     "NAME_REQUIRED": "Name is required",
-    "DIFFICULTY_REQUIRED": "Difficulty is required"
+    "DIFFICULTY_REQUIRED": "Difficulty is required",
+    "DOWNLOAD_ASSETS": "Download assets"
     },
     "PLATFORMER": {
       "NO_DEATH_LEVEL_BONUS": "max bonus for passing levels without death",
