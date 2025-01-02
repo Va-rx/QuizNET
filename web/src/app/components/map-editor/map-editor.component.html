@@ -54,7 +54,7 @@
                 <div class="alert-danger" *ngIf="!selectedMap && f.submitted">{{'MAP_EDITOR.MAP_REQUIRED' | translate}}</div>
               </div>
               <div class="downloadAssetsDiv">
-                <button (click)="downloadAssets()">{{'MAP_EDITOR.DOWNLOAD_ASSETS' | translate}}</button>
+                <button type="button" (click)="downloadAssets()">{{'MAP_EDITOR.DOWNLOAD_ASSETS' | translate}}</button>
               </div>
             </div>
 
