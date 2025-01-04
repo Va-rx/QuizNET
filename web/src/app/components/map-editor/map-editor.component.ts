@@ -28,8 +28,20 @@ export class MapEditorComponent implements OnInit {
     map: null
   };
 
+  colors:Array<String>=["Blue","Camo","Desert","Purple","Red"]
+
   filesStructure = [
-    // { folder: 'tanks', name: 'ammo.png', path: 'assets/games/tankgame/ammo.png' },
+    ...this.colors.map(color => ({
+      folder: 'tanks',
+      name: `${color}/towers_walls_blank.png`,
+      path: `assets/games/tankgame/${color}/Towers/towers_walls_blank.png`
+    })),
+    { folder: 'tanks', name: 'terrain.png', path: 'assets/games/tankgame/Terrains/terrain.png' },
+    { folder: 'tanks', name: 'ammo.png', path: 'assets/games/tankgame/ammo.png' },
+    { folder: 'tanks', name: 'health.png', path: 'assets/games/tankgame/health.png' },
+    { folder: 'tanks', name: 'Poradnik.pdf', path: 'assets/games/tankgame/Poradnik.pdf' },
+    { folder: 'tanks', name: 'star.png', path: 'assets/games/tankgame/star.png' },
+    { folder: 'tanks', name: 'bomb.png', path: 'assets/games/tankgame/bomb.png' },
 
     // { folder: 'deathmatch', name: 'plik2.jpg', path: 'assets/folder/plik2.jpg' },
 
@@ -59,7 +71,7 @@ export class MapEditorComponent implements OnInit {
       },
     ];
    }
-  
+
   ngOnInit(): void {
     this.loadLevels();
     this.loadGames();
@@ -78,7 +90,7 @@ export class MapEditorComponent implements OnInit {
   loadGames(): void {
     this.gamesService.getAllGames().subscribe((data: any[]) => {
       this.games = data;
-  
+
     });
   }
 
@@ -102,7 +114,7 @@ export class MapEditorComponent implements OnInit {
           map: null
         };
         this._snackBar.open(text ? text: '', close ? close: '');
-    
+
       }
     });
   }
@@ -113,7 +125,7 @@ export class MapEditorComponent implements OnInit {
 
   deleteLevel(level: Level) {
     if (level.id) {
-      
+
       this.levelService.deleteLevel(level.id).subscribe((deleted) => {
         console.log(deleted);
         if (deleted) {
