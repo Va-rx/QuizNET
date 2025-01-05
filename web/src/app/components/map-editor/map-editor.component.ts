@@ -39,7 +39,7 @@ export class MapEditorComponent implements OnInit {
     { folder: 'tanks', name: 'terrain.png', path: 'assets/games/tankgame/Terrains/terrain.png' },
     { folder: 'tanks', name: 'ammo.png', path: 'assets/games/tankgame/ammo.png' },
     { folder: 'tanks', name: 'health.png', path: 'assets/games/tankgame/health.png' },
-    { folder: 'tanks', name: 'Poradnik.pdf', path: 'assets/games/tankgame/Poradnik.pdf' },
+    { folder: 'tanks', name: 'tanks-map-guide.pdf', path: 'assets/games/tankgame/Poradnik.pdf' },
     { folder: 'tanks', name: 'star.png', path: 'assets/games/tankgame/star.png' },
     { folder: 'tanks', name: 'bomb.png', path: 'assets/games/tankgame/bomb.png' },
 
@@ -52,8 +52,12 @@ export class MapEditorComponent implements OnInit {
     { folder: 'platformer', name: 'Terrain.png', path: 'assets/games/platformer/tilesets/Terrain.png' },
     { folder: 'platformer', name: 'Spikes.png', path: 'assets/games/platformer/tilesets/Spikes.png' },
     { folder: 'platformer', name: 'Platform.png', path: 'assets/games/platformer/tilesets/platforms/Off.png' },
-    { folder: 'platformer', name: 'Saw.png', path: 'assets/games/platformer/tilesets//Off.png' },
-    //PDF DO PLATFORMERA,
+    { folder: 'platformer', name: 'Saw.png', path: 'assets/games/platformer/tilesets/Off.png' },
+    { folder: 'platformer', name: 'platformer-map-guide.pdf', path: 'assets/games/platformer/Poradnik.pdf' },
+    { folder: 'platformer', name: 'map-1.json', path: 'assets/games/platformer/levels/map-1.json' },
+    { folder: 'platformer', name: 'map-2.json', path: 'assets/games/platformer/levels/map-2.json' },
+    { folder: 'platformer', name: 'map-3.json', path: 'assets/games/platformer/levels/map-3.json' },
+    { folder: 'platformer', name: 'platformer-maps.txt', path: 'assets/games/platformer/gotowe-mapy.txt'}
   ];
 
   constructor(private gamesService: GamesService, private levelService: LevelService, private _snackBar: MatSnackBar, private translateService: TranslateService) {

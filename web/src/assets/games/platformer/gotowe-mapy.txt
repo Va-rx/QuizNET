@@ -1,0 +1,16 @@
+Wraz z aplikacją przygotowane są mapy:
+
+1. map-1
+nazwa: wspinaczka
+poziom trudności: łatwy
+sugerowany czas gry: 1min
+
+2. map-2
+nazwa: symetryczny las
+poziom trudności: średni
+sugerowany czas gry: 2min
+
+3. map-3
+nazwa: hurtownia
+poziom trudności: trudny
+sugerowany czas gry: 3min
