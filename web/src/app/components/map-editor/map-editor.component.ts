@@ -43,7 +43,11 @@ export class MapEditorComponent implements OnInit {
     { folder: 'tanks', name: 'star.png', path: 'assets/games/tankgame/star.png' },
     { folder: 'tanks', name: 'bomb.png', path: 'assets/games/tankgame/bomb.png' },
 
-    // { folder: 'deathmatch', name: 'plik2.jpg', path: 'assets/folder/plik2.jpg' },
+    { folder: 'deathmatch', name: 'fences.png', path: 'assets/games/multiplayergame/Map/fences.png' },
+    { folder: 'deathmatch', name: 'grass.png', path: 'assets/games/multiplayergame/Map/grass.png' },
+    { folder: 'deathmatch', name: 'plains.png', path: 'assets/games/multiplayergame/Map/plains.png' },
+    { folder: 'deathmatch', name: 'player.png', path: 'assets/games/multiplayergame/Player/player.png' },
+    { folder: 'deathmatch', name: 'star.png', path: 'assets/games/tankgame/star.png' },
 
     { folder: 'platformer', name: 'Terrain.png', path: 'assets/games/platformer/tilesets/Terrain.png' },
     { folder: 'platformer', name: 'Spikes.png', path: 'assets/games/platformer/tilesets/Spikes.png' },
