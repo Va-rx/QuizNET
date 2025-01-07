@@ -8,7 +8,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
-import { GameComponent } from './components/game/game.component';
 import { TankGameComponent } from './components/tank-game/tank-game.component';
 import { SocketServiceService } from './services/socket/socket-service.service';
 import { QuestionViewComponent } from './components/question-view/question-view.component';
@@ -60,7 +59,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     AppComponent,
     CreateLobbyComponent,
     JoinLobbyComponent,
-    GameComponent,
     TankGameComponent,
     QuestionViewComponent,
     AnswerViewComponent,

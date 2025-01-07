@@ -72,7 +72,6 @@ router.get("/:id/details", async (req, res) => {
     const id = req.params.id;
     try {
         const test_details = (await getTestDetails(id));
-        // dodać ewentualnie czy dobry test_id
         res.status(200).send(test_details);
     } catch (error)  {
         console.error(error);

@@ -10,7 +10,7 @@ import { NavbarService } from '../../services/navbar/navbar.service';
 export class ScoreboardComponent implements OnChanges,OnInit {
   @Input() scoreboard: Map<string, [number, number]> = new Map<string, [number, number]>();
   @Input() currentPlayer: string = '';
-  @Input() totalScore: number = 0;//max amount of points
+  @Input() totalScore: number = 0;
   @Input() bonusScore: number = 0;
   @Input() testName: string = '';
   currentPlayerScore: number = 0;
@@ -41,10 +41,6 @@ export class ScoreboardComponent implements OnChanges,OnInit {
     this.currentPlayerPercentage = (this.currentPlayerScore / this.totalScore) * 100;
     this.currentPlayerScoreOnlyQuestions = this.currentPlayerScore - this.bonusScore;
     this.timeSpent = playerScore ? playerScore[1] : 0;
-
-    console.log(this.currentPlayerScore);
-    console.log(this.bonusScore)
-    console.log(this.currentPlayerScoreOnlyQuestions);
   }
 
   get sortedScoreboard(): { key: string, value: [number, number] }[] {

@@ -15,7 +15,6 @@ export class ShareHealthComponent {
   }
 
 }
-
 export enum ShareHealthAnswer {
   NO,
   YES,

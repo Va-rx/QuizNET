@@ -9,11 +9,10 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    methods: ["GET", "POST", "DELETE", "PUT"], // Allow GET and POST requests
+    methods: ["GET", "POST", "DELETE", "PUT"],
   },
 });
 var corsOptions = {
-  // Origin: "http://72.145.1.108:8081" bez tego działa
 };
 
 var timerValue = 0;
@@ -193,7 +192,7 @@ io.on("connection", (socket) => {
       switch (shareType) {
         case ShareHealthAnswer.YES:
           const randomPlayer = filteredPlayers[Math.floor(Math.random() * filteredPlayers.length)];
-          players[randomPlayer.id].hp = Math.min(players[randomPlayer.id].hp + players[playerId].hp, players[randomPlayer.id].maxHealth); // Adjust the health value as needed
+          players[randomPlayer.id].hp = Math.min(players[randomPlayer.id].hp + players[playerId].hp, players[randomPlayer.id].maxHealth); 
           io.emit('healthShared', [{ id: randomPlayer.id, hp: players[randomPlayer.id].hp }]);
           break
         case ShareHealthAnswer.SPLIT:
@@ -226,20 +225,14 @@ io.on("connection", (socket) => {
   })
 
   // #endregion
-  //Handle Health sharing
   socket.on("shareHealth",(userName,join_code)=>{
     const session = sessions.get(join_code);
     const filteredUsers = session.users
     .map((socket) => socketToUser.get(socket))
     .filter((user) => user !== userName && user !== 'Creator');
 
-    console.log(filteredUsers);
-
     if (filteredUsers.length > 0) {
       const randomUser = filteredUsers[Math.floor(Math.random() * filteredUsers.length)];
-      console.log(randomUser);
-      console.log(userToSocket.get(randomUser))
-      console.log(userToSocket)
       userToSocket.get(randomUser).user[0].emit("receiveHealth",userName);
     } else {
       console.log("No valid users found.");
@@ -248,7 +241,6 @@ io.on("connection", (socket) => {
 
   })
   
-  // Handle event coordinator request for join code
   socket.on("requestJoinCode", (userName, lobbyName) => {
     console.log(
       "Event coordinator requested a join code" +
@@ -258,24 +250,21 @@ io.on("connection", (socket) => {
         lobbyName
     );
     const joinCode = generateJoinCode();
-    // Create a new session with the join code and an empty user list
     sessions.set(joinCode, { users: [socket], scoreBoard: new Map() });
-    //map userName or userToken to socket, assuming userName is unique
     userToSocket.set(userName, { user: [socket] });
     socketToUser.set(socket, userName);
     socket.emit("joinCode", joinCode);
   });
 
-  // Handle event participant request to join the event
   socket.on("joinByCode", (joinCode, userName) => {
     console.log(
       `Event participant: ${userName} requested to join event with join code: ${joinCode}`
     );
     const session = sessions.get(joinCode);
     if (session) {
-      userToSocket.set(userName, { user: [socket] }); // TODO: dodac usuwanie z tego mappingu po disconnect
-      socketToUser.set(socket, userName); // TODO: dodac usuwanie z tego mappingu po disconnect
-      if(!session.users.includes(socket)){ // FIX tego jak ktoś spróbuje dołączyć kilka razy na ten sam kod
+      userToSocket.set(userName, { user: [socket] });
+      socketToUser.set(socket, userName);
+      if(!session.users.includes(socket)){
         session.users.push(socket);
       }
       console.log("Event participant joined the event");
@@ -352,7 +341,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("userScoreUpdate", (userName, userScore, joinCode, isFinishedGame) => {
-    console.log(`User: ${userName} current score: ${userScore}`);
     const session = sessions.get(joinCode);
     if (session) {
       session.scoreBoard.set(userName, [userScore, isFinishedGame ? gameTime - timerValue : 0]);
@@ -396,12 +384,10 @@ io.on("connection", (socket) => {
   
 });
 
-// Start the HTTP server
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
-// TODO: zastapic to funkjca taka jak ma byc porzadna
 function generateJoinCode() {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

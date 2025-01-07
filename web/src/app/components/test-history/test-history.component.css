@@ -23,7 +23,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  height: 100px; /* adjust height as needed */
+  height: 100px;
 }
 
 .text-truncate {

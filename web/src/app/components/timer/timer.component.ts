@@ -14,12 +14,12 @@ import { SocketServiceService } from 'src/app/services/socket/socket-service.ser
   font-size: 2em;
   position: fixed;
   top: 1%;
-  left: 50%; /* Position at the center horizontally */
-  transform: translateX(-50%); /* Adjust by half of the element's width */
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 32px;
-  font-weight: bold; /* Makes the font bold */
+  font-weight: bold;
   color: #ffffff;
-  text-shadow: 2px 2px 2px #000000; /* Adds shadow with offset and blur */
+  text-shadow: 2px 2px 2px #000000;
 }
   `]
 })
@@ -35,9 +35,8 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.displayTime = this.formatTime(this.seconds);//new
+    this.displayTime = this.formatTime(this.seconds);
     this.socket = this.socketService.getSocket();
-    //this.startTimer(this.seconds); LEGACY TIMER
     this.socket.on("timer-update",(timeValue)=>{
       this.displayTime = this.formatTime(timeValue);
       if(timeValue == 0){

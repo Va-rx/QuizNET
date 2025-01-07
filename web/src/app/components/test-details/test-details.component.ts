@@ -160,7 +160,6 @@ export class TestDetailsComponent implements OnInit {
 
   createAddAnswer() {
     this.selectedQuestion.answers.push(new Answer(this.selectedQuestion.id));
-    console.log(this.selectedQuestion.answers);
   }
 
   deleteAnswer(answer: Answer) {

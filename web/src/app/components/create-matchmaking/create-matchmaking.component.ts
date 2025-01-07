@@ -20,7 +20,7 @@ export class CreateMatchmakingComponent implements OnInit {
   timerControl = new FormControl(1);
   selectedGame: any;
   selectedLevels: Level[] = [];
-  isSubmitted = false;// DEBUG: TRUE return to false in PROD env
+  isSubmitted = false;
   @ViewChild('targetSection') targetSection!: ElementRef;
   responsiveOptions;
   chosenTestNumberOfQuestion: number = 0;
@@ -133,8 +133,7 @@ export class CreateMatchmakingComponent implements OnInit {
           'PLATFORMER.LEVEL_SPEED_BONUS': this.platformerLevelSpeedBonus.value / 100,
         }
       }
-
-      console.log('Submitting:', data);
+      
       this.isSubmitted = true;
     } else {
       console.log('Please select all required fields.');

@@ -38,10 +38,9 @@ export class LiveScoreBoardComponent implements AfterViewInit, OnChanges {
 
     if (this.sort) {
       setTimeout(() => {
-      // Set the initial sort to 'score' column in descending order
       this.sort.active = 'score';
       this.sort.direction = 'desc';
-      this.sort.sortChange.emit(); // Trigger data sorting
+      this.sort.sortChange.emit();
       });
     }
   }

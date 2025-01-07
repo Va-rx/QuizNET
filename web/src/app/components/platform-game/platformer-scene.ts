@@ -38,7 +38,6 @@ export default class platformerScene extends Phaser.Scene {
 
     constructor(config: Phaser.Types.Scenes.SettingsConfig, levelsData) {
         super(config);
-        console.log(levelsData);
         this.levelsData = levelsData;
     }
 

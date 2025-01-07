@@ -1,4 +1,3 @@
-import {SocketServiceService} from "../../services/socket/socket-service.service";
 import Phaser from "phaser";
 import {Socket} from "socket.io-client";
 import Pointer = Phaser.Input.Pointer;
@@ -138,14 +137,6 @@ export default class multiplayerScene extends Phaser.Scene {
     rt.mask = new Phaser.Display.Masks.GeometryMask(this, this.player.vision)
     rt.mask.invertAlpha = true
     this.cameras.main.startFollow(this.player.sprite, true);
-
-    // fill it with black
-
-
-    // draw the floorLayer into it
-    //
-    //
-    // set a dark blue tint
     rt.setTint(0x0a2948)
     rt.setDepth(4)
 

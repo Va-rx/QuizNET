@@ -24,9 +24,7 @@ export class Player {
   isAnswering: boolean = false;
   canCollectStar: boolean = false;
 
-  // Offensive
   offensivePowerUps: string[] = ['damage', 'attackRange'];
-  // Defensive
   defensivePowerUps: string[] = ['health', 'speed'];
 
   constructor(sprite: Phaser.GameObjects.Sprite, nickname: string, health: number, id: string, vision) {
@@ -57,8 +55,6 @@ export class Player {
     this.healthBar.setVisible(false);
   }
 
-
-  // Used only after collecting star
   public showPlayer(): void{
     this.isAnswering = false;
     this.isTargetable = true;

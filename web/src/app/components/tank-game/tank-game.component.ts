@@ -39,7 +39,7 @@ export class TankGameComponent implements OnInit {
   turretsDestroyed: number = 0;
   totalTurrets: number = 0;
   testMaxPoints: number = 0;
-  timer: number = 900; //IN SECONDS
+  timer: number = 900;
   timerEnded:boolean=false;
   timerStarted:boolean=false;
   totalStars:number=0;
@@ -69,9 +69,7 @@ export class TankGameComponent implements OnInit {
   async ngOnInit() {
     this.navbarService.hideNavbar();
     this.socket = this.socketService.getSocket();
-    //this.testID= this.route.snapshot.params["id"];
     this.testID=history.state.data.testId;
-    //this.testID=1;
     this.historyTestId = history.state.data.testHistoryId;
     this.levelMap = history.state.data.levelsData[0].map;
     this.timer=history.state.data.timer;
@@ -79,7 +77,6 @@ export class TankGameComponent implements OnInit {
     this.shuffleAnswers = history.state.data.shuffleAnswers;
     this.config = {
       type: Phaser.AUTO,
-      //height as window
       height: this.startingHeight,
       width: this.startingWidth,
       physics: {
@@ -98,13 +95,11 @@ export class TankGameComponent implements OnInit {
         target: 60,
         forceSetTimeOut: true
       },
-      scene: [new Tanks({key: 'Tanks'}, this.levelMap), UIScene], // Use Example scene here
+      scene: [new Tanks({key: 'Tanks'}, this.levelMap), UIScene],
     };
     this.nickname = this.auth.getNickname();
 
     this.phaserGame = new Phaser.Game(this.config);
-   
-    //Sometime there is problem with loading it at scene start, this fixes it
 
     await this.loadTestDetails();
     await this.sleep(1000);
@@ -113,8 +108,6 @@ export class TankGameComponent implements OnInit {
       this.timerStarted=true;
     }
     this.phaserGame.scene.game.events.on('levelCompleted_SpawnQuestion', (id) => {
-      //freeze game for question time
-
       let question;
       this.phaserGame.pause();
       if (this.shuffleQuestions) {
@@ -134,41 +127,29 @@ export class TankGameComponent implements OnInit {
       });
       this.currentLevel++;
       dialogRef.afterClosed().subscribe(result => {
-        console.log(`Dialog result: ${result}`);
-        console.log(result);
         this.playerScore += result;
         this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.playerScore, this.socketService.getJoinCode(), false)
-        //resume game
         this.phaserGame.resume();
-        if (this.currentLevel == this.maxLevel) {//REVERT THIS TO ==this.maxLevel for user experience
+        if (this.currentLevel == this.maxLevel) {
             this.finishGame();
         }
       });
     });
 
     this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
-      console.log(jsonScoreBoard);
-
       this.scoreBoardMap = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
       this.scoreBoard = Object.entries(JSON.parse(jsonScoreBoard)).map(([username, score]) => ({ username, score }));
-      console.log(this.scoreBoard);
     }
 
     );
 
     this.phaserGame.scene.game.events.on('shareHealth', () => {
-      console.log("SHARING HEALTH WITH OTHER USER")
-      console.log(this.nickname)
       this.socket.emit('shareHealth', this.nickname,this.socketService.getJoinCode())
     })
 
     this.socket.on('receiveHealth', (userName) => {
-      console.log("You received apteczka from user: " + userName);
       this.phaserGame.events.emit("receiveHealth_inPhaser", userName)
     })
-
-
-
   }
 
   async loadTestDetails() {
@@ -188,13 +169,11 @@ export class TankGameComponent implements OnInit {
   }
 
   onTimerEnded(){
-    console.log("TIMER ENDED IN TANK_GAME");
     this.timerEnded=true;
     this.finishGame();
   }
 
   async finishGame(){
-    console.log("Game Over");
     this.timerEnded=true;
     let results = JSON.parse(this.userAnswersService.getWrappedResult(this.historyTestId));
 

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { JoinLobbyComponent } from './components/join-lobby/join-lobby.component';
-import { GameComponent } from './components/game/game.component';
 import { TankGameComponent } from './components/tank-game/tank-game.component';
 import { CreateMatchmakingComponent } from './components/create-matchmaking/create-matchmaking.component';
 import { TestsComponent } from './components/tests/tests.component';
@@ -26,7 +25,6 @@ const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [authGuard] },
   { path: 'create-lobby', component: CreateLobbyComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'join-lobby', component: JoinLobbyComponent, canActivate: [authGuard]},
-  { path: 'game', component: GameComponent, canActivate: [authGuard]},
   { path: 'tank-game', component: TankGameComponent, canActivate: [authGuard]},
   { path :'create-matchmaking', component: CreateMatchmakingComponent, canActivate: [authGuard, RoleGuard]},
   { path: 'tank-game/:id', component: TankGameComponent, canActivate: [authGuard]},
@@ -40,7 +38,7 @@ const routes: Routes = [
   { path: 'test-history/:id', component: TestHistoryListComponent, canActivate: [authGuard, RoleGuard] },
   { path: 'deathmatch', component: MultiplayerGameComponent, canActivate: [authGuard]},
   { path: 'map-editor', component: MapEditorComponent, canActivate: [authGuard, RoleGuard]},
-  { path: 'platformer', component: PlatformGameComponent},
+  { path: 'platformer', component: PlatformGameComponent, canActivate: [authGuard]},
 ];
 
 @NgModule({

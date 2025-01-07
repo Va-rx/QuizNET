@@ -1,5 +1,3 @@
-import { max } from "rxjs";
-
 class EnemyTurret {
   index;
   game;
@@ -21,10 +19,6 @@ class EnemyTurret {
     this.range = range;
     this.x = x + game.cameras.main.scrollX;
     this.y = y + game.cameras.main.scrollY;
-    //draw circle of turret range, for debug purposes
-    //const circle = new Phaser.Geom.Circle(this.x, this.y, this.range);
-    //const graphics = game.add.graphics({ lineStyle: { color: 0xff0000 } });
-    //graphics.strokeCircleShape(circle);
 
     this.enemyShot = game.sound.add('enemyShot', {
       volume: 0.1
@@ -33,7 +27,6 @@ class EnemyTurret {
     this.index = index;
     this.player = player;
     this.turret = game.add.sprite(this.x, this.y, 'tankTurret', 0);
-    //console.log(this.turret);
     this.turret.anims.create({
       key: 'shoot',
       frames: this.game.anims.generateFrameNumbers('tankTurret', { start: 0, end: 7 }),
@@ -53,7 +46,6 @@ class EnemyTurret {
 
         if (bodyB.gameObject) {
           if (bodyB.gameObject.name == 'bulletPlayer') {
-            //console.log('Player bullet collided with Turret');
             if (bodyB.gameObject.label == 'bullet') {
               //PLAYER HIT DAMAGE = 10
               this.health -= this.game.playerBulletDmg;
@@ -84,7 +76,6 @@ class EnemyTurret {
       this.game.BARTLE_turrets_destroyed += 1;
       this.turret.destroy();
       this.healthBar.clear();
-      //destroy whole object
       this.game.matter.world.remove(this.emptyBody);
       this.disabled = true;
       return;
@@ -117,14 +108,9 @@ class EnemyTurret {
         this.enemyShot.play();
         this.turret.anims.play('shoot', true);
         this.nextFire = this.game.time.now + this.fireRate;
-        //var bullet = this.bullets.getFirst();
         var bullet = this.game.matter.add.image(128, 128, 'bullet');
         bullet.setPosition(this.turret.x, this.turret.y);
         bullet.setSensor(true);
-        //bullet.setMass(0.000000000000000000000000000001);
-        //bullet.thrust(0.0002);
-        //bullet.setVelocityX(-10);
-        //bullet.setVelocityY(-10);
         const deltax = this.player.x - bullet.x;
         const deltay = this.player.y - bullet.y;
         const bulletSpeed = 50;
@@ -134,7 +120,6 @@ class EnemyTurret {
         const yVelocity = normalizedDeltay * bulletSpeed;
 
         bullet.setVelocity(xVelocity, yVelocity);
-        //bullet.setCollidesWith(0);
         bullet.label = "bullet";
 
         bullet.setOnCollide(pair => {
@@ -180,8 +165,6 @@ class Checkpoint {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject) {
           if (bodyA.gameObject.label == 'tankPlayer') {
-            console.log('LEVEL ' + id + ' COMPLETED, QUESSTION HERE!');
-
             //emit level complete event
             if (!this.finsihsed) {
               this.game.tankSound.pause()
@@ -275,7 +258,6 @@ export default class Tanks extends Phaser.Scene {
 
 
     this.game.events.on("receiveHealth_inPhaser", (userName) => {
-      console.log("IN GAME RECEIVE MEDKIT WORKS" + userName)
       this.pickedUpHealth += 1;
       this.events.emit("updateMedkits", this.pickedUpHealth)
       this.drawDialogMsg(userName);
@@ -297,7 +279,6 @@ export default class Tanks extends Phaser.Scene {
     const coordinatesArray: { x: number; y: number }[] = [];
     const checkpointCoordinatesArray: { x: number; y: number }[] = [];
 
-    // Generate a tilemap
     let mappy = this.make.tilemap({ key: 'map' });
     let terrain = mappy.addTilesetImage('terrain', 'terrain');
     let towers = mappy.addTilesetImage('towers_walls_blank', 'towers_walls_blank');
@@ -346,7 +327,6 @@ export default class Tanks extends Phaser.Scene {
     this.tankBody.setMass(1000);
     this.tankBody.setFriction(0.3);
     this.tankBody.label = "tankPlayer";
-    //this.cameras.main.startFollow(this.tankBody, true);
     this.cameras.main.setBounds(0, 0, 11000, 800);
     this.cameras.main.startFollow(this.tankBody, true);
     if (this.input.keyboard) {
@@ -369,93 +349,28 @@ export default class Tanks extends Phaser.Scene {
     });
 
     this.input.on('pointerdown', () => {
-      //x,y plus camera scroll
-      console.log(this.input.activePointer.x + this.cameras.main.scrollX, this.input.activePointer.y + this.cameras.main.scrollY);
       if (this.time.now > this.nextFire) {
         this.tankTurret.anims.play('shoot', true);
       }
     });
-
-    //this.testEnemyTurret = new EnemyTurret(0, this, this.tankBody, 800, 575);
-    /////////////////////ENERMY TURRETS////////////////////////
-    ////////////////////LEVEL 1///////////////////////////////
     coordinatesArray.forEach((coord, index) => {
       this.enemyTurrets.push(new EnemyTurret(index, this, this.tankBody, coord.x, coord.y, 350));
   });
   checkpointCoordinatesArray.forEach((coord, index) => {
    this.checkpointsArray.push(new Checkpoint(coord.x,coord.y,this,index+1,this.tankBody));
-});    //this.enemyTurrets.push(new EnemyTurret(0, this, this.tankBody, 800, 575, 450));
-    //this.enemyTurrets.push(new EnemyTurret(1, this, this.tankBody, 435, 270, 300));
-    //this.enemyTurrets.push(new EnemyTurret(2, this, this.tankBody, 640, 270, 300));
-    //this.enemyTurrets.push(new EnemyTurret(3, this, this.tankBody, 1120, 115, 700));
-    //this.enemyTurrets.push(new EnemyTurret(4, this, this.tankBody, 60, 430, 300));
-    //this.enemyTurrets.push(new EnemyTurret(5, this, this.tankBody, 286, 705, 400));
-    //checkpointsArray.push(new Checkpoint(1270, 270, this, 1, this.tankBody));
-    ////////////////////LEVEL 2///////////////////////////////
-    //this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501, 381, 300));
-    ////this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502, 590, 300));
-    //this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757, 240, 300));
-    //this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760, 430, 300));
-    //this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015, 493, 300));
-    //checkpointsArray.push(new Checkpoint(2109, 675, this, 2, this.tankBody));
-    ////////////////////LEVEL 3///////////////////////////////
-    //this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319, 190, 300));
-    //this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350, 557, 300));
-    //this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509, 559, 300));
-    //this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668, 559, 300));
-    //checkpointsArray.push(new Checkpoint(2894, 506, this, 3, this.tankBody));
-    ////////////////////LEVEL 4///////////////////////////////
-    //this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117, 591, 300));
-    //this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375, 237, 300));
-    //this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628, 494, 300));
-    //this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373, 429, 300));
-    //checkpointsArray.push(new Checkpoint(3722, 673, this, 4, this.tankBody));
-    ////////////////////LEVEL 5///////////////////////////////
-    //this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046, 416, 450));
-    //this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807, 110, 450));
-    //checkpointsArray.push(new Checkpoint(4123, 163, this, 5, this.tankBody));
-
+}); 
     const offset = 2962;
-
-    ////////////////////LEVEL 6///////////////////////////////
-    //this.enemyTurrets.push(new EnemyTurret(6, this, this.tankBody, 1501 + offset, 381, 300));
-    ////this.enemyTurrets.push(new EnemyTurret(7, this, this.tankBody, 1502 + offset, 590, 300));
-    ////this.enemyTurrets.push(new EnemyTurret(8, this, this.tankBody, 1757 + offset, 240, 300));
-    ////this.enemyTurrets.push(new EnemyTurret(9, this, this.tankBody, 1760 + offset, 430, 300));
-    //this.enemyTurrets.push(new EnemyTurret(10, this, this.tankBody, 2015 + offset, 493, 300));
-    //checkpointsArray.push(new Checkpoint(2109 + offset, 675, this, 6, this.tankBody));
-    ////////////////////LEVEL 7///////////////////////////////
-    //this.enemyTurrets.push(new EnemyTurret(11, this, this.tankBody, 2319 + offset, 190, 300));
-    //this.enemyTurrets.push(new EnemyTurret(12, this, this.tankBody, 2350 + offset, 557, 300));
-    //this.enemyTurrets.push(new EnemyTurret(13, this, this.tankBody, 2509 + offset, 559, 300));
-    //this.enemyTurrets.push(new EnemyTurret(14, this, this.tankBody, 2668 + offset, 559, 300));
-    //checkpointsArray.push(new Checkpoint(2894 + offset, 506, this, 7, this.tankBody));
-    ////////////////////LEVEL 8///////////////////////////////
-    //this.enemyTurrets.push(new EnemyTurret(15, this, this.tankBody, 3117 + offset, 591, 300));
-    //this.enemyTurrets.push(new EnemyTurret(16, this, this.tankBody, 3375 + offset, 237, 300));
-    //this.enemyTurrets.push(new EnemyTurret(17, this, this.tankBody, 3628 + offset, 494, 300));
-    //this.enemyTurrets.push(new EnemyTurret(18, this, this.tankBody, 3373 + offset, 429, 300));
-    //checkpointsArray.push(new Checkpoint(3722 + offset, 673, this, 8, this.tankBody));
-    ////////////////////LEVEL 9///////////////////////////////
-    //this.enemyTurrets.push(new EnemyTurret(19, this, this.tankBody, 4046 + offset, 416, 450));
-    //this.enemyTurrets.push(new EnemyTurret(20, this, this.tankBody, 3807 + offset, 110, 450));
-    //checkpointsArray.push(new Checkpoint(4123 + offset, 163, this, 9, this.tankBody));
-    ///////////////////////////////////////////////////////////
     this.matter.world.on('collisionstart', (event) => {
       const pairs = event.pairs;
       pairs.forEach((pair) => {
         const { bodyA, bodyB } = pair;
         if (bodyA.gameObject && bodyB.gameObject) {
           if (bodyA.gameObject.name == 'bulletPlayer' && bodyB.gameObject.label == 'stationaryObject' || bodyA.gameObject.label == 'stationaryObject' && bodyB.gameObject.name == 'bulletPlayer') {
-            //console.log('Player bullet collided with stationary object');
             if (bodyA.gameObject.label == 'bullet') {
-
               bodyA.gameObject.destroy();
-
             }
             else {
               bodyB.gameObject.destroy();
-
             }
           }
         }
@@ -474,11 +389,8 @@ export default class Tanks extends Phaser.Scene {
     this.allTurrets = this.enemyTurrets.length;
 
     this.game.events.on("getTimer", (timer,max_level) => {
-      console.log("gottime");
       this.timer = timer;
-      console.log(this.timer)
       this.max_level=max_level;
-      console.log(this.max_level);
       const count = this.enemyTurrets.filter(turret => turret.x < this.checkpointsArray[this.max_level-1].x).length;
       this.allTurrets=count;
       this.events.emit("set_ui_max_level",max_level)
@@ -503,11 +415,8 @@ export default class Tanks extends Phaser.Scene {
     } else {
       this.updateReloadTimer(1);
     }
-    //console.log(this.tankSound.rate,this.tankSound.volume)
     this.tankTurret.x = this.tankBody.x;
     this.tankTurret.y = this.tankBody.y;
-    //this.testEnemyTurret.update();
-    //this.testEnemyTurret.fire();
     this.enemyTurrets.forEach(turret => {
       turret.update();
       turret.fire();
@@ -588,15 +497,12 @@ export default class Tanks extends Phaser.Scene {
       if (bodyA.gameObject && bodyB.gameObject) {
         if ((bodyA.gameObject.label == 'tankPlayer' && bodyB.gameObject.label == 'bullet') ||
           (bodyA.gameObject.label == 'bullet' && bodyB.gameObject.label == 'tankPlayer')) {
-          //console.log('Tank hit by bullet!');
           if (bodyB.gameObject.label == 'bullet') {
             bodyB.gameObject.destroy();
-            //TURRET HIT DAMAGE = 10
             this.playerHealth -= 25;
             if (this.playerHealth <= 0) {
               this.playerHealth = 100;
               this.deaths++;
-              //emit death event
               this.events.emit('updateDeaths', this.deaths);
               this.tankBody.setPosition(128, 128);
             }
@@ -608,7 +514,6 @@ export default class Tanks extends Phaser.Scene {
             if (this.playerHealth <= 0) {
               this.playerHealth = 100;
               this.deaths++;
-              //emit death event
               this.events.emit('updateDeaths', this.deaths);
               this.tankBody.setPosition(128, 128);
             }
@@ -631,20 +536,18 @@ export default class Tanks extends Phaser.Scene {
   }
 
   updateReloadTimer(percentage) {
-    const radius = 30; // Radius of the circular timer
-    const thickness = 6; // Thickness of the circular timer
+    const radius = 30;
+    const thickness = 6;
     const x_cord = 50;
     const y_cord = 150;
-    // Clear previous graphics
+
     this.reloadTimerGraphics.clear();
 
-    // Draw the background circle (full circle)
     this.reloadTimerGraphics.lineStyle(thickness, 0x000000, 0.5);
     this.reloadTimerGraphics.beginPath();
     this.reloadTimerGraphics.arc(x_cord, y_cord - 50, radius, 0, Phaser.Math.DegToRad(360), false);
     this.reloadTimerGraphics.strokePath();
 
-    // Draw the foreground circle (progress arc)
     this.reloadTimerGraphics.lineStyle(thickness, 0x00ff00, 1);
     this.reloadTimerGraphics.beginPath();
     this.reloadTimerGraphics.arc(
@@ -659,7 +562,6 @@ export default class Tanks extends Phaser.Scene {
   }
 
   onWindowResize() {
-    //change size of game
     this.game.scale.resize(window.innerWidth, Math.min(window.innerHeight - 80, 800));
   }
 
@@ -692,7 +594,6 @@ export default class Tanks extends Phaser.Scene {
     if (this.playerHealth > 100) {
       this.playerHealth = 100;
     }
-    //emit event to update health bar
     this.events.emit('updateHealth', this.playerHealth);
   }
 
@@ -702,7 +603,6 @@ export default class Tanks extends Phaser.Scene {
   }
 
   spawnPickups() {
-    // Ammo pickups
     this.ammoCoordinatesArray.forEach(cord => {
       let ammo = this.matter.add.image(cord.x, cord.y, 'ammo');
       ammo.setName('ammo');
@@ -727,9 +627,7 @@ export default class Tanks extends Phaser.Scene {
     });
     const filteredAmmoCoordinates:number = this.ammoCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
     this.allPickups += filteredAmmoCoordinates;
-    console.log("ammo:" + filteredAmmoCoordinates);
 
-    // Health pickups
     this.healthCoordinatesArray.forEach(cord => {
       let health = this.matter.add.image(cord.x, cord.y, 'health');
       health.setName('health');
@@ -757,7 +655,6 @@ export default class Tanks extends Phaser.Scene {
     this.allPickups += filteredHealthCoordinates;
     this.totalApteczkas=filteredHealthCoordinates;
 
-    // Star pickups
     this.starCoordinatesArray.forEach(cord => {
       let star = this.matter.add.image(cord.x, cord.y, 'star');
       star.setName('star');
@@ -783,16 +680,12 @@ export default class Tanks extends Phaser.Scene {
     const filteredStarCoordinates:number = this.starCoordinatesArray.filter(cord => cord.x <= this.checkpointsArray[this.max_level-1].x).length;
     this.allPickups += filteredStarCoordinates;
     this.totalStars=filteredStarCoordinates;
-    console.log("star:" + filteredStarCoordinates);
 
   }
 
 
   drawDialogMsg(userName) {
-    // Get the main camera
     const camera = this.cameras.main;
-
-    // Create a dialog box and position it relative to the camera's center
     const dialogBox = this.add.text(
       camera.worldView.x + camera.width / 2,
       camera.worldView.y + camera.height / 2,
@@ -806,12 +699,10 @@ export default class Tanks extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
-    // Automatically destroy the dialog box after 3 seconds
     this.time.delayedCall(3000, () => {
       dialogBox.destroy();
     });
 
-    // Ensure the dialog box stays centered if the camera moves
     this.events.on('cameraupdate', () => {
       dialogBox.setPosition(
         camera.worldView.x + camera.width / 2,
@@ -821,7 +712,6 @@ export default class Tanks extends Phaser.Scene {
   }
 
   drawDialogMsg_share() {
-    // Get the center of the camera, not the game world
     const camera = this.cameras.main;
     const dialogBox = this.add.text(
       camera.worldView.x + camera.width / 2,
@@ -836,12 +726,10 @@ export default class Tanks extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
-    // Destroy the dialog box after 3 seconds
     this.time.delayedCall(3000, () => {
       dialogBox.destroy();
     });
 
-    // Ensure the dialog box follows the camera if it moves
     this.events.on('cameraupdate', () => {
       dialogBox.setPosition(
         camera.worldView.x + camera.width / 2,
@@ -851,30 +739,25 @@ export default class Tanks extends Phaser.Scene {
   }
 
   createTutorialDialog() {
-    // Get the screen dimensions
     const screenWidth = Number(this.sys.game.config.width);
     const screenHeight = Number(this.sys.game.config.height);
 
-    // Create a semi-transparent background to darken the game behind the dialog
     const backgroundOverlay = this.add.graphics();
     backgroundOverlay.fillStyle(0x000000, 0.5);
     backgroundOverlay.fillRect(0, 0, screenWidth, screenHeight);
 
-    // Create the dialog box graphics (background)
     const dialogWidth = 400;
     const dialogHeight = 300;
     const dialogX = (screenWidth / 2) - (dialogWidth / 2);
     const dialogY = (screenHeight / 2) - (dialogHeight / 2);
 
     const dialogBox = this.add.graphics().setDepth(1);
-    dialogBox.fillStyle(0x2d2d2d, 1); // Dark grey background
-    dialogBox.fillRoundedRect(dialogX, dialogY, dialogWidth, dialogHeight, 20); // Rounded corners
+    dialogBox.fillStyle(0x2d2d2d, 1);
+    dialogBox.fillRoundedRect(dialogX, dialogY, dialogWidth, dialogHeight, 20);
 
-    // Create a border around the dialog box
     dialogBox.lineStyle(4, 0xffffff, 1);
     dialogBox.strokeRoundedRect(dialogX, dialogY, dialogWidth, dialogHeight, 20);
 
-    // Define the tutorial text content
     const tutorialText =
       "Welcome to the Game!\n\n" +
       "In this game, you can pick up Medkits that will be added to your inventory.\n\n" +
@@ -889,22 +772,20 @@ export default class Tanks extends Phaser.Scene {
       wordWrap: { width: dialogWidth - 40, useAdvancedWrap: true }
     };
 
-    // Create the text object
+
     const tutorialTextObject = this.add.text(0, 0, tutorialText, tutorialTextStyle).setDepth(1);
 
-    // Measure the text size and adjust position to center it vertically within a specific area
     const textBounds = tutorialTextObject.getBounds();
-    const textMaxHeight = dialogHeight - 100; // Leave space for the button (around 100px)
+    const textMaxHeight = dialogHeight - 100;
 
     tutorialTextObject.setPosition(
-      dialogX + (dialogWidth / 2) - (textBounds.width / 2), // Center horizontally
-      dialogY + (textMaxHeight / 2) - (textBounds.height / 2) + 20 // Center vertically with padding
+      dialogX + (dialogWidth / 2) - (textBounds.width / 2),
+      dialogY + (textMaxHeight / 2) - (textBounds.height / 2) + 20
     );
 
-    // Add a close button (optional for display, but not required for closing the dialog)
     const closeButton = this.add.text(
       screenWidth / 2,
-      dialogY + dialogHeight - 40,  // Position the button below the text
+      dialogY + dialogHeight - 40, 
       "Click to Start",
       {
         fontSize: '22px',
@@ -914,7 +795,6 @@ export default class Tanks extends Phaser.Scene {
       }
     ).setOrigin(0.5).setDepth(1);
 
-    // Add an animation to the dialog box to fade in
     this.tweens.add({
       targets: [dialogBox, tutorialTextObject, closeButton],
       alpha: { from: 0, to: 1 },
@@ -922,10 +802,8 @@ export default class Tanks extends Phaser.Scene {
       ease: 'Power2'
     });
 
-    // Close the dialog when clicking anywhere on the backgroundOverlay
     backgroundOverlay.setInteractive(new Phaser.Geom.Rectangle(0, 0, screenWidth, screenHeight), Phaser.Geom.Rectangle.Contains);
     backgroundOverlay.once('pointerdown', () => {
-      // Fade out and destroy the dialog elements
       this.tweens.add({
         targets: [backgroundOverlay, dialogBox, tutorialTextObject, closeButton],
         alpha: { from: 1, to: 0 },
@@ -954,14 +832,14 @@ export class UIScene extends Phaser.Scene {
   levelText;
 
   ///Timer vars
-  timerText!: Phaser.GameObjects.Text;  // Text object to display the timer
-  totalTime!: number;  // Total time in seconds
-  timerEvent!: Phaser.Time.TimerEvent;  // Timer event for countdown
+  timerText!: Phaser.GameObjects.Text;
+  totalTime!: number;
+  timerEvent!: Phaser.Time.TimerEvent;
 
   //Qestions vars
-  questionsLeftText!: Phaser.GameObjects.Text; // Text object for questions left
-  totalQuestions: number = 0; // Total number of questions
-  currentQuestion: number = 0; // Current question index
+  questionsLeftText!: Phaser.GameObjects.Text;
+  totalQuestions: number = 0;
+  currentQuestion: number = 0;
 
   constructor() {
     super({ key: 'UIScene', active: true });
@@ -969,43 +847,39 @@ export class UIScene extends Phaser.Scene {
     this.score = 0;
   }
   preload() {
-    // Preload the health medkit image
     this.load.image('medkit', 'assets/games/tankgame/health.png');
   }
   create() {
-    //  Our Text object to display the Score
-    // Initial configuration of timer text
+
     this.timerText = this.add.text(this.cameras.main.width / 2, 20, '', {
       fontSize: '32px',
-      fontStyle: 'bold',     // Makes the font bold
+      fontStyle: 'bold',
       color: '#ffffff',
-      stroke: '#000000',     // Adds a black stroke around the text
-      strokeThickness: 4,    // The thickness of the stroke
+      stroke: '#000000', 
+      strokeThickness: 4, 
       shadow: {
-        offsetX: 2,          // Adds shadow offset horizontally
-        offsetY: 2,          // Adds shadow offset vertically
-        color: '#000000',     // Shadow color
-        blur: 2,             // Shadow blur radius
-        stroke: true,        // Shadow applies to the stroke
-        fill: true           // Shadow applies to the fill
+        offsetX: 2,
+        offsetY: 2,
+        color: '#000000',
+        blur: 2,
+        stroke: true,
+        fill: true
       }
     }).setOrigin(0.5, 0.5);
 
-
-    // Create the text object
     this.questionsLeftText = this.add.text(20, 20, '', {
       fontSize: '32px',
-      fontStyle: 'bold',     // Makes the font bold
+      fontStyle: 'bold',
       color: '#ffffff',
-      stroke: '#000000',     // Adds a black stroke around the text
-      strokeThickness: 4,    // The thickness of the stroke
+      stroke: '#000000',
+      strokeThickness: 4,
       shadow: {
-        offsetX: 2,          // Adds shadow offset horizontally
-        offsetY: 2,          // Adds shadow offset vertically
-        color: '#000000',     // Shadow color
-        blur: 2,             // Shadow blur radius
-        stroke: true,        // Shadow applies to the stroke
-        fill: true           // Shadow applies to the fill
+        offsetX: 2, 
+        offsetY: 2,   
+        color: '#000000', 
+        blur: 2,
+        stroke: true,
+        fill: true
       }
     });
 
@@ -1013,25 +887,17 @@ export class UIScene extends Phaser.Scene {
 
     const ourGame = this.scene.get('Tanks');
 
-    ////INITIALIZE LEVEL COUNTING/////////////
     ourGame.events.on("set_ui_max_level",(max_level)=> {
       this.totalQuestions=max_level;
       this.updateQuestionsLeftText();
 
     })
-    //////////////////////////////////////////
 
-    console.log(ourGame.events)
-
-    //console.log(this.scene);
     this.playerHealthBar = this.add.graphics();
     ourGame.events.on('updateHealth', this.updatePlayerHealthBar, this);
     this.updatePlayerHealthBar(100);
-    //var text = this.add.text(10, 10, 'Pointer Position: (0, 0)', { font: '16px Arial', color: '#ffffff' });
-
-    // Listen for pointer movement
     ourGame.input.on('pointermove', function (pointer) {
-      // text.setText('Pointer Position: (' + pointer.x + ', ' + pointer.y + ')');
+  
     });
 
     ourGame.events.on('updateAmmo', this.updateAmmoCount, this);
@@ -1047,7 +913,6 @@ export class UIScene extends Phaser.Scene {
     );
     this.updateAmmoCount(100);
 
-    //dispaly death count
     this.deathsText = this.add.text(Number(this.sys.game.config.width) - 200, 80, 'Deaths: 0', {
       fontSize: '20px',
       color: '#fff'
@@ -1055,8 +920,6 @@ export class UIScene extends Phaser.Scene {
 
     ourGame.events.on('updateDeaths', this.updateDeaths, this);
 
-
-    //dispaly level complete
     this.levelText = this.add.text(Number(this.sys.game.config.width) - 200, 110, 'Levels:', {
       fontSize: '20px',
       color: '#fff'
@@ -1067,27 +930,22 @@ export class UIScene extends Phaser.Scene {
       this.updateQuestionsLeftText()
       this.levelText.setText('Levels:' + this.levelsCompleted);
     });
-    // Define medkit box dimensions
     const boxSize = 50;
     const boxX = Number(this.sys.game.config.width) - 250;
-    const boxY = 50;//170;
+    const boxY = 50;
 
-    // Create black frame (graphics object)
     this.medkitFrame = this.add.graphics();
     this.medkitFrame.lineStyle(4, 0x000000, 1); // 4-pixel wide black line
     this.medkitFrame.strokeRect(boxX - boxSize / 2, boxY - boxSize / 2, boxSize, boxSize);
 
-    // Create medkit image (inside the frame)
     this.medkitImage = this.add.image(boxX, boxY, 'medkit').setDisplaySize(boxSize, boxSize);
 
-    // Create medkit count text on top of the image
     this.medkitCountText = this.add.text(this.medkitImage.x + 20, this.medkitImage.y - 20, '0', {
       fontSize: '20px',
       color: '#fff',
       fontStyle: 'bold',
       align: 'center'
     }).setOrigin(0.5);
-    // Listen for medkit update events
     ourGame.events.on('updateMedkits', this.updateMedkitCount, this);
   }
 
@@ -1095,7 +953,6 @@ export class UIScene extends Phaser.Scene {
     console.log("Works");
   }
   updateMedkitCount(medkits) {
-    // Update the medkit count number displayed on top of the medkit image
     this.medkitCountText.setText(medkits);
   }
 
@@ -1122,10 +979,9 @@ export class UIScene extends Phaser.Scene {
   startTimer(seconds: number) {
     this.totalTime = seconds;
 
-    // Create a timed event that triggers every second
     this.updateTimer();
     this.timerEvent = this.time.addEvent({
-      delay: 1000,  // 1 second
+      delay: 1000,
       callback: this.updateTimer,
       callbackScope: this,
       loop: true
@@ -1134,26 +990,19 @@ export class UIScene extends Phaser.Scene {
 
   updateTimer() {
     if (this.totalTime > 0) {
-      // Decrease total time by 1 second
       this.totalTime--;
 
-      // Convert the remaining time to MM:SS format
       const minutes = Math.floor(this.totalTime / 60);
       const seconds = this.totalTime % 60;
 
-      // Update the text object to display the time
       this.timerText.setText(`${this.formatTime(minutes)}:${this.formatTime(seconds)}`);
     } else {
-      // Timer has finished, stop the timed event
       this.timerEvent.remove(false);
-
-      // Call the function after the timer ends
       this.onTimerEnd();
     }
   }
 
   formatTime(time: number): string {
-    // Ensure time is displayed as two digits
     return time < 10 ? `0${time}` : `${time}`;
   }
 

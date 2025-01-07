@@ -50,7 +50,6 @@ router.get("/user/:id",  (req, res) => {
         res.status(500).send({ hasError: "Error getting all tests connected to user" });
     });
 });
-// Nie chcemy dodawać POST - test powinien się generować tylko podczas rozpoczęcia rozgrywki co jest robione po stronie serwera
 
 module.exports = router;
 

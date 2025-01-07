@@ -43,7 +43,6 @@ export class TestsComponent implements OnInit{
   }
 
   sortBy(criteria: string) {
-    console.log(this.tests);
     if (criteria === 'nameAsc') {
       this.tests.sort((a, b) => a.name.localeCompare(b.name));
     } else if (criteria === 'nameDesc') {

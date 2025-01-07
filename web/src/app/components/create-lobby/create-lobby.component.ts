@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SocketServiceService } from 'src/app/services/socket/socket-service.service';
 import { Level } from 'src/app/models/level.model';
 
@@ -35,7 +35,6 @@ export class CreateLobbyComponent implements OnInit {
   ngOnInit(): void {
     this.socket = this.socketService.getSocket();
     this.socket.on('joinCode', (code: string) => {
-      console.log('Received join code:', code);
       this.joinCode = code;
       this.created = true;
       this.onStartGame();
@@ -48,18 +47,11 @@ export class CreateLobbyComponent implements OnInit {
     this.socket.on('broadcastScoreBoard', (jsonScoreBoard) => {
       this.scoreBoard = new Map(Object.entries(JSON.parse(jsonScoreBoard)));
     }
-
     );
   }
-
-  // Method to handle form submission
   onSubmit(): void {
-    // Emit an event to the server
-    console.log(this.lobbyName);
-    console.log(this.userName);
     this.socketService.setUserId(this.userName);
     this.socket.emit('requestJoinCode', this.userName, this.lobbyName);
-
   }
 
   onStartGame(): void {

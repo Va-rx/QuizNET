@@ -45,7 +45,7 @@ export class MultiplayerGameComponent implements  OnInit, OnDestroy{
   players;
   levelMap: any;
 
-  timer: number = 900; //IN SECONDS
+  timer: number = 900;
   timerEnded:boolean=false;
   timerStarted:boolean=false;
   shuffleQuestions: boolean = false;

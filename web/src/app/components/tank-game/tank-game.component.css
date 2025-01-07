@@ -1,8 +1,8 @@
 .main_container {
   position: absolute;
   right: 0;
-  bottom: 0; /* Align to bottom of the page */
-  margin: 20px; /* Optional margin to create some space from the edge */
+  bottom: 0;
+  margin: 20px;
   color: white;
   text-align: center;
 }

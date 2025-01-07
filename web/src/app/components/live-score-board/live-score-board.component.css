@@ -79,57 +79,52 @@ ul {
   padding: 0;
 }
 
-
-/* Custom Scrollbar Styling */
 .bottom-right-table-container {
-  position: fixed; /* Fix the position relative to the viewport */
-  bottom: 10px; /* 10px from the bottom */
-  right: 10px; /* 10px from the right */
-  width: 14vw; /* No more than 10% of screen width */
-  max-height: 50vh; /* No more than 50% of screen height */
-  overflow-y: auto; /* Add vertical scrolling if content overflows */
-  background-color: #2b2b35; /* Match the table background */
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Optional shadow for visual effect */
-  border-radius: 5px; /* Rounded corners for a nicer appearance */
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 14vw;
+  max-height: 50vh;
+  overflow-y: auto;
+  background-color: #2b2b35;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
 }
 
-/* Scrollbar Track */
 .bottom-right-table-container::-webkit-scrollbar {
-  width: 8px; /* Width of the scrollbar */
+  width: 8px;
 }
 
 .bottom-right-table-container::-webkit-scrollbar-track {
-  background: #24242d; /* Dark background for the track */
-  border-radius: 5px; /* Rounded track edges */
+  background: #24242d;
+  border-radius: 5px;
 }
 
-/* Scrollbar Thumb */
 .bottom-right-table-container::-webkit-scrollbar-thumb {
-  background-color: #695497; /* Use your accent color for the thumb */
-  border-radius: 5px; /* Rounded thumb edges */
-  border: 2px solid #2b2b35; /* Add some space around the thumb for a nicer look */
+  background-color: #695497;
+  border-radius: 5px;
+  border: 2px solid #2b2b35;
 }
 
 .bottom-right-table-container::-webkit-scrollbar-thumb:hover {
-  background-color: #8a7bbd; /* Lighter shade on hover for better visibility */
+  background-color: #8a7bbd;
 }
 
 
 .results-table {
-  width: 100%; /* Ensure table fits within its container */
-  table-layout: fixed; /* Makes columns consistent in size */
-  background-color: inherit; /* Inherit the background color from the parent */
+  width: 100%;
+  table-layout: fixed;
+  background-color: inherit;
 }
 
 .results-table th,
 .results-table td {
-  /*white-space: nowrap;  Prevent wrapping for table cells */
-  overflow: hidden; /* Hide overflow to prevent text spilling */
-  text-overflow: ellipsis; /* Add ellipsis if text overflows */
+  overflow: hidden;
+  text-overflow: ellipsis;
   padding: 5px;
 }
 
 .tight-score-td{
-  width: 60px; /* Fixed width to fit up to 2-digit numbers */
-  text-align: right; /* Center-align numbers for a cleaner look */
+  width: 60px;
+  text-align: right;
 }
