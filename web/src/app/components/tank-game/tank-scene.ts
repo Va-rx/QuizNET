@@ -241,10 +241,10 @@ export default class Tanks extends Phaser.Scene {
     this.load.image('tankBody', 'assets/games/tankgame/Camo/Bodies/body_tracks.png');
     this.load.spritesheet('tankTurret', 'assets/games/tankgame/Camo/Weapons/turret_01_mk1.png', { frameWidth: 128, frameHeight: 128 });
     this.load.spritesheet('tankTurret2', 'assets/games/tankgame/Camo/Weapons/turret_01_mk4.png', { frameWidth: 128, frameHeight: 128 });
-    this.load.image('bullet', 'assets/games/firstgame/assets/bomb.png');
+    this.load.image('bullet', 'assets/games/tankgame/bomb.png');
     this.load.spritesheet('towers_walls_blank', 'assets/games/tankgame/Camo/Towers/towers_walls_blank.png', { frameWidth: 32, frameHeight: 32 });
     this.load.image('ammo', 'assets/games/tankgame/ammo.png');
-    this.load.image('star', 'assets/games/firstgame/assets/star.png');
+    this.load.image('star', 'assets/games/tankgame/star.png');
     this.load.image('health', 'assets/games/tankgame/health.png');
 
     
