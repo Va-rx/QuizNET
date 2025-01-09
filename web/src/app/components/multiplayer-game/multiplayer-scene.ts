@@ -37,7 +37,7 @@ export default class multiplayerScene extends Phaser.Scene {
 
   preload() {
     this.load.spritesheet('dude', 'assets/games/multiplayergame/Player/player.png', {frameWidth: 48, frameHeight: 48});
-    this.load.image('star', 'assets/games/firstgame/assets/star.png');
+    this.load.image('star', 'assets/games/tankgame/star.png');
     this.load.tilemapTiledJSON('map', this.map);
     this.load.image('plains', 'assets/games/multiplayergame/Map/plains.png');
     this.load.image('grass', 'assets/games/multiplayergame/Map/grass.png');
