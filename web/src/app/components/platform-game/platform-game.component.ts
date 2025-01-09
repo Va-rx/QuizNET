@@ -57,6 +57,8 @@ export class PlatformGameComponent {
   shuffleQuestions: boolean = false;
   shuffleAnswers: boolean = false;
   maxQuestions: number = 0;
+  
+  timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private testService: TestService, 
               private dialog: MatDialog, 
@@ -180,12 +182,14 @@ export class PlatformGameComponent {
     this.phaserGame.scene.game.events.on('startedLevel', (level) => {
       setTimeout(() => {
         this.secondsWhenStartedLevel = this.currentServerSeconds;
+        this.stopDetectingLevelTimeOut();
         this.detectLevelTimeOut(level);
       }, 1000)
     })
 
     this.phaserGame.scene.game.events.on('finishLevel', (level, deaths: number) => {
       this.phaserGame.pause();
+      this.stopDetectingLevelTimeOut();
       const spentTime = this.secondsWhenStartedLevel - this.currentServerSeconds;
       if (spentTime <= (this.levelsData[level-1].time)/3 * 60) { 
         this.bonusPoints += this.pointsPerLevelSpeed;
@@ -246,12 +250,19 @@ export class PlatformGameComponent {
       return question;
   }
 
+  stopDetectingLevelTimeOut() {
+    if (this.timeoutId !== null) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+  }
+
   detectLevelTimeOut(level: number) {
     const maxTime = this.levelsData[level-1].time * 60
     if (this.secondsWhenStartedLevel - this.currentServerSeconds >= maxTime) {
       this.phaserGame.events.emit("finishLevel", level, 999);
     } else {
-      setTimeout(() => this.detectLevelTimeOut(level), 1000);
+      this.timeoutId = setTimeout(() => this.detectLevelTimeOut(level), 1000);
     }
   }
 
