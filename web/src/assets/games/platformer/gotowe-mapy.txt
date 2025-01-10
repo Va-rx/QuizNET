@@ -1,16 +1,41 @@
 Wraz z aplikacją przygotowane są mapy:
 
-1. map-1
+1. wspinaczka.json
 nazwa: wspinaczka
 poziom trudności: łatwy
 sugerowany czas gry: 1min
 
-2. map-2
+2. wzgorze.json
+nazwa: wzgórze
+poziom trudności: łatwy
+sugerowany czas gry: 1min
+
+3. obozWLesie.json
+nazwa: obóz w lesie
+poziom trudności: łatwy
+sugerowany czas gry: 1min
+
+4. symetrycznyLas.json
 nazwa: symetryczny las
 poziom trudności: średni
 sugerowany czas gry: 2min
 
-3. map-3
+5. labirynt.json
+nazwa: labirynt
+poziom trudności: średni
+sugerowany czas gry: 2min
+
+6. podejrzanyPoziom.json
+nazwa: podejrzany poziom
+poziom trudności: średni
+sugerowany czas gry: 2min
+
+7. hurtownia.json
 nazwa: hurtownia
+poziom trudności: trudny
+sugerowany czas gry: 3min
+
+8. miasto.json
+nazwa: miasto
 poziom trudności: trudny
 sugerowany czas gry: 3min

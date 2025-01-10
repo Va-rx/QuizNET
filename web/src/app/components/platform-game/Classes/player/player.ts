@@ -146,10 +146,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             this.canControl = false;
             this.setVelocityX(0);
             this.setVelocityY(300);
+            this.setOrigin(0.5, 0.5);
 
             this.anims.play('disappear', true);
             this.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
                 if (anim.key === 'disappear') {
+                    this.setOrigin(0,0);
                     resolve();
                 }
             });

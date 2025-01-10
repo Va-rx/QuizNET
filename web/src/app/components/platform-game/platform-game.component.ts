@@ -57,7 +57,7 @@ export class PlatformGameComponent {
   shuffleQuestions: boolean = false;
   shuffleAnswers: boolean = false;
   maxQuestions: number = 0;
-  
+
   timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private testService: TestService, 
@@ -237,7 +237,7 @@ export class PlatformGameComponent {
       this.points += this.pointsPerBonusFruit;
 
       this.socket.emit('userScoreUpdate', this.socketService.getUserId(), this.points, this.socketService.getJoinCode(), false);
-    })
+    });
   }
 
   getRandomQuestion(): Question | null {
@@ -265,7 +265,5 @@ export class PlatformGameComponent {
       this.timeoutId = setTimeout(() => this.detectLevelTimeOut(level), 1000);
     }
   }
-
-  
 }
 

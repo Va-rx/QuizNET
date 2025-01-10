@@ -56,10 +56,15 @@ export class MapEditorComponent implements OnInit {
     { folder: 'platformer', name: 'Platform.png', path: 'assets/games/platformer/tilesets/platforms/Off.png' },
     { folder: 'platformer', name: 'Saw.png', path: 'assets/games/platformer/tilesets/Off.png' },
     { folder: 'platformer', name: 'platformer-map-guide.pdf', path: 'assets/games/platformer/Poradnik.pdf' },
-    { folder: 'platformer', name: 'map-1.json', path: 'assets/games/platformer/levels/map-1.json' },
-    { folder: 'platformer', name: 'map-2.json', path: 'assets/games/platformer/levels/map-2.json' },
-    { folder: 'platformer', name: 'map-3.json', path: 'assets/games/platformer/levels/map-3.json' },
-    { folder: 'platformer', name: 'platformer-maps.txt', path: 'assets/games/platformer/gotowe-mapy.txt'}
+    { folder: 'platformer', name: 'levels/hurtownia.json', path: 'assets/games/platformer/levels/hurtownia.json' },
+    { folder: 'platformer', name: 'levels/labirynt.json', path: 'assets/games/platformer/levels/labirynt.json' },
+    { folder: 'platformer', name: 'levels/miasto.json', path: 'assets/games/platformer/levels/miasto.json' },
+    { folder: 'platformer', name: 'levels/obozWLesie.json', path: 'assets/games/platformer/levels/obozWLesie.json' },
+    { folder: 'platformer', name: 'levels/podejrzanyPoziom.json', path: 'assets/games/platformer/levels/podejrzanyPoziom.json' },
+    { folder: 'platformer', name: 'levels/symetrycznyLas.json', path: 'assets/games/platformer/levels/symetrycznyLas.json' },
+    { folder: 'platformer', name: 'levels/wspinaczka.json', path: 'assets/games/platformer/levels/wspinaczka.json' },
+    { folder: 'platformer', name: 'levels/wzgorze.json', path: 'assets/games/platformer/levels/wzgorze.json' },
+    { folder: 'platformer', name: 'levels/platformer-maps.txt', path: 'assets/games/platformer/gotowe-mapy.txt'}
   ];
 
   constructor(private gamesService: GamesService, private levelService: LevelService, private _snackBar: MatSnackBar, private translateService: TranslateService) {
