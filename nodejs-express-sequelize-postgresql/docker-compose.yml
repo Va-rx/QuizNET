@@ -1,30 +1,30 @@
 version: "3"
 services:
-    postgre_quiznet:
-        container_name: postgre_quiznet
-        image: postgres:latest
-        restart: always
-        environment:
-            TZ: Europe/Warsaw
-            POSTGRES_USER: root
-            POSTGRES_PASSWORD: zaq1@WSX
-            POSTGRES_DB: postgres # quiznet -> ive changed it
-        ports:
-            - "5432:5432"
-        volumes:
-            - db-data:/var/lib/postgresql/data
-            - ./dbInit:/docker-entrypoint-initdb.d
-        networks:
-            - quiznet-network
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready"]
-            interval: 10s
-            timeout: 5s
-            retries: 5
+  postgre_quiznet_test:
+    container_name: postgre_quiznet_test
+    image: postgres:latest
+    restart: always
+    environment:
+      TZ: Europe/Warsaw
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: zaq1@WSX
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data-test:/var/lib/postgresql
+      - ./dbInit:/docker-entrypoint-initdb.d
+    networks:
+      - quiznet-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 networks:
-    quiznet-network:
-        driver: bridge
-        external: true
+  quiznet-network:
+    external: true
 
 volumes:
-    db-data:
+  db-data-test:
