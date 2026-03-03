@@ -84,12 +84,14 @@ app.use("/api/user-results", userResultsRouter);
 app.use("/api/user-personality-results", userPersonalityResultsRouter);
 app.use("/api/levels", levelRouter);
 
-app.use(express.static(path.join(__dirname, "../web/dist/web")));
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(__dirname, '../web/dist/web');
+  app.use(express.static(distPath));
 
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../web/dist/web/index.html"));
-});
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 8080;
 
