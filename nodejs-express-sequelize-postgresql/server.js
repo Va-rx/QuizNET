@@ -4,6 +4,7 @@ const http = require("http");
 const socketIo = require("socket.io");
 const cron = require("node-cron");
 const bodyParser = require('body-parser');
+const path = require('path')
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +15,9 @@ const io = socketIo(server, {
 });
 var corsOptions = {
 };
+
+console.log('Server time:', new Date().toString());
+console.log('ISO time:', new Date().toISOString());
 
 var timerValue = 0;
 var gameTime = 0;
@@ -79,6 +83,13 @@ app.use("/api/test-history", testHistoryRouter);
 app.use("/api/user-results", userResultsRouter);
 app.use("/api/user-personality-results", userPersonalityResultsRouter);
 app.use("/api/levels", levelRouter);
+
+app.use(express.static(path.join(__dirname, "../web/dist/web")));
+
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../web/dist/web/index.html"));
+});
 
 const PORT = process.env.PORT || 8080;
 
@@ -384,7 +395,7 @@ io.on("connection", (socket) => {
   
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
