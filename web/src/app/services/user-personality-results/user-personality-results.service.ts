@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {PersonalityResults} from "../../models/user-personality-results";
 
-const baseUrl = 'http://localhost:8080/api/user-personality-results';
+const baseUrl = '/api/user-personality-results';
 @Injectable({
   providedIn: 'root'
 })
