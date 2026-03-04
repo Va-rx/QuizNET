@@ -128,6 +128,25 @@ NODE_ENV=development node server.js
 ng serve --proxy-config proxy.conf.json --open
 ```
 
+### Using the App
+Students can create their own accounts using the registration form available in the application.
+
+For demonstration purposes, a default administrator (teacher) account is provided.
+
+**Default admin credentials:**
+
+- Email: `admin@admin.pl`
+- Password: `adminADMIN`
+
+These credentials can be modified in the database initialization script:
+
+```bash
+./backend/dbInit/2filldata.sql
+```
+
+The password stored in `2filldata.sql` is already hashed.  
+If you change the default password, make sure to generate a new bcrypt hash before updating the script.
+
 ## Adding Levels
 
 All implemented levels must be manually added using the in-app editor.  
