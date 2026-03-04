@@ -5,7 +5,7 @@ import {AuthService} from "../auth/auth.service";
 import {TestHistory} from "../../models/test-history.model";
 import {Results} from "../../models/user-results.model";
 
-const baseUrl = 'http://localhost:8080/api/user-results';
+const baseUrl = '/api/user-results';
 @Injectable({
   providedIn: 'root'
 })

@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import { Level } from 'src/app/models/level.model';
 
-const baseUrl = 'http://localhost:8080/api/levels';
+const baseUrl = '/api/levels';
 @Injectable({
   providedIn: 'root'
 })

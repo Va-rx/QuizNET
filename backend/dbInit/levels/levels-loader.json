@@ -1,0 +1,79 @@
+{
+    "games": [
+      {
+        "game_id": 1,
+        "levels": [
+          {
+            "name": "Równiny",
+            "difficulty": "DIFFICULTY.MEDIUM",
+            "time": 10,
+            "map": "levels/czolgi/tanktest.json"
+          }
+        ]
+      },
+      {
+        "game_id": 2,
+        "levels": [
+            {
+                "name": "Centrum",
+                "difficulty": "DIFFICULTY.MEDIUM",
+                "time": 10,
+                "map": "levels/multiplayer/multiplayerMap.json"
+            }
+        ]
+      },
+      {
+        "game_id": 3,
+        "levels": [
+            {
+                "name": "Wspinaczka",
+                "difficulty": "DIFFICULTY.EASY",
+                "time": 1,
+                "map": "levels/platformer/wspinaczka.json"
+            },
+            {
+                "name": "Wzgórze",
+                "difficulty": "DIFFICULTY.EASY",
+                "time": 1,
+                "map": "levels/platformer/wzgorze.json"
+            },
+            {
+                "name": "Obóz w lesie",
+                "difficulty": "DIFFICULTY.EASY",
+                "time": 1,
+                "map": "levels/platformer/obozWLesie.json"
+            },
+            {
+                "name": "Symetryczny las",
+                "difficulty": "DIFFICULTY.MEDIUM",
+                "time": 2,
+                "map": "levels/platformer/symetrycznyLas.json"
+            },
+            {
+                "name": "Labirynt",
+                "difficulty": "DIFFICULTY.MEDIUM",
+                "time": 2,
+                "map": "levels/platformer/labirynt.json"
+            },            
+            {
+                "name": "Podejrzany poziom",
+                "difficulty": "DIFFICULTY.MEDIUM",
+                "time": 2,
+                "map": "levels/platformer/podejrzanyPoziom.json"
+            },            
+            {
+                "name": "Hurtownia",
+                "difficulty": "DIFFICULTY.HARD",
+                "time": 3,
+                "map": "levels/platformer/hurtownia.json"
+            },            
+            {
+                "name": "Miasto",
+                "difficulty": "DIFFICULTY.HARD",
+                "time": 10,
+                "map": "levels/platformer/miasto.json"
+            }
+        ]
+      }
+    ]
+  }

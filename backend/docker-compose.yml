@@ -1,0 +1,30 @@
+version: "3"
+services:
+  postgre_quiznet_test:
+    container_name: postgre_quiznet_test
+    image: postgres:latest
+    restart: always
+    environment:
+      TZ: Europe/Warsaw
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_DATABASE}"
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - db-data-test:/var/lib/postgresql
+      - ./dbInit:/docker-entrypoint-initdb.d
+    networks:
+      - quiznet-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  quiznet-network:
+    external: true
+
+volumes:
+  db-data-test:
