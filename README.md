@@ -1,6 +1,6 @@
 # QuizNET - Gamification of short knowledge assessments
 
-## Project Overview
+## 📌: Project Overview
 QuizNET is a full-stack web application that aims to transform traditional knowledge tests into gamified experience. The platform allows teachers to create and schedule tests that are enhanced with mini-games, making learning more engaging and motivating for students. 
 
 Students complete tests with one of three integrated mini-games. The system also captures brief personality insights based on students' in-game decision (Bartle Taxonomy).
@@ -9,13 +9,13 @@ Teachers can monitor tests live, track student progress in real-time, and access
 
 Project is made as part of Engineering Thesis.
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 **Frontend:** Angular (HTML, CSS, JS/TS), Bootstrap, Phaser
 
 **Backend:** Node.js, Express.js, PostgreSQL, Docker, Javascript
 
-## Key features
+## 🌟 Key features
 
 - User registration & login (JWT-based auth)
 - Role-based access (Teacher / Student)
@@ -27,7 +27,7 @@ Project is made as part of Engineering Thesis.
 - Personality insights based on in-game behavior
 - Changing app language
 
-## Screenshots
+## 📸 Screenshots
 
 ### Game: Platformer
 <img src="screenshots/platformer1.jpg" width="800">
@@ -50,7 +50,7 @@ Project is made as part of Engineering Thesis.
 ### Test: Results [Teacher]
 <img src="screenshots/test-history-teacher.png" width="800">
 
-## Installation & Setup (Linux)
+## 📦 Installation & Setup (Linux)
 
 ### Installing tools (Node, NPM, Docker, Angular-CLI)
 ```bash
@@ -147,7 +147,7 @@ These credentials can be modified in the database initialization script:
 The password stored in `2filldata.sql` is already hashed.  
 If you change the default password, make sure to generate a new bcrypt hash before updating the script.
 
-## Adding Levels
+## 🛃 Adding Levels
 
 All implemented levels must be manually added using the in-app editor.  
 Once added, they remain permanently available in the system.
@@ -161,7 +161,7 @@ All level files are located in:
 This directory also contains instructions and suggestions on how to properly load the levels into the system.  
 It includes predefined difficulty levels and suggested completion times (mainly for the Platformer game).
 
-## Game Configuration
+## 🔑 Game Configuration
 
 ### Deathmatch
 
@@ -255,7 +255,7 @@ Suggested time values are configurable and can be adjusted when adding new level
 - **City level** – very difficult and experimental.
 - **WeirdLevel** – contains hidden mechanics and secrets that require understanding non-obvious gameplay behavior.
 
-## Collaborators and responsibilities
+## 🎓 Collaborators and responsibilities
 ### Jakub Płowiec
 - Database structure + queries
 - API endpoints
