@@ -1,6 +1,6 @@
 # QuizNET - Gamification of short knowledge assessments
 
-## 📌: Project Overview
+## 📌 Project Overview
 QuizNET is a full-stack web application that aims to transform traditional knowledge tests into gamified experience. The platform allows teachers to create and schedule tests that are enhanced with mini-games, making learning more engaging and motivating for students. 
 
 Students complete tests with one of three integrated mini-games. The system also captures brief personality insights based on students' in-game decision (Bartle Taxonomy).
